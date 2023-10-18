@@ -26,10 +26,11 @@ def get_theme_parks_from_json(json):
     # print(park_list)
     return park_list
 
+
 def get_rides_from_json(json_data):
     """
     Returns a list of the names of rides at a particular park contained in the JSON
-    :param json: A JSON file containing data for a particular park
+    :param json_data: A JSON file containing data for a particular park
     :return: name, id, wait_time, is_open
     """
     ride_list = []
@@ -39,12 +40,13 @@ def get_rides_from_json(json_data):
         rides = land['rides']
         for ride in rides:
             name = ride['name']
-            park_id = ride['id']
+            ride_id = ride['id']
             wait_time = ride['wait_time']
             is_open = ride['is_open']
-            park_desc = ([name, park_id, wait_time, is_open])
+            park_desc = ([name, ride_id, wait_time, is_open])
             ride_list.append(park_desc)
     return ride_list
+
 
 def get_park_url(park_list, park_name):
     """
@@ -59,12 +61,22 @@ def get_park_url(park_list, park_name):
     url2 = "/queue_times.json"
     for park in park_list:
         if park[0] == park_name:
-            id = park[1]
-            url = url1 + str(id) + url2
+            park_id = park[1]
+            url = url1 + str(park_id) + url2
             return url
 
-
-
-
-
-
+def get_wait_time(park_json, ride_name):
+    """
+    :param park_json:  The parsed JSON from a particular park
+    :param ride_name:  The individual ride at that park you want the time for
+    :return: Standby wait time in minutes as a string. Returns "closed" if the ride is closed
+    """
+    ride_list = get_rides_from_json(park_json)
+    for ride in ride_list:
+        if ride[0] == ride_name:
+            target_ride_time = ride[2]
+            is_open = ride[3]
+            if is_open is False:
+                return "Closed"
+            else:
+                return target_ride_time
