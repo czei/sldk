@@ -17,7 +17,8 @@ import adafruit_requests
 import displayio
 from rainbowio import colorwheel
 from theme_park_api import get_theme_parks_from_json
-from theme_park_api import get_rides_from_json
+from theme_park_api import Rides
+
 from theme_park_api import get_park_url
 from theme_park_api import get_wait_time
 from adafruit_matrixportal.matrixportal import MatrixPortal
@@ -31,6 +32,15 @@ def populate_park_list():
     response = requests.get(url)
     json_response = response.json()
     return get_theme_parks_from_json(json_response)
+
+def populate_ride_list(park_list, park_name):
+    url = get_park_url(park_list, park_name)
+    pool = socketpool.SocketPool(wifi.radio)
+    requests = adafruit_requests.Session(pool, ssl.create_default_context())
+    response = requests.get(url)
+    rides = Rides(response.json())
+    return rides
+
 
 # Get WIFI credentials
 try:
@@ -128,18 +138,13 @@ def update_scores(park_name, ride_name):
     if display_wait is False :
         matrixportal.set_text("", STANDBY)
         matrixportal.set_text("", WAIT_TIME)
-        #       matrixportal.set_text_color(BLACK_COLOR, STANDBY)
-        #       matrixportal.set_text_color(BLACK_COLOR, WAIT_TIME)
-        #       matrixportal.set_text_color(RED_COLOR, RIDE_NAME)
         matrixportal.set_text(process_ride_name(ride_name), RIDE_NAME)
     else:
         wait_time = get_live_wait_time(park_name, ride_name)
         matrixportal.set_text("", RIDE_NAME)
         matrixportal.set_text(wait_time, WAIT_TIME)
-        #       matrixportal.set_text_color(BLUE_COLOR, STANDBY)
-        #       matrixportal.set_text_color(BLUE_COLOR, WAIT_TIME)
-        #       matrixportal.set_text_color(BLACK_COLOR, RIDE_NAME)
         matrixportal.set_text("Standby", STANDBY)
+
 
 class ColorPicker:
     def __init__(self):
@@ -154,10 +159,16 @@ class ColorPicker:
 # customize_team_names()
 # update_scores()
 last_update = time.monotonic()
+rides = populate_ride_list(park_list, 'Disney Magic Kingdom')
+
 
 while True:
-    # matrixportal.scroll_text(SCROLL_DELAY)
+    current_ride_index = 0
     if time.monotonic() > last_update + UPDATE_DELAY:
         display_wait = not display_wait
-        update_scores('Disney Magic Kingdom', 'Haunted Mansion')
+        ride_name = rides.get_current_ride_name()
+        print(f"Current Ride: {ride_name}")
+        update_scores('Disney Magic Kingdom', ride_name)
         last_update = time.monotonic()
+        if display_wait is True:
+            rides.increment_counter()
