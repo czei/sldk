@@ -1,6 +1,3 @@
-import time
-
-
 def get_theme_parks_from_json(json):
     """
     Return a list of theme parks and their ids
@@ -101,13 +98,8 @@ class Rides:
         if self.counter >= len(self.rides):
             self.counter = 0
 
-    def update(self, json_data):
-        self.rides = get_rides_from_json(json_data)
     def get_current_ride_name(self):
         return self.rides[self.counter][0]
-
-    def get_current_ride_time(self):
-        return self.rides[self.counter][2]
 
     def get_next_ride_name(self):
         self.increment_counter()
@@ -115,54 +107,3 @@ class Rides:
 
     def get_num_rides(self):
         return len(self.rides)
-
-class DisplayMode:
-    """
-    Is the display showing the name of the ride or the wait time?
-    """
-
-    def __init__(self,wait_delay):
-        self.modes = ["Scrolling", "Wait"]
-        self.current_mode = 0
-        self.WAIT_DELAY = wait_delay
-        self.last_update = time.monotonic()
-
-    def get_current_mode(self):
-        return self.modes[self.current_mode]
-
-    def time_to_switch_mode(self):
-        the_time = time.monotonic()
-        if the_time > (self.last_update + self.WAIT_DELAY) :
-            self.last_update = time.monotonic()
-            self.increment_mode()
-            return True
-        return False
-
-    def print_status(self):
-        the_time = time.monotonic()
-        print(f"Time is {the_time} last update is {self.last_update} delay is {self.WAIT_DELAY}")
-
-    def increment_mode(self):
-        self.current_mode += 1
-        self.last_update = time.monotonic()
-        if self.current_mode >= len(self.modes):
-            self.current_mode = 0
-
-class ParkUpdateTimer:
-    """
-    Is the display showing the name of the ride or the wait time?
-    """
-    def __init__(self,wait_delay):
-        self.WAIT_DELAY = wait_delay
-        self.last_update = time.monotonic()
-
-    def time_to_do_something(self):
-        the_time = time.monotonic()
-        if the_time > (self.last_update + self.WAIT_DELAY) :
-            self.last_update = time.monotonic()
-            return True
-        return False
-
-    def print_status(self):
-        the_time = time.monotonic()
-        print(f"Time is {the_time} last update is {self.last_update} delay is {self.WAIT_DELAY}")

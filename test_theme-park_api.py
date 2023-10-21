@@ -5,8 +5,10 @@ from urllib.request import urlopen, Request
 from theme_park_api import get_rides_from_json
 from theme_park_api import get_park_url
 from theme_park_api import get_wait_time
-
+from theme_park_api import Rides
+from theme_park_api import DisplayMode
 import json
+import time
 
 
 class Test(TestCase):
@@ -23,9 +25,16 @@ class Test(TestCase):
                 found_magic_kingdom = True
         self.assertTrue(found_magic_kingdom is True)
 
+        found_universal = False
+        for park in park_list:
+            if park[0] == "Universal Studios At Universal Orlando" :
+                found_magic_kingdom = True
+        self.assertTrue(found_magic_kingdom is True)
+
     def test_get_theme_parks_from_json_http(self):
         url1 = "https://queue-times.com/parks.json"
-        headers = {"User-Agent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3"}
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3"}
         req = Request(url=url1, headers=headers)
         response = urlopen(req).read()
         data = json.loads(response)
@@ -76,7 +85,6 @@ class Test(TestCase):
         self.assertTrue(is_open is False)
         self.assertTrue(ride_id == 1187)
 
-
     def test_get_park_url(self):
         f = open('theme-park-list.json')
         data = json.load(f)
@@ -96,3 +104,41 @@ class Test(TestCase):
 
         wait_time = get_wait_time(park_json, 'Liberty Square Riverboat')
         self.assertTrue(wait_time == "Closed")
+
+        f = open('universal.json')
+        park_json = json.load(f)
+        f.close()
+        self.assertTrue(len(park_json) > 0)
+
+        wait_time = get_wait_time(park_json, 'Revenge of the Mummy™')
+        self.assertTrue(wait_time == 20)
+
+        wait_time = get_wait_time(park_json, 'Illumination\'s Villain-Con Minion Blast')
+        self.assertTrue(wait_time == 40)
+
+        wait_time = get_wait_time(park_json, 'Despicable Me Minion Mayhem™')
+        self.assertTrue(wait_time == 55)
+
+    def test_get_ride_class(self):
+        f = open('magic-kingdom.json')
+        data = json.load(f)
+        f.close()
+        ride_class_instance = Rides(data)
+        self.assertTrue(ride_class_instance.get_num_rides() > 0)
+        ride_name = ride_class_instance.get_current_ride_name()
+        self.assertTrue(ride_name == "A Pirate's Adventure ~ Treasures of the Seven Seas")
+        ride_name = ride_class_instance.get_next_ride_name()
+        self.assertTrue(ride_name == "Jungle Cruise")
+
+
+    def test_display_mode(self):
+        mode = DisplayMode(2)
+        self.assertTrue(mode.get_current_mode() == "Scrolling")
+        mode.increment_mode()
+        self.assertTrue(mode.get_current_mode() == "Wait")
+        mode.increment_mode()
+        self.assertTrue(mode.get_current_mode() == "Scrolling")
+
+        self.assertTrue(mode.time_to_switch_mode() is False)
+        time.sleep(5)
+        self.assertTrue(mode.time_to_switch_mode() is True)

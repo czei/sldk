@@ -7,8 +7,8 @@
 # Perfect for cornhole, ping pong, and other games
 
 import re
-import time
 import board
+import time
 import terminalio
 import wifi
 import ssl
@@ -18,9 +18,9 @@ import displayio
 from rainbowio import colorwheel
 from theme_park_api import get_theme_parks_from_json
 from theme_park_api import Rides
+from theme_park_api import ParkUpdateTimer
 
 from theme_park_api import get_park_url
-from theme_park_api import get_wait_time
 from adafruit_matrixportal.matrixportal import MatrixPortal
 
 # get List of theme parks to choose from
@@ -91,7 +91,7 @@ matrixportal.add_text(
     text_font=terminalio.FONT,
     text_position=(0, int(matrixportal.graphics.display.height * 0.25)+10),
     text_color=RED_COLOR,
-    scrolling=False,
+    scrolling=True,
     text_scale=.5,
 )
 
@@ -115,36 +115,30 @@ def show_connecting(show):
     else:
         matrixportal.set_text(" ", 4)
 
-def customize_team_names():
-    # matrixportal.set_text("Mansion", 0)
-    matrixportal.set_text("5", 0)
-    matrixportal.set_text("Haunted\nMansion", 1)
-    matrixportal.set_text("Standby", 2)
 
-
-def get_live_wait_time(park_name, ride_name):
+def update_live_wait_time(park_name):
     url = get_park_url(park_list, park_name)
+    print(f"Park URL: {url}")
     pool = socketpool.SocketPool(wifi.radio)
     requests = adafruit_requests.Session(pool, ssl.create_default_context())
     response = requests.get(url)
     json_response = response.json()
-    return get_wait_time(json_response, ride_name)
+    rides.update(json_response)
 
 def process_ride_name(ride_name):
     return re.sub(r'\s' , '\n', ride_name)
 
-def update_scores(park_name, ride_name):
-    # matrixportal.set_text_color(BLACK_COLOR)
-    if display_wait is False :
-        matrixportal.set_text("", STANDBY)
-        matrixportal.set_text("", WAIT_TIME)
-        matrixportal.set_text(process_ride_name(ride_name), RIDE_NAME)
-    else:
-        wait_time = get_live_wait_time(park_name, ride_name)
-        matrixportal.set_text("", RIDE_NAME)
-        matrixportal.set_text(wait_time, WAIT_TIME)
-        matrixportal.set_text("Standby", STANDBY)
 
+def show_ride_wait_time(ride_wait_time) :
+    matrixportal.set_text("", RIDE_NAME)
+    matrixportal.set_text(ride_wait_time, WAIT_TIME)
+    matrixportal.set_text("Standby", STANDBY)
+
+
+def show_ride_name(ride_name) :
+    matrixportal.set_text("", STANDBY)
+    matrixportal.set_text("", WAIT_TIME)
+    matrixportal.set_text(ride_name, RIDE_NAME)
 
 class ColorPicker:
     def __init__(self):
@@ -156,19 +150,27 @@ class ColorPicker:
         print(f"color = {color}")
         return color
 
-# customize_team_names()
-# update_scores()
-last_update = time.monotonic()
-rides = populate_ride_list(park_list, 'Disney Magic Kingdom')
-
+# Setup Ride Data
+PARK_NAME = "Hollywood Studios"
+rides = populate_ride_list(park_list, PARK_NAME)
+# show_ride_name(rides.get_current_ride_name())
+park_update_timer = ParkUpdateTimer(300)
 
 while True:
-    current_ride_index = 0
-    if time.monotonic() > last_update + UPDATE_DELAY:
-        display_wait = not display_wait
+    try:
         ride_name = rides.get_current_ride_name()
-        print(f"Current Ride: {ride_name}")
-        update_scores('Disney Magic Kingdom', ride_name)
-        last_update = time.monotonic()
-        if display_wait is True:
-            rides.increment_counter()
+        print(f"Displaying Ride: {ride_name}")
+        show_ride_name(ride_name)
+        matrixportal.scroll_text()
+
+        show_ride_wait_time(rides.get_current_ride_time())
+        rides.increment_counter()
+        time.sleep(4)
+
+        # Time to contact website to get latest wait times
+        if park_update_timer.time_to_do_something() is True:
+            update_live_wait_time(PARK_NAME)
+
+    except RuntimeError:
+        print("Runtime error getting wait times")
+
