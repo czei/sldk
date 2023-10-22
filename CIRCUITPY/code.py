@@ -17,11 +17,16 @@ import adafruit_requests
 import displayio
 from rainbowio import colorwheel
 from theme_park_api import get_theme_parks_from_json
-from theme_park_api import Rides
+from theme_park_api import ThemePark
+from theme_park_api import ThemeParkRide
 from theme_park_api import ParkUpdateTimer
 
 from theme_park_api import get_park_url
 from adafruit_matrixportal.matrixportal import MatrixPortal
+
+import supervisor
+supervisor.runtime.autoreload = False
+
 
 # get List of theme parks to choose from
 def populate_park_list():
@@ -38,8 +43,8 @@ def populate_ride_list(park_list, park_name):
     pool = socketpool.SocketPool(wifi.radio)
     requests = adafruit_requests.Session(pool, ssl.create_default_context())
     response = requests.get(url)
-    rides = Rides(response.json())
-    return rides
+    park = ThemePark(park_name, response.json())
+    return park
 
 
 # Get WIFI credentials
@@ -99,7 +104,7 @@ matrixportal.add_text(
 STANDBY = 2
 matrixportal.add_text(
     text_font=terminalio.FONT,
-    text_position=((int((matrixportal.graphics.display.width-7*6) / 2)+2), 6),
+    text_position=((int((matrixportal.graphics.display.width-7*6) / 2)), 6),
     text_color=BLUE_COLOR,
 )
 
@@ -123,16 +128,19 @@ def update_live_wait_time(park_name):
     requests = adafruit_requests.Session(pool, ssl.create_default_context())
     response = requests.get(url)
     json_response = response.json()
-    rides.update(json_response)
+    park.update(json_response)
 
 def process_ride_name(ride_name):
     return re.sub(r'\s' , '\n', ride_name)
 
 
-def show_ride_wait_time(ride_wait_time) :
-    matrixportal.set_text("", RIDE_NAME)
-    matrixportal.set_text(ride_wait_time, WAIT_TIME)
-    matrixportal.set_text("Standby", STANDBY)
+def show_ride_wait_time(ride_wait_time, ride_closed) :
+    if ride_closed is True:
+        matrixportal.set_text("Closed", STANDBY)
+    else:
+        matrixportal.set_text("", RIDE_NAME)
+        matrixportal.set_text(ride_wait_time, WAIT_TIME)
+        matrixportal.set_text("Standby", STANDBY)
 
 
 def show_ride_name(ride_name) :
@@ -151,20 +159,20 @@ class ColorPicker:
         return color
 
 # Setup Ride Data
-PARK_NAME = "Hollywood Studios"
-rides = populate_ride_list(park_list, PARK_NAME)
+PARK_NAME = "Disney Hollywood Studios"
+park = populate_ride_list(park_list, PARK_NAME)
 # show_ride_name(rides.get_current_ride_name())
 park_update_timer = ParkUpdateTimer(300)
 
 while True:
     try:
-        ride_name = rides.get_current_ride_name()
+        ride_name = park.get_current_ride_name()
         print(f"Displaying Ride: {ride_name}")
         show_ride_name(ride_name)
         matrixportal.scroll_text()
 
-        show_ride_wait_time(rides.get_current_ride_time())
-        rides.increment_counter()
+        show_ride_wait_time(park.get_current_ride_time(), park.is_current_ride_open())
+        park.increment()
         time.sleep(4)
 
         # Time to contact website to get latest wait times

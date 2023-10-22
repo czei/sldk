@@ -1,6 +1,5 @@
 import time
 
-
 def get_theme_parks_from_json(json):
     """
     Return a list of theme parks and their ids
@@ -69,59 +68,91 @@ def get_park_url(park_list, park_name):
             return url
 
 
-def get_wait_time(park_json, ride_name):
-    """
-    :param park_json:  The parsed JSON from a particular park
-    :param ride_name:  The individual ride at that park you want the time for
-    :return: Standby wait time in minutes as a string. Returns "closed" if the ride is closed
-    """
-    ride_list = get_rides_from_json(park_json)
-    for ride in ride_list:
-        if ride[0] == ride_name:
-            target_ride_time = ride[2]
-            is_open = ride[3]
-            if is_open is False:
-                return "Closed"
-            else:
-                return target_ride_time
+class ThemeParkRide:
+    def __init__(self, name, new_id, wait_time, is_open):
+        self.name = name
+        self.id = new_id
+        self.wait_time = wait_time
+        self.is_open = is_open
 
 
-class Rides:
-    def __init__(self, json_data):
+class ThemePark:
+    def __init__(self, name, json_data):
         """
         :param self:
         :param json_data: Python JSON objects from a single park
         :return:
         """
         self.counter = 0
-        self.rides = get_rides_from_json(json_data)
+        self.name = name
+        self.rides = self.get_rides_from_json(json_data)
 
-    def increment_counter(self):
+    @staticmethod
+    def get_rides_from_json(json_data):
+        """
+        Returns a list of the names of rides at a particular park contained in the JSON
+        :param json_data: A JSON file containing data for a particular park
+        :return: name, id, wait_time, is_open
+        """
+        ride_list = []
+        lands_list = json_data['lands']
+        for land in lands_list:
+            rides = land['rides']
+            for ride in rides:
+                name = ride['name']
+                # print(f"Ride = {name}")
+                ride_id = ride['id']
+                wait_time = ride['wait_time']
+                is_open = ride['is_open']
+                this_ride_object = ThemeParkRide(name, ride_id, wait_time, is_open)
+                ride_list.append(this_ride_object)
+
+        return ride_list
+
+    def get_wait_time(self, ride_name):
+        for ride in self.rides:
+            if ride.name == ride_name:
+                return ride.wait_time
+
+    def is_ride_open(self, ride_name):
+        for ride in self.rides:
+            if ride.name == ride_name:
+                return ride.is_open
+
+    def increment(self):
         self.counter += 1
         if self.counter >= len(self.rides):
             self.counter = 0
 
     def update(self, json_data):
-        self.rides = get_rides_from_json(json_data)
+        self.rides = self.get_rides_from_json(json_data)
+
     def get_current_ride_name(self):
-        return self.rides[self.counter][0]
+        return self.rides[self.counter].name
+
+    def is_current_ride_open(self):
+        if self.rides[self.counter].is_open is False:
+            return False
+        else:
+            return True
 
     def get_current_ride_time(self):
-        return self.rides[self.counter][2]
+        return self.rides[self.counter].wait_time
 
     def get_next_ride_name(self):
-        self.increment_counter()
-        return self.rides[self.counter][0]
+        self.increment()
+        return self.rides[self.counter].name
 
     def get_num_rides(self):
         return len(self.rides)
+
 
 class DisplayMode:
     """
     Is the display showing the name of the ride or the wait time?
     """
 
-    def __init__(self,wait_delay):
+    def __init__(self, wait_delay):
         self.modes = ["Scrolling", "Wait"]
         self.current_mode = 0
         self.WAIT_DELAY = wait_delay
@@ -132,7 +163,7 @@ class DisplayMode:
 
     def time_to_switch_mode(self):
         the_time = time.monotonic()
-        if the_time > (self.last_update + self.WAIT_DELAY) :
+        if the_time > (self.last_update + self.WAIT_DELAY):
             self.last_update = time.monotonic()
             self.increment_mode()
             return True
@@ -148,17 +179,19 @@ class DisplayMode:
         if self.current_mode >= len(self.modes):
             self.current_mode = 0
 
+
 class ParkUpdateTimer:
     """
     Is the display showing the name of the ride or the wait time?
     """
-    def __init__(self,wait_delay):
+
+    def __init__(self, wait_delay):
         self.WAIT_DELAY = wait_delay
         self.last_update = time.monotonic()
 
     def time_to_do_something(self):
         the_time = time.monotonic()
-        if the_time > (self.last_update + self.WAIT_DELAY) :
+        if the_time > (self.last_update + self.WAIT_DELAY):
             self.last_update = time.monotonic()
             return True
         return False

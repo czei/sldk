@@ -1,11 +1,9 @@
 from unittest import TestCase
-from theme_park_api import get_theme_parks_from_json
 from urllib.request import urlopen, Request
-
-from theme_park_api import get_rides_from_json
 from theme_park_api import get_park_url
-from theme_park_api import get_wait_time
-from theme_park_api import Rides
+from theme_park_api import ThemePark
+from theme_park_api import ThemeParkRide
+from theme_park_api import get_theme_parks_from_json
 from theme_park_api import DisplayMode
 import json
 import time
@@ -20,16 +18,16 @@ class Test(TestCase):
         self.assertTrue(len(park_list) > 0)
 
         found_magic_kingdom = False
-        for park in park_list:
-            if park[0] == "Disney Magic Kingdom":
+        for park_json in park_list:
+            if park_json[0] == "Disney Magic Kingdom":
                 found_magic_kingdom = True
         self.assertTrue(found_magic_kingdom is True)
 
         found_universal = False
-        for park in park_list:
-            if park[0] == "Universal Studios At Universal Orlando" :
-                found_magic_kingdom = True
-        self.assertTrue(found_magic_kingdom is True)
+        for park_json in park_list:
+            if park_json[0] == "Universal Studios At Universal Orlando":
+                found_universal = True
+        self.assertTrue(found_universal is True)
 
     def test_get_theme_parks_from_json_http(self):
         url1 = "https://queue-times.com/parks.json"
@@ -52,19 +50,20 @@ class Test(TestCase):
         f = open('magic-kingdom.json')
         data = json.load(f)
         f.close()
-        ride_list = get_rides_from_json(data)
-        self.assertTrue(len(ride_list) > 0)
+
+        park = ThemePark("Magic Kingdom", data)
+        self.assertTrue(park.get_num_rides() > 0)
 
         ride_found = False
         wait_time = 0
         is_open = False
         ride_id = 0
-        for ride in ride_list:
-            if ride[0] == "Haunted Mansion":
+        for ride in park.rides:
+            if ride.name == "Haunted Mansion":
                 ride_found = True
-                ride_id = ride[1]
-                wait_time = ride[2]
-                is_open = ride[3]
+                ride_id = ride.id
+                wait_time = ride.wait_time
+                is_open = ride.is_open
         self.assertTrue(ride_found)
         self.assertTrue(wait_time == 15)
         self.assertTrue(is_open is True)
@@ -74,12 +73,12 @@ class Test(TestCase):
         ride_id = 0
         ride_found = False
         wait_time = 1000
-        for ride in ride_list:
-            if ride[0] == "Liberty Square Riverboat":
+        for ride in park.rides:
+            if ride.name == "Liberty Square Riverboat":
                 ride_found = True
-                ride_id = ride[1]
-                wait_time = ride[2]
-                is_open = ride[3]
+                ride_id = ride.id
+                wait_time = ride.wait_time
+                is_open = ride.is_open
         self.assertTrue(ride_found)
         self.assertTrue(wait_time == 0)
         self.assertTrue(is_open is False)
@@ -99,37 +98,44 @@ class Test(TestCase):
         f.close()
         self.assertTrue(len(park_json) > 0)
 
-        wait_time = get_wait_time(park_json, 'Haunted Mansion')
+        park = ThemePark('Park Name', park_json)
+        wait_time = park.get_wait_time('Haunted Mansion')
         self.assertTrue(wait_time == 15)
+        is_open = park.is_ride_open('Haunted Mansion')
+        self.assertTrue(is_open is True)
 
-        wait_time = get_wait_time(park_json, 'Liberty Square Riverboat')
-        self.assertTrue(wait_time == "Closed")
+        wait_time = park.get_wait_time('Liberty Square Riverboat')
+        self.assertTrue(wait_time == 0)
+        is_open = park.is_ride_open('Liberty Square Riverboat')
+        self.assertTrue(is_open is False)
 
         f = open('universal.json')
         park_json = json.load(f)
         f.close()
         self.assertTrue(len(park_json) > 0)
 
-        wait_time = get_wait_time(park_json, 'Revenge of the Mummy™')
+        universal_park = ThemePark('Universal', park_json)
+
+        wait_time = universal_park.get_wait_time('Revenge of the Mummy™')
         self.assertTrue(wait_time == 20)
 
-        wait_time = get_wait_time(park_json, 'Illumination\'s Villain-Con Minion Blast')
+        wait_time = universal_park.get_wait_time('Illumination\'s Villain-Con Minion Blast')
         self.assertTrue(wait_time == 40)
 
-        wait_time = get_wait_time(park_json, 'Despicable Me Minion Mayhem™')
+        wait_time = universal_park.get_wait_time('Despicable Me Minion Mayhem™')
         self.assertTrue(wait_time == 55)
 
     def test_get_ride_class(self):
         f = open('magic-kingdom.json')
         data = json.load(f)
         f.close()
-        ride_class_instance = Rides(data)
-        self.assertTrue(ride_class_instance.get_num_rides() > 0)
-        ride_name = ride_class_instance.get_current_ride_name()
+        park_class_instance = ThemePark('Magic Kingdom', data)
+        self.assertTrue(park_class_instance.get_num_rides() > 0)
+        ride_name = park_class_instance.get_current_ride_name()
         self.assertTrue(ride_name == "A Pirate's Adventure ~ Treasures of the Seven Seas")
-        ride_name = ride_class_instance.get_next_ride_name()
+        ride_name = park_class_instance.get_next_ride_name()
         self.assertTrue(ride_name == "Jungle Cruise")
-
+        self.assertTrue(park_class_instance.get_current_ride_time() == 5)
 
     def test_display_mode(self):
         mode = DisplayMode(2)
