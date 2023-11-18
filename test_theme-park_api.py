@@ -5,6 +5,10 @@ from theme_park_api import ThemePark
 from theme_park_api import ThemeParkRide
 from theme_park_api import get_theme_parks_from_json
 from theme_park_api import DisplayMode
+from theme_park_api import DisplayMessage
+from theme_park_api import DisplayStyle
+from theme_park_api import display_message_renderer
+
 import json
 import time
 
@@ -148,3 +152,9 @@ class Test(TestCase):
         self.assertTrue(mode.time_to_switch_mode() is False)
         time.sleep(5)
         self.assertTrue(mode.time_to_switch_mode() is True)
+
+    def test_display_message(self):
+        style = DisplayStyle()
+        display_message = DisplayMessage("Haunted Mansion", style.SCROLLING, display_message_renderer)
+        self.assertTrue(display_message.render() == "Haunted Mansion")
+

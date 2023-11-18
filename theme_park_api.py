@@ -1,5 +1,6 @@
 import time
 
+
 def get_theme_parks_from_json(json):
     """
     Return a list of theme parks and their ids
@@ -26,6 +27,7 @@ def get_theme_parks_from_json(json):
                     park_list.append(name_id)
 
     # print(park_list)
+
     return park_list
 
 
@@ -199,3 +201,32 @@ class ParkUpdateTimer:
     def print_status(self):
         the_time = time.monotonic()
         print(f"Time is {the_time} last update is {self.last_update} delay is {self.WAIT_DELAY}")
+
+
+class DisplayStyle:
+    """
+    Mostly static or scrolling, but could expand in the future
+    """
+    def __init__(self):
+        self.SCROLLING = 0
+        self.STATIC = 1
+
+
+def display_message_renderer(message, style):
+    print(f"message={message}, style={style}")
+    return message
+
+
+class DisplayMessage:
+    """
+    Something to put on the screen, like a ride wait time.
+    """
+
+    def __init__(self, message, style, renderer):
+        self.message = message
+        self.display_style = style
+        self.renderer = renderer
+
+    def render(self):
+        return self.renderer(self.message, self.display_style)
+
