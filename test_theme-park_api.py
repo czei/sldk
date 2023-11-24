@@ -1,6 +1,9 @@
 from unittest import TestCase
 from urllib.request import urlopen, Request
-from theme_park_api import get_park_url
+
+from adafruit_matrixportal.matrixportal import MatrixPortal
+
+from theme_park_api import get_park_url_from_name
 from theme_park_api import ThemePark
 from theme_park_api import ThemeParkRide
 from theme_park_api import get_theme_parks_from_json
@@ -8,12 +11,22 @@ from theme_park_api import DisplayMode
 from theme_park_api import DisplayMessage
 from theme_park_api import DisplayStyle
 from theme_park_api import display_message_renderer
-
+from theme_park_api import populate_park_list
+from theme_park_api import get_park_name_from_id
+from theme_park_api import Vacation
+from theme_park_api import Display
 import json
+import numpy
 import time
+import board
 
 
 class Test(TestCase):
+
+    def test_display_class(self):
+        runtime_display = Display(MatrixPortal(status_neopixel=board.NEOPIXEL, debug=False))
+        runtime_display.show_configuration_message("test")
+
     def test_get_theme_parks_from_json(self):
         f = open('theme-park-list.json')
         data = json.load(f)
@@ -55,7 +68,7 @@ class Test(TestCase):
         data = json.load(f)
         f.close()
 
-        park = ThemePark("Magic Kingdom", data)
+        park = ThemePark(data, "Disney Magic Kingdom", 6)
         self.assertTrue(park.get_num_rides() > 0)
 
         ride_found = False
@@ -88,12 +101,12 @@ class Test(TestCase):
         self.assertTrue(is_open is False)
         self.assertTrue(ride_id == 1187)
 
-    def test_get_park_url(self):
+    def test_get_park_url_from_name(self):
         f = open('theme-park-list.json')
         data = json.load(f)
         f.close()
         park_list = get_theme_parks_from_json(data)
-        url = get_park_url(park_list, 'Disney Magic Kingdom')
+        url = get_park_url_from_name(park_list, 'Disney Magic Kingdom')
         self.assertTrue(url == "https://queue-times.com/parks/6/queue_times.json")
 
     def test_get_wait_time(self):
@@ -102,7 +115,7 @@ class Test(TestCase):
         f.close()
         self.assertTrue(len(park_json) > 0)
 
-        park = ThemePark('Park Name', park_json)
+        park = ThemePark(park_json, 'Park Name')
         wait_time = park.get_wait_time('Haunted Mansion')
         self.assertTrue(wait_time == 15)
         is_open = park.is_ride_open('Haunted Mansion')
@@ -118,7 +131,7 @@ class Test(TestCase):
         f.close()
         self.assertTrue(len(park_json) > 0)
 
-        universal_park = ThemePark('Universal', park_json)
+        universal_park = ThemePark(park_json, "Universal")
 
         wait_time = universal_park.get_wait_time('Revenge of the Mummy™')
         self.assertTrue(wait_time == 20)
@@ -133,7 +146,7 @@ class Test(TestCase):
         f = open('magic-kingdom.json')
         data = json.load(f)
         f.close()
-        park_class_instance = ThemePark('Magic Kingdom', data)
+        park_class_instance = ThemePark(data, 'Disney Magic Kingdom', 6)
         self.assertTrue(park_class_instance.get_num_rides() > 0)
         ride_name = park_class_instance.get_current_ride_name()
         self.assertTrue(ride_name == "A Pirate's Adventure ~ Treasures of the Seven Seas")
@@ -158,3 +171,33 @@ class Test(TestCase):
         display_message = DisplayMessage("Haunted Mansion", style.SCROLLING, display_message_renderer)
         self.assertTrue(display_message.render() == "Haunted Mansion")
 
+    # Doesn't work on macOS
+    # def test_populate_park_list(self):
+    #    park_list = populate_park_list()
+    #    self.assertTrue(len(park_list) >= 20)
+
+    def test_theme_park_class(self):
+        park = ThemePark()
+        self.assertTrue(type(park) is ThemePark)
+
+    def test_get_park_name_from_id(self):
+        url1 = "https://queue-times.com/parks.json"
+        headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3"}
+        req = Request(url=url1, headers=headers)
+        response = urlopen(req).read()
+        data = json.loads(response)
+
+        park_list = get_theme_parks_from_json(data)
+        self.assertTrue(len(park_list) > 0)
+        self.assertTrue(get_park_name_from_id(park_list, 16) == "Disneyland")
+        self.assertTrue(get_park_name_from_id(park_list, 6) == "Disney Magic Kingdom")
+
+    def test_vacation(self):
+        params = "Name=Wdw&Year=2024&Month=10&Day=20"
+        vac = Vacation()
+        vac.parse(params)
+        self.assertTrue(vac.name == "Wdw")
+        self.assertTrue(vac.year == 2024)
+        self.assertTrue(vac.month == 10)
+        self.assertTrue(vac.day == 20)
