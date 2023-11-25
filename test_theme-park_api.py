@@ -1,31 +1,75 @@
 from unittest import TestCase
 from urllib.request import urlopen, Request
 
-from adafruit_matrixportal.matrixportal import MatrixPortal
-
 from theme_park_api import get_park_url_from_name
 from theme_park_api import ThemePark
-from theme_park_api import ThemeParkRide
 from theme_park_api import get_theme_parks_from_json
 from theme_park_api import DisplayMode
 from theme_park_api import DisplayMessage
 from theme_park_api import DisplayStyle
 from theme_park_api import display_message_renderer
-from theme_park_api import populate_park_list
 from theme_park_api import get_park_name_from_id
 from theme_park_api import Vacation
 from theme_park_api import Display
+from theme_park_api import MessageQueue
 import json
-import numpy
 import time
-import board
+
+"""
+This file ensures everything is in place to run PyTest based unit tests against
+the adafruit_radio module. It works by using Python's mock library to add
+MagicMock objects to sys.modules for the modules which are not available to
+standard Python because they're CircuitPython only modules.
+
+Such mocking happens as soon as this conftest.py file is imported (so the
+mocked modules exist in sys.modules before the module to be tested is
+imported), and immediately before each test function is evaluated (so changes
+to state remain isolated between tests).
+"""
+import sys
+from unittest.mock import MagicMock, Mock
+
+# Add fully qualified namespace paths to things that are imported, but which
+# should be mocked away. For instance, modules which are available in
+# CircuitPython but not standard Python.
+MOCK_MODULES = [
+    "adafruit_ble.BLERadio",
+    "adafruit_ble.advertising.adafruit.AdafruitRadio",
+    "adafruit_matrixportal.matrixportal",
+]
+
+
+def mock_imported_modules():
+    """
+    Mocks away the modules named in MOCK_MODULES, so the module under test
+    can be imported with modules which may not be available.
+    """
+    module_paths = set()
+    for m in MOCK_MODULES:
+        namespaces = m.split(".")
+        ns = []
+        for n in namespaces:
+            ns.append(n)
+            module_paths.add(".".join(ns))
+    for m_path in module_paths:
+        sys.modules[m_path] = MagicMock()
+
+
+def pytest_runtest_setup(item):
+    """
+    Called immediately before any test function is called.
+
+    Recreates afresh the mocked away modules so state between tests remains
+    isolated.
+    """
+    mock_imported_modules()
+
+
+# Initial mocking needed to stop ImportError when importing module under test.
+mock_imported_modules()
 
 
 class Test(TestCase):
-
-    def test_display_class(self):
-        runtime_display = Display(MatrixPortal(status_neopixel=board.NEOPIXEL, debug=False))
-        runtime_display.show_configuration_message("test")
 
     def test_get_theme_parks_from_json(self):
         f = open('theme-park-list.json')
@@ -201,3 +245,9 @@ class Test(TestCase):
         self.assertTrue(vac.year == 2024)
         self.assertTrue(vac.month == 10)
         self.assertTrue(vac.day == 20)
+
+#    def test_message_queue(self):
+#        mocker = Mock()
+#        runtime_display = Display(mocker)
+#        queue = MessageQueue(runtime_display)
+#        self.assertTrue(len(queue.queue) is 2)

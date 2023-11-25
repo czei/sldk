@@ -4,6 +4,7 @@ import ssl
 import adafruit_requests
 import socketpool
 import terminalio
+import asyncio
 
 
 def populate_park_list():
@@ -179,6 +180,7 @@ class ThemePark:
 
     def update(self, json_data):
         self.rides = self.get_rides_from_json(json_data)
+        self.new_flag = False
 
     def get_current_ride_name(self):
         return self.rides[self.counter].name
@@ -318,7 +320,7 @@ class Vacation:
 
 
 class Display:
-    def __init__(self, mp, scrolldelay=0.3):
+    def __init__(self, mp, scrolldelay=0.03):
         self.matrix_portal = mp
         print(f"Setting matrix to {self.matrix_portal}")
         self.scroll_delay = scrolldelay
@@ -362,13 +364,13 @@ class Display:
             text_color=self.BLUE_COLOR,
         )
 
-    async def show_ride_wait_time(self, ride_wait_time, ride_open):
-        if ride_open is False:
-            self.matrix_portal.set_text("Closed", self.STANDBY)
-        else:
-            self.matrix_portal.set_text("", self.RIDE_NAME)
-            self.matrix_portal.set_text(ride_wait_time, self.WAIT_TIME)
-            self.matrix_portal.set_text("Standby", self.STANDBY)
+    async def show_ride_closed(self, dummy):
+        self.matrix_portal.set_text("Closed", self.STANDBY)
+
+    async def show_ride_wait_time(self, ride_wait_time):
+        self.matrix_portal.set_text("", self.RIDE_NAME)
+        self.matrix_portal.set_text(ride_wait_time, self.WAIT_TIME)
+        self.matrix_portal.set_text("Standby", self.STANDBY)
 
     async def show_configuration_message(self):
         self.matrix_portal.set_text("", self.STANDBY)
@@ -384,9 +386,69 @@ class Display:
         self.matrix_portal.set_text(ride_name, self.RIDE_NAME)
         self.matrix_portal.scroll_text(self.scroll_delay)
 
-    async def show_scroll_message(self, message):
+    def show_scroll_message(self, message):
         print(f"Scrolling message: {message}")
         self.matrix_portal.set_text("", self.STANDBY)
         self.matrix_portal.set_text("", self.WAIT_TIME)
         self.matrix_portal.set_text(message, self.RIDE_NAME)
         self.matrix_portal.scroll_text(self.scroll_delay)
+
+
+REQUIRED_MESSAGE = "Data provided by http://queue-times.com"
+CONFIGURATION_MESSAGE = "Configure at http://themeparkwaits.local"
+
+
+#  The things to display on the screen
+class MessageQueue:
+
+    def __init__(self, d):
+        self.display = d
+        self.func_queue = []
+        self.param_queue = []
+        self.delay_queue = []
+        self.func_queue.append(d.show_scroll_message)
+        self.param_queue.append(REQUIRED_MESSAGE)
+        self.delay_queue.append(4)
+        self.func_queue.append(d.show_scroll_message)
+        self.param_queue.append(CONFIGURATION_MESSAGE)
+        self.delay_queue.append(4)
+        self.index = 0
+
+    async def init_message_queue(self, park):
+        print(f"Initalizing message for park: {park.name}")
+        self.func_queue = []
+        self.param_queue = []
+        self.delay_queue = []
+        self.index = 0
+        self.func_queue.append(self.display.show_scroll_message)
+        self.param_queue.append(REQUIRED_MESSAGE)
+        self.delay_queue.append(0)
+        self.func_queue.append(self.display.show_scroll_message)
+        self.param_queue.append(park.name + ":")
+        self.delay_queue.append(0)
+
+
+        for ride in park.rides:
+            self.func_queue.append(self.display.show_scroll_message)
+            self.param_queue.append(ride.name)
+            self.delay_queue.append(0)
+
+
+            if park.is_current_ride_open():
+                self.func_queue.append(self.display.show_ride_wait_time)
+                self.param_queue.append(park.get_current_ride_time())
+            else:
+                self.func_queue.append(self.display.show_ride_closed)
+                self.param_queue.append("Closed")
+            self.delay_queue.append(4)
+
+    async def show(self):
+        local_func = self.func_queue[self.index]
+        # print(f"queue is {self.func_queue}")
+        # print(f"queue item is {local_func} at index {self.index}")
+        self.func_queue[self.index](self.param_queue[self.index])
+        await asyncio.sleep(self.delay_queue[self.index])
+        self.index += 1
+        if self.index >= len(self.func_queue):
+            self.index = 0
+
