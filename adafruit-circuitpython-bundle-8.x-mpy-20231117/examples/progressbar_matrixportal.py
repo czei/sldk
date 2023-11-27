@@ -59,7 +59,7 @@ matrix = rgbmatrix.RGBMatrix(
     output_enable_pin=board.MTX_OE,
 )
 
-# Associate the RGB matrix with a Display so that we can use displayio features
+# Associate the RGB matrix with a MatrixPortalDisplay so that we can use displayio features
 display = framebufferio.FramebufferDisplay(matrix)
 
 print("Adding display group")

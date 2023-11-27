@@ -49,8 +49,8 @@ _program = adafruit_pioasm.Program(
     """
 )
 
-# Display Pins 1-7 are GP 15-9
-# Display Pins 8-12 are GP 22-16
+# MatrixPortalDisplay Pins 1-7 are GP 15-9
+# MatrixPortalDisplay Pins 8-12 are GP 22-16
 COM1_WT = 1 << 7
 COM2_WT = 1 << 10
 COM3_WT = 1 << 11

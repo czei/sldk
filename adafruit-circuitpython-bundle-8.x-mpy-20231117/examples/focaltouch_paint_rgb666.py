@@ -14,7 +14,7 @@ import adafruit_focaltouch
 
 displayio.release_displays()
 
-# Initialize the Display
+# Initialize the MatrixPortalDisplay
 tft_pins = dict(board.TFT_PINS)
 
 tft_timings = {
@@ -66,7 +66,7 @@ group = displayio.Group()
 # Add the TileGrid to the Group
 group.append(tile_grid)
 
-# Add the Group to the Display
+# Add the Group to the MatrixPortalDisplay
 display.root_group = group
 
 display.auto_refresh = True

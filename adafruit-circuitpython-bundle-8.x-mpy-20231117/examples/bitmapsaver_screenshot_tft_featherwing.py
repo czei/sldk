@@ -22,7 +22,7 @@ TAKE_SCREENSHOT = False  # Set to True to take a screenshot
 # Initialize SPI Bus
 spi = board.SPI()
 
-# Initialize TFT Featherwing Display
+# Initialize TFT Featherwing MatrixPortalDisplay
 tft_cs = board.D9
 tft_dc = board.D10
 display_bus = displayio.FourWire(spi, command=tft_dc, chip_select=tft_cs)

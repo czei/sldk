@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
-""" Display magnetometer data very quickly using the continuous data capture mode"""
+""" MatrixPortalDisplay magnetometer data very quickly using the continuous data capture mode"""
 
 import board
 import adafruit_mmc56x3

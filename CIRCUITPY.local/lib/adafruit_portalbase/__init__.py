@@ -77,7 +77,7 @@ class PortalBase:
         """The :py:meth:`displayio.Group()` object that acts as the splash screen
         for this device."""
         self.display = self.graphics.display
-        """The :py:meth:`displayio.Display` object representing the screen for this device"""
+        """The :py:meth:`displayio.MatrixPortalDisplay` object representing the screen for this device"""
 
         # Font Cache
         self._fonts = {}
@@ -253,7 +253,7 @@ class PortalBase:
         gc.collect()
 
     def set_text(self, val, index=0):
-        """Display text, with indexing into our list of text boxes.
+        """MatrixPortalDisplay text, with indexing into our list of text boxes.
 
         :param str val: The text to be displayed
         :param index: Defaults to 0.

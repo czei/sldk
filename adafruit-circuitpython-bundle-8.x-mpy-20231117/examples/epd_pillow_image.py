@@ -84,6 +84,6 @@ image = image.crop((x, y, x + display.width, y + display.height)).convert("RGB")
 # Convert to Monochrome and Add dithering
 # image = image.convert("1").convert("L")
 
-# Display image.
+# MatrixPortalDisplay image.
 display.image(image)
 display.display()

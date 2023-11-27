@@ -451,7 +451,7 @@ ts = adafruit_touchscreen.Touchscreen(board.TOUCH_XL, board.TOUCH_XR,
 # -----------------------------------
 
 # create and show main_group
-main_group = displayio.Group()  # The Main Display Group
+main_group = displayio.Group()  # The Main MatrixPortalDisplay Group
 
 display.root_group = main_group
 

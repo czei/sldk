@@ -3,6 +3,8 @@ import wifi
 import ssl
 import adafruit_requests
 import socketpool
+import terminalio
+import asyncio
 
 
 def populate_park_list():
@@ -56,16 +58,16 @@ def get_rides_from_json(json_data):
     :return: name, id, wait_time, is_open
     """
     ride_list = []
-    lands_list = json_data['lands']
+    lands_list = json_data["lands"]
     for land in lands_list:
         # print(f"company = {company}")
-        rides = land['rides']
+        rides = land["rides"]
         for ride in rides:
-            name = ride['name']
-            ride_id = ride['id']
-            wait_time = ride['wait_time']
-            is_open = ride['is_open']
-            park_desc = ([name, ride_id, wait_time, is_open])
+            name = ride["name"]
+            ride_id = ride["id"]
+            wait_time = ride["wait_time"]
+            is_open = ride["is_open"]
+            park_desc = [name, ride_id, wait_time, is_open]
             ride_list.append(park_desc)
     return ride_list
 
@@ -118,7 +120,7 @@ class ThemeParkRide:
 
 
 class ThemePark:
-    def __init__(self,json_data=(), name="",id=0):
+    def __init__(self, json_data=(), name="", id=0):
         """
         :param self:
         :param json_data: Python JSON objects from a single park
@@ -143,15 +145,15 @@ class ThemePark:
         if len(json_data) <= 0:
             return ride_list
 
-        lands_list = json_data['lands']
+        lands_list = json_data["lands"]
         for land in lands_list:
-            rides = land['rides']
+            rides = land["rides"]
             for ride in rides:
-                name = ride['name']
+                name = ride["name"]
                 # print(f"Ride = {name}")
-                ride_id = ride['id']
-                wait_time = ride['wait_time']
-                is_open = ride['is_open']
+                ride_id = ride["id"]
+                wait_time = ride["wait_time"]
+                is_open = ride["is_open"]
                 this_ride_object = ThemeParkRide(name, ride_id, wait_time, is_open)
                 ride_list.append(this_ride_object)
 
@@ -178,6 +180,7 @@ class ThemePark:
 
     def update(self, json_data):
         self.rides = self.get_rides_from_json(json_data)
+        self.new_flag = False
 
     def get_current_ride_name(self):
         return self.rides[self.counter].name
@@ -238,7 +241,9 @@ class DisplayMode:
 
     def print_status(self):
         the_time = time.monotonic()
-        print(f"Time is {the_time} last update is {self.last_update} delay is {self.WAIT_DELAY}")
+        print(
+            f"Time is {the_time} last update is {self.last_update} delay is {self.WAIT_DELAY}"
+        )
 
     def increment_mode(self):
         self.current_mode += 1
@@ -265,7 +270,9 @@ class ParkUpdateTimer:
 
     def print_status(self):
         the_time = time.monotonic()
-        print(f"Time is {the_time} last update is {self.last_update} delay is {self.WAIT_DELAY}")
+        print(
+            f"Time is {the_time} last update is {self.last_update} delay is {self.WAIT_DELAY}"
+        )
 
 
 class DisplayStyle:
@@ -297,12 +304,151 @@ class DisplayMessage:
         return self.renderer(self.message, self.display_style)
 
 
-class ColorPicker:
-    def __init__(self):
+class Vacation:
+    def __init_(self, park_name="", year=0, month=0, day=0):
+        self.name = park_name
+        self.year = year
+        self.month = month
+        self.day = day
+
+    def parse(self, str_params):
+        params = str_params.split("&")
+        self.name = params[0].split("=")[1]
+        self.year = int(params[1].split("=")[1])
+        self.month = int(params[2].split("=")[1])
+        self.day = int(params[3].split("=")[1])
+
+
+class Display:
+    def __init__(self, mp, scrolldelay=0.03):
+        self.matrix_portal = mp
+        print(f"Setting matrix to {self.matrix_portal}")
+        self.scroll_delay = scrolldelay
+        self.RED_COLOR = 0xCC3333
+        self.BLUE_COLOR = 0x0000AA
+        self.BLACK_COLOR = 0x000000
+
+        self.WAIT_TIME = 0
+        self.matrix_portal.add_text(
+            text_font=terminalio.FONT,
+            text_position=(
+                23,
+                int(self.matrix_portal.graphics.display.height * 0.75) - 2,
+            ),
+            text_color=self.BLUE_COLOR,
+            scrolling=False,
+            text_scale=2,
+        )
+
+        # Ride Name
+        self.RIDE_NAME = 1
+        self.matrix_portal.add_text(
+            text_font=terminalio.FONT,
+            text_position=(
+                0,
+                int(self.matrix_portal.graphics.display.height * 0.25) + 10,
+            ),
+            text_color=self.RED_COLOR,
+            scrolling=True,
+            text_scale=1,
+        )
+
+        # Standby
+        self.STANDBY = 2
+        self.matrix_portal.add_text(
+            text_font=terminalio.FONT,
+            text_position=(
+                (int((self.matrix_portal.graphics.display.width - 7 * 6) / 2)),
+                6,
+            ),
+            text_color=self.BLUE_COLOR,
+        )
+
+    async def show_ride_closed(self, dummy):
+        self.matrix_portal.set_text("Closed", self.STANDBY)
+
+    async def show_ride_wait_time(self, ride_wait_time):
+        self.matrix_portal.set_text("", self.RIDE_NAME)
+        self.matrix_portal.set_text(ride_wait_time, self.WAIT_TIME)
+        self.matrix_portal.set_text("Standby", self.STANDBY)
+
+    async def show_configuration_message(self):
+        self.matrix_portal.set_text("", self.STANDBY)
+        self.matrix_portal.set_text("", self.WAIT_TIME)
+        self.matrix_portal.set_text("Configure at ", self.RIDE_NAME)
+        self.matrix_portal.scroll_text(self.scroll_delay)
+        self.matrix_portal.set_text("http://themeparkwaits.local", self.RIDE_NAME)
+        self.matrix_portal.scroll_text(self.scroll_delay)
+
+    async def show_ride_name(self, ride_name):
+        self.matrix_portal.set_text("", self.STANDBY)
+        self.matrix_portal.set_text("", self.WAIT_TIME)
+        self.matrix_portal.set_text(ride_name, self.RIDE_NAME)
+        self.matrix_portal.scroll_text(self.scroll_delay)
+
+    def show_scroll_message(self, message):
+        print(f"Scrolling message: {message}")
+        self.matrix_portal.set_text("", self.STANDBY)
+        self.matrix_portal.set_text("", self.WAIT_TIME)
+        self.matrix_portal.set_text(message, self.RIDE_NAME)
+        self.matrix_portal.scroll_text(self.scroll_delay)
+
+
+REQUIRED_MESSAGE = "Data provided by http://queue-times.com"
+CONFIGURATION_MESSAGE = "Configure at http://themeparkwaits.local"
+
+
+#  The things to display on the screen
+class MessageQueue:
+
+    def __init__(self, d):
+        self.display = d
+        self.func_queue = []
+        self.param_queue = []
+        self.delay_queue = []
+        self.func_queue.append(d.show_scroll_message)
+        self.param_queue.append(REQUIRED_MESSAGE)
+        self.delay_queue.append(4)
+        self.func_queue.append(d.show_scroll_message)
+        self.param_queue.append(CONFIGURATION_MESSAGE)
+        self.delay_queue.append(4)
         self.index = 0
 
-    def get_next_color(self):
-        self.index = (self.index + 1) % 256
-        color = colorwheel(self.index)
-        print(f"color = {color}")
-        return color
+    async def init_message_queue(self, park):
+        print(f"Initalizing message for park: {park.name}")
+        self.func_queue = []
+        self.param_queue = []
+        self.delay_queue = []
+        self.index = 0
+        self.func_queue.append(self.display.show_scroll_message)
+        self.param_queue.append(REQUIRED_MESSAGE)
+        self.delay_queue.append(0)
+        self.func_queue.append(self.display.show_scroll_message)
+        self.param_queue.append(park.name + ":")
+        self.delay_queue.append(0)
+
+
+        for ride in park.rides:
+            self.func_queue.append(self.display.show_scroll_message)
+            self.param_queue.append(ride.name)
+            self.delay_queue.append(0)
+
+
+            if park.is_current_ride_open():
+                self.func_queue.append(self.display.show_ride_wait_time)
+                self.param_queue.append(park.get_current_ride_time())
+            else:
+                self.func_queue.append(self.display.show_ride_closed)
+                self.param_queue.append("Closed")
+            self.delay_queue.append(4)
+
+    async def show(self):
+        local_func = self.func_queue[self.index]
+        # print(f"queue is {self.func_queue}")
+        # print(f"queue item is {local_func} at index {self.index}")
+        self.func_queue[self.index](self.param_queue[self.index])
+        await asyncio.sleep(self.delay_queue[self.index])
+        self.index += 1
+        if self.index >= len(self.func_queue):
+            self.index = 0
+

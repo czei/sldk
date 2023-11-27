@@ -103,7 +103,7 @@ class GraphicsBase:
     def qrcode(
         self, qr_data, *, qr_size=1, x=0, y=0, qr_color=0x000000
     ):  # pylint: disable=invalid-name
-        """Display a QR code
+        """MatrixPortalDisplay a QR code
 
         :param qr_data: The data for the QR code, None to remove.
         :param int qr_size: The scale of the QR code.

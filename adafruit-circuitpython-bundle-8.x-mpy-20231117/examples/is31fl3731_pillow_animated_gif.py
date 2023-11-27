@@ -20,12 +20,12 @@ import board
 from PIL import Image
 
 # uncomment next line if you are using Adafruit 16x9 Charlieplexed PWM LED Matrix
-# from adafruit_is31fl3731.matrix import Matrix as Display
+# from adafruit_is31fl3731.matrix import Matrix as MatrixPortalDisplay
 # uncomment next line if you are using Adafruit 16x8 Charlieplexed Bonnet
 from adafruit_is31fl3731.charlie_bonnet import CharlieBonnet as Display
 
 # uncomment next line if you are using Pimoroni Scroll Phat HD LED 17 x 7
-# from adafruit_is31fl3731.scroll_phat_hd import ScrollPhatHD as Display
+# from adafruit_is31fl3731.scroll_phat_hd import ScrollPhatHD as MatrixPortalDisplay
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
 # i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller

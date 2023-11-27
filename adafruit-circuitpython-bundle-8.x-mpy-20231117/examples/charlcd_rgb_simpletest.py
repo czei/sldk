@@ -63,13 +63,13 @@ lcd.message = "Hello\nCircuitPython"
 time.sleep(5)
 # Return text direction to left to right
 lcd.text_direction = lcd.LEFT_TO_RIGHT
-# Display cursor
+# MatrixPortalDisplay cursor
 lcd.clear()
 lcd.cursor = True
 lcd.message = "Cursor! "
 # Wait 5s
 time.sleep(5)
-# Display blinking cursor
+# MatrixPortalDisplay blinking cursor
 lcd.clear()
 lcd.blink = True
 lcd.message = "Blinky Cursor!"

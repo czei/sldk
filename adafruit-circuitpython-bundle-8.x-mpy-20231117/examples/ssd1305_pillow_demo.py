@@ -69,6 +69,6 @@ draw.text(
     fill=255,
 )
 
-# Display image
+# MatrixPortalDisplay image
 oled.image(image)
 oled.show()

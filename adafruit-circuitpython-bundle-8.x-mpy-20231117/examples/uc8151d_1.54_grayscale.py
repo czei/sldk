@@ -5,7 +5,7 @@
 """Simple test script for 1.54" 152x152 grayscale display.
 
 Supported products:
-  * 1.54" Grayscale Display (GDEW0154T8D)
+  * 1.54" Grayscale MatrixPortalDisplay (GDEW0154T8D)
 """
 # pylint: disable=no-member
 

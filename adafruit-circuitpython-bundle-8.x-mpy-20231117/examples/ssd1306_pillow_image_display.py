@@ -33,6 +33,6 @@ image = (
     .convert("1")
 )
 
-# Display the converted image
+# MatrixPortalDisplay the converted image
 oled.image(image)
 oled.show()

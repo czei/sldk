@@ -15,7 +15,7 @@ calibration values will display on the screen and in the REPL. The calibration
 tuple can be copied and pasted into the calling code's touchscreen
 instantiation statement.
 
-DISPLAY_ROTATION: Display rotation value in degrees. Only values of
+DISPLAY_ROTATION: MatrixPortalDisplay rotation value in degrees. Only values of
 None, 0, 90, 180, and 270 degrees are accepted. Defaults to None, the
 previous orientation of the display.
 

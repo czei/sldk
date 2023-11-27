@@ -37,7 +37,7 @@ google_auth = OAuth2(
 # https://developers.google.com/identity/protocols/oauth2/limited-input-device#step-1:-request-device-and-user-codes
 google_auth.request_codes()
 
-# Display user code and verification url
+# MatrixPortalDisplay user code and verification url
 # NOTE: If you are displaying this on a screen, ensure the text label fields are
 # long enough to handle the user_code and verification_url.
 # Details in link below:

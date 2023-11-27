@@ -13,19 +13,20 @@ import mdns
 import time
 import re
 import board
-import terminalio
 import wifi
 import ssl
 import socketpool
 import adafruit_requests
 import displayio
-from rainbowio import colorwheel
 from theme_park_api import get_theme_parks_from_json
 from theme_park_api import get_park_name_from_id
 from theme_park_api import ThemePark
+from theme_park_api import Display
+from theme_park_api import MessageQueue
 from theme_park_api import get_park_url_from_id
 from adafruit_matrixportal.matrixportal import MatrixPortal
 import supervisor
+
 supervisor.runtime.autoreload = False
 
 
@@ -59,9 +60,14 @@ time.sleep(4)
 http_requests = adafruit_requests.Session(socketpool.SocketPool(wifi.radio), ssl.create_default_context())
 web_server = biplane.Server()
 
+# --- MatrixPortalDisplay setup ---
+displayio.release_displays()
+runtime_display = Display(MatrixPortal(status_neopixel=board.NEOPIXEL, debug=False))
+messages = MessageQueue(runtime_display)
+
+
+
 # get List of theme parks to choose from
-
-
 def populate_park_list():
     print("Getting master list of theme parks")
     url = "https://queue-times.com/parks.json"
@@ -85,8 +91,6 @@ park_list = populate_park_list()
 UPDATE_DELAY = 4
 display_wait = False
 
-# --- Display setup ---
-display = Display(MatrixPortal(status_neopixel=board.NEOPIXEL, debug=False))
 
 
 async def update_live_wait_time():
@@ -107,17 +111,6 @@ def process_ride_name(ride_name):
     return re.sub(r'\s', '\n', ride_name)
 
 
-class ColorPicker:
-    def __init__(self):
-        self.index = 0
-
-    def get_next_color(self):
-        self.index = (self.index + 1) % 256
-        color = colorwheel(self.index)
-        print(f"color = {color}")
-        return color
-
-
 def remove_non_ascii(orig_str):
     new_str = ""
     for c in orig_str:
@@ -125,9 +118,6 @@ def remove_non_ascii(orig_str):
             new_str += c
     return new_str
 
-
-# setup_ride_data
-theme_park_list = populate_park_list()
 
 # The park data is empty at first
 park = ThemePark()
@@ -144,12 +134,6 @@ def main_page(park_id):
     page += "<a href=\"#home\">Theme Park Wait Times</a>"
     page += "</div>"
 
-    # f = open('theme-park-list.json')
-    # data = json.load(f)
-    # f.close()
-
-    # This list should only be fetched at the beginning
-    # park_list = populate_park_list()
     page += "<br>"
     page += "<h2>Choose a Park</h2>"
     page += "<div>"
@@ -224,17 +208,21 @@ def main(query_parameters, headers, body):
 def main(query_parameters, headers, body):
     print(f"Form sent parameters: {query_parameters}")
     new_park_id = int(query_parameters.split("=")[1])
-    new_park_name = get_park_name_from_id(theme_park_list, new_park_id)
+    new_park_name = get_park_name_from_id(park_list, new_park_id)
     park.change_parks(new_park_name, new_park_id)
     print(f"Selecting park {new_park_name}:{new_park_id}")
     page = main_page(new_park_id)
     return biplane.Response(page, content_type="text/html")
+
 
 @web_server.route("/vacation", "GET")
 def main(query_parameters, headers, body):
     print(f"Vacation Form sent parameters: {query_parameters}")
     page = main_page(park.id)
     return biplane.Response(page, content_type="text/html")
+
+
+
 
 
 async def run_server():
@@ -244,43 +232,25 @@ async def run_server():
 
 async def run_display():
     while True:
+        if park.new_flag is True:
+            await asyncio.create_task(update_live_wait_time())
+            await asyncio.create_task(messages.init_message_queue(park))
 
-        try:
-            if park.new_flag is True:
-                await asyncio.gather(asyncio.create_task(display_scroll_message(park.name+":")))
-                await asyncio.gather(asyncio.create_task(populate_ride_list(theme_park_list, park.id)))
-                park.new_flag = False
-
-            if len(park.rides) > 0:
-                ride_name = park.get_current_ride_name()
-                print(f"Displaying Ride: {ride_name}")
-                await asyncio.gather(asyncio.create_task(show_ride_name(ride_name)))
-
-                await asyncio.gather(asyncio.create_task(show_ride_wait_time(park.get_current_ride_time(), park.is_current_ride_open())))
-                park.increment()
-            else:
-                print("No theme park selected")
-                display_task = asyncio.create_task(display_scroll_message(CONFIGURATION_MESSAGE))
-                await asyncio.gather(display_task)
-
-            await asyncio.sleep(10)  # let other tasks run
-
-        except RuntimeError:
-            print("Runtime error getting wait times")
+        await asyncio.create_task(messages.show())
+        # await asyncio.sleep(4)  # let other tasks run
 
 
 async def update_ride_times():
+    """
+    If the user has selected a park, update the ride values ever so often.
+    :return:
+    """
     while True:
         try:
             await asyncio.sleep(100)
-
-            asyncio.create_task(display_scroll_message(REQUIRED_MESSAGE))
-            await asyncio.sleep(16)
             if len(park.rides) > 0:
-                asyncio.create_task(display_scroll_message(park.name + ":"))
-                asyncio.create_task(update_live_wait_time())
-            else:
-                asyncio.create_task(display_scroll_message(CONFIGURATION_MESSAGE))
+                await asyncio.create_task(update_live_wait_time())
+                await asyncio.create_task(messages.init_message_queue(park))
 
         except RuntimeError:
             print("Runtime error getting wait times")
@@ -289,4 +259,5 @@ async def update_ride_times():
 mdns_setup()
 
 # run both coroutines at the same time
-asyncio.run(asyncio.gather(run_display(), run_server(), update_ride_times()))
+# asyncio.run(asyncio.gather(run_display(), run_server(), update_ride_times()))
+asyncio.run(asyncio.gather(run_display(), run_server()))

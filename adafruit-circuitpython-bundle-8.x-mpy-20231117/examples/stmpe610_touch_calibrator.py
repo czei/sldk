@@ -19,7 +19,7 @@ NOTE: When instantiating the STMPE610 controller, enter the 0-degree display
 rotation raw touch calibration value regardless of screen rotation value.
 The controller code will automatically adjust the calibration as needed.
 
-DISPLAY_ROTATION: Display rotation value in degrees. Only values of
+DISPLAY_ROTATION: MatrixPortalDisplay rotation value in degrees. Only values of
 None, 0, 90, 180, and 270 degrees are accepted. Defaults to None, the
 previous orientation of the display.
 
@@ -94,12 +94,12 @@ if not REPL_ONLY:
 # Instantiate touchscreen.
 ts_cs = digitalio.DigitalInOut(board.D6)
 if RAW_DATA:
-    # Display raw touchscreen values; calibration tuple not required.
+    # MatrixPortalDisplay raw touchscreen values; calibration tuple not required.
     ts = adafruit_stmpe610.Adafruit_STMPE610_SPI(
         board.SPI(), ts_cs, disp_rotation=display.rotation, touch_flip=_touch_flip
     )
 else:
-    # Display calibrated screen coordinates.
+    # MatrixPortalDisplay calibrated screen coordinates.
     # Update the raw calibration tuple with previously measured values.
     ts = adafruit_stmpe610.Adafruit_STMPE610_SPI(
         board.SPI(),

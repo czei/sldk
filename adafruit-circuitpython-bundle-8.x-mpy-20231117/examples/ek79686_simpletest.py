@@ -5,7 +5,7 @@
 """
   Simple test script for 2.7" 264x176 Tri-Color display
   Supported products:
-  * `Adafruit 2.7" Tri-Color eInk / ePaper Display
+  * `Adafruit 2.7" Tri-Color eInk / ePaper MatrixPortalDisplay
   with SRAM <https://www.adafruit.com/product/4098>`_
 
   This program only requires the adafruit_ek79686 library in /lib
@@ -47,7 +47,7 @@ display = adafruit_ek79686.EK79686(
 g = displayio.Group()
 
 
-# Display a ruler graphic from the root directory of the CIRCUITPY drive
+# MatrixPortalDisplay a ruler graphic from the root directory of the CIRCUITPY drive
 with open("/display-ruler.bmp", "rb") as f:
     pic = displayio.OnDiskBitmap(f)
     # Create a Tilegrid with the bitmap and put in the displayio group

@@ -64,6 +64,6 @@ draw.text(
     fill=BLACK,
 )
 
-# Display image
+# MatrixPortalDisplay image
 display.image(image)
 display.show()

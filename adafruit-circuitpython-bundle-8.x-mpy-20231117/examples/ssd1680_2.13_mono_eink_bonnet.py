@@ -5,11 +5,11 @@
 
 """Simple test script for 2.13" 250x122 tri-color display.
 Supported products:
-  * Adafruit 2.13" Tri-Color eInk Display Breakout
+  * Adafruit 2.13" Tri-Color eInk MatrixPortalDisplay Breakout
     * https://www.adafruit.com/product/4947
-  * Adafruit 2.13" Tri-Color eInk Display FeatherWing
+  * Adafruit 2.13" Tri-Color eInk MatrixPortalDisplay FeatherWing
     * https://www.adafruit.com/product/4814
-  * Adafruit 2.13" Mono eInk Display FeatherWing
+  * Adafruit 2.13" Mono eInk MatrixPortalDisplay FeatherWing
     * https://www.adafruit.com/product/4195
 
 

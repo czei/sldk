@@ -11,20 +11,22 @@ import biplane
 import asyncio
 import mdns
 import time
-import re
 import board
 import wifi
 import ssl
 import socketpool
 import adafruit_requests
 import displayio
+import rgbmatrix
+import framebufferio
+
 from theme_park_api import get_theme_parks_from_json
 from theme_park_api import get_park_name_from_id
 from theme_park_api import ThemePark
-from theme_park_api import Display
+from theme_park_api import Vacation
+from theme_park_api import AsyncScrollingDisplay
 from theme_park_api import MessageQueue
 from theme_park_api import get_park_url_from_id
-from adafruit_matrixportal.matrixportal import MatrixPortal
 import supervisor
 
 supervisor.runtime.autoreload = False
@@ -54,17 +56,51 @@ def mdns_setup():
 
 # Setup WIFI
 wifi_setup()
-time.sleep(4)
 
 # Setup Global Sockets and Server
-http_requests = adafruit_requests.Session(socketpool.SocketPool(wifi.radio), ssl.create_default_context())
+http_requests = adafruit_requests.Session(
+    socketpool.SocketPool(wifi.radio), ssl.create_default_context())
 web_server = biplane.Server()
 
-# --- Display setup ---
+# Display Setup
 displayio.release_displays()
-runtime_display = Display(MatrixPortal(status_neopixel=board.NEOPIXEL, debug=False))
-messages = MessageQueue(runtime_display)
+DISPLAY_WIDTH = 64
+DISPLAY_HEIGHT = 32
+DISPLAY_ROTATION = 0
+BIT_DEPTH = 3
+AUTO_REFRESH = True
 
+matrix = rgbmatrix.RGBMatrix(
+    width=DISPLAY_WIDTH, height=DISPLAY_HEIGHT, bit_depth=BIT_DEPTH,
+    rgb_pins=[
+        board.MTX_R1,
+        board.MTX_G1,
+        board.MTX_B1,
+        board.MTX_R2,
+        board.MTX_G2,
+        board.MTX_B2],
+    addr_pins=[board.MTX_ADDRA, board.MTX_ADDRB, board.MTX_ADDRC, board.MTX_ADDRD],
+    clock_pin=board.MTX_CLK,
+    latch_pin=board.MTX_LAT,
+    output_enable_pin=board.MTX_OE,
+    tile=1,
+    serpentine=False,
+    doublebuffer=True)
+
+# Associate the RGB matrix with a Display so we can use displayio
+display_hardware = framebufferio.FramebufferDisplay(
+    matrix, auto_refresh=AUTO_REFRESH, rotation=DISPLAY_ROTATION)
+
+# The messages class contains a list of function calls
+# to the local Display class, which in turn uses the displayio Display
+SCROLL_DELAY = 4
+messages = MessageQueue(AsyncScrollingDisplay(display_hardware), SCROLL_DELAY)
+
+# Params for the next vacation, if set
+vacation = Vacation()
+
+# The current selected park, empty at first
+park = ThemePark()
 
 
 # get List of theme parks to choose from
@@ -75,7 +111,10 @@ def populate_park_list():
     json_response = response.json()
     return sorted(get_theme_parks_from_json(json_response))
 
+# A list of all ~150 supported parks
+park_list = populate_park_list()
 
+# Get a list of rides to populate the currently selected ride
 async def populate_ride_list(parks, park_id):
     url = get_park_url_from_id(parks, park_id)
     print(f"Configuring park {park_id} from {url}")
@@ -84,14 +123,6 @@ async def populate_ride_list(parks, park_id):
     park.name = get_park_name_from_id(parks, park_id)
     await asyncio.sleep(0)
     park.set_rides(response.json())
-
-
-# init global variables
-park_list = populate_park_list()
-UPDATE_DELAY = 4
-display_wait = False
-
-
 
 async def update_live_wait_time():
     if park.id <= 0:
@@ -107,22 +138,6 @@ async def update_live_wait_time():
     park.update(json_response)
 
 
-def process_ride_name(ride_name):
-    return re.sub(r'\s', '\n', ride_name)
-
-
-def remove_non_ascii(orig_str):
-    new_str = ""
-    for c in orig_str:
-        if ord(c) < 128:
-            new_str += c
-    return new_str
-
-
-# The park data is empty at first
-park = ThemePark()
-
-
 def main_page(park_id):
     print("Generating main web GUI")
     page = "<link rel=\"stylesheet\" href=\"style.css\">"
@@ -131,7 +146,7 @@ def main_page(park_id):
     page += "<body style=\"background-color:white;\">"
 
     page += "<div class=\"navbar\">"
-    page += "<a href=\"#home\">Theme Park Wait Times</a>"
+    page += "<a href=\"/\">Theme Park Wait Times</a>"
     page += "</div>"
 
     page += "<br>"
@@ -141,7 +156,7 @@ def main_page(park_id):
     page += "<p>"
     page += "<select name=\"park-names\" id=\"park-id\">\n"
     for park in park_list:
-        park_name = remove_non_ascii(park[0])
+        park_name = ThemePark.remove_non_ascii(park[0])
         if park[1] == park_id:
             page += f"<option value=\"{park[1]}\" selected>{park_name}</option>\n"
         else:
@@ -206,7 +221,6 @@ def main(query_parameters, headers, body):
 
 @web_server.route("/action", "GET")
 def main(query_parameters, headers, body):
-    print(f"Form sent parameters: {query_parameters}")
     new_park_id = int(query_parameters.split("=")[1])
     new_park_name = get_park_name_from_id(park_list, new_park_id)
     park.change_parks(new_park_name, new_park_id)
@@ -218,23 +232,23 @@ def main(query_parameters, headers, body):
 @web_server.route("/vacation", "GET")
 def main(query_parameters, headers, body):
     print(f"Vacation Form sent parameters: {query_parameters}")
+    vacation.parse(query_parameters)
     page = main_page(park.id)
     return biplane.Response(page, content_type="text/html")
 
 
-
-
-
 async def run_server():
-    for _ in web_server.circuitpython_start_wifi_ap("FBI Surveillance Van 112", "9196190607", "themeparkwaits"):
+    for _ in web_server.circuitpython_start_wifi_ap(
+            "FBI Surveillance Van 112", "9196190607", "themeparkwaits"):
         await asyncio.sleep(0)  # let other tasks run
 
 
 async def run_display():
     while True:
+        display_hardware.refresh(minimum_frames_per_second=0)
         if park.new_flag is True:
             await asyncio.create_task(update_live_wait_time())
-            await asyncio.create_task(messages.init_message_queue(park))
+            await asyncio.create_task(messages.add_rides(park))
 
         await asyncio.create_task(messages.show())
         # await asyncio.sleep(4)  # let other tasks run
@@ -247,10 +261,10 @@ async def update_ride_times():
     """
     while True:
         try:
-            await asyncio.sleep(100)
+            await asyncio.sleep(300)
             if len(park.rides) > 0:
                 await asyncio.create_task(update_live_wait_time())
-                await asyncio.create_task(messages.init_message_queue(park))
+                await asyncio.create_task(messages.add_rides(park))
 
         except RuntimeError:
             print("Runtime error getting wait times")
@@ -259,5 +273,5 @@ async def update_ride_times():
 mdns_setup()
 
 # run both coroutines at the same time
-# asyncio.run(asyncio.gather(run_display(), run_server(), update_ride_times()))
-asyncio.run(asyncio.gather(run_display(), run_server()))
+asyncio.run(asyncio.gather(run_display(), run_server(), update_ride_times()))
+

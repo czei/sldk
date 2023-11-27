@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
-""" Display compass heading data five times per second """
+""" MatrixPortalDisplay compass heading data five times per second """
 import time
 from math import atan2, degrees
 import board

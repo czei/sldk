@@ -91,7 +91,7 @@ else:
     # reset the display to show nothing.
     display.root_group = None
 
-print("Display is started")
+print("MatrixPortalDisplay is started")
 
 preload_glyphs = (
     True  # set this to True if you want to preload the font glyphs into memory

@@ -4,7 +4,7 @@
 """
   Simple test script for 2.7" 264x176 Tri-Color display shield
   Supported products:
-  * Adafruit 2.7" Tri-Color ePaper Display Shield
+  * Adafruit 2.7" Tri-Color ePaper MatrixPortalDisplay Shield
     https://www.adafruit.com/product/4229
 
   This program only requires the adafruit_il91874 library in /lib
@@ -45,7 +45,7 @@ display = adafruit_il91874.IL91874(
 # Create a display group for our screen objects
 g = displayio.Group()
 
-# Display a ruler graphic from the root directory of the CIRCUITPY drive
+# MatrixPortalDisplay a ruler graphic from the root directory of the CIRCUITPY drive
 with open("/display-ruler.bmp", "rb") as f:
     pic = displayio.OnDiskBitmap(f)
     # Create a Tilegrid with the bitmap and put in the displayio group

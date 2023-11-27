@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 """
 Simple button demonstration/example.
-STMPE610 touch controller with TFT FeatherWing Display
+STMPE610 touch controller with TFT FeatherWing MatrixPortalDisplay
 
 Author(s): ladyada, CedarGroveMakerStudios
 

@@ -3,7 +3,7 @@
 
 """Simple test script for Adafruit 2.13" 212x104 tri-color display
 Supported products:
-  * Adafruit 2.13" Tri-Color Display Breakout
+  * Adafruit 2.13" Tri-Color MatrixPortalDisplay Breakout
   * https://www.adafruit.com/product/4086 (breakout) or
   * https://www.adafruit.com/product/4128 (FeatherWing)
 """
@@ -44,7 +44,7 @@ display = adafruit_il0373.IL0373(
 # Create a display group for our screen objects
 g = displayio.Group()
 
-# Display a ruler graphic from the root directory of the CIRCUITPY drive
+# MatrixPortalDisplay a ruler graphic from the root directory of the CIRCUITPY drive
 with open("/display-ruler.bmp", "rb") as f:
     pic = displayio.OnDiskBitmap(f)
     # Create a Tilegrid with the bitmap and put in the displayio group

@@ -9,13 +9,13 @@ import busio
 from adafruit_is31fl3731.charlie_wing import CharlieWing as Display
 
 # uncomment next line if you are using Adafruit 16x9 Charlieplexed PWM LED Matrix
-# from adafruit_is31fl3731.matrix import Matrix as Display
+# from adafruit_is31fl3731.matrix import Matrix as MatrixPortalDisplay
 # uncomment next line if you are using Adafruit 16x8 Charlieplexed Bonnet
-# from adafruit_is31fl3731.charlie_bonnet import CharlieBonnet as Display
+# from adafruit_is31fl3731.charlie_bonnet import CharlieBonnet as MatrixPortalDisplay
 # uncomment next line if you are using Pimoroni Scroll Phat HD LED 17 x 7
-# from adafruit_is31fl3731.scroll_phat_hd import ScrollPhatHD as Display
+# from adafruit_is31fl3731.scroll_phat_hd import ScrollPhatHD as MatrixPortalDisplay
 # uncomment next line if you are using Pimoroni 11x7 LED Matrix Breakout
-# from adafruit_is31fl3731.matrix_11x7 import Matrix11x7 as Display
+# from adafruit_is31fl3731.matrix_11x7 import Matrix11x7 as MatrixPortalDisplay
 
 # uncomment this line if you use a Pico, here with SCL=GP21 and SDA=GP20.
 # i2c = busio.I2C(board.GP21, board.GP20)

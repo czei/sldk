@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
-"""Display a custom character"""
+"""MatrixPortalDisplay a custom character"""
 import board
 import digitalio
 import adafruit_character_lcd.character_lcd as characterlcd

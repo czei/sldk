@@ -17,7 +17,7 @@ for count in range(0, 3):
     display.fill(False)
     sleep(0.5)
 
-# Display a number and text
+# MatrixPortalDisplay a number and text
 display.print(1234)
 sleep(1)
 display.print("FEED")
@@ -40,7 +40,7 @@ while count < 1025:
     display.print(count)
     sleep(0.1)
 
-# Display a Time
+# MatrixPortalDisplay a Time
 hour = 12
 for minute in range(15, 26):
     display.print("{}:{}".format(hour, minute))

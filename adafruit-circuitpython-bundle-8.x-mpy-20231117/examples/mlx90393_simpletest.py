@@ -15,7 +15,7 @@ while True:
     print("X: {} uT".format(MX))
     print("Y: {} uT".format(MY))
     print("Z: {} uT".format(MZ))
-    # Display the status field if an error occured, etc.
+    # MatrixPortalDisplay the status field if an error occured, etc.
     if SENSOR.last_status > adafruit_mlx90393.STATUS_OK:
         SENSOR.display_status()
     time.sleep(1.0)

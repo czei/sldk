@@ -96,6 +96,6 @@ while True:
     y += font.getsize(Disk)[1]
     draw.text((x, y), Temp, font=font, fill="#FF00FF")
 
-    # Display image.
+    # MatrixPortalDisplay image.
     disp.image(image, rotation)
     time.sleep(0.1)

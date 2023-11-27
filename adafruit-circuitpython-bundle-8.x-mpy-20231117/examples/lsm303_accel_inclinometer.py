@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
-""" Display inclination data five times per second """
+""" MatrixPortalDisplay inclination data five times per second """
 
 import time
 from math import atan2, degrees

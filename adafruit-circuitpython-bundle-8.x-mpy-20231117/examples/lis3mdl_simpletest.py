@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
-""" Display magnetometer data once per second """
+""" MatrixPortalDisplay magnetometer data once per second """
 
 import time
 import board

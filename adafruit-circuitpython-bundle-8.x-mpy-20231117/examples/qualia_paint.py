@@ -31,7 +31,7 @@ tile_grid = displayio.TileGrid(
 # Add the TileGrid to the Group
 graphics.splash.append(tile_grid)
 
-# Add the Group to the Display
+# Add the Group to the MatrixPortalDisplay
 graphics.display.root_group = graphics.splash
 
 current_color = displayio.ColorConverter().convert(0xFFFFFF)

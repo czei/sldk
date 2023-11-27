@@ -75,6 +75,6 @@ font = ImageFont.load_default()
 draw.text((x, top), "Hello", font=font, fill=255)
 draw.text((x, top + 20), "World!", font=font, fill=255)
 
-# Display image.
+# MatrixPortalDisplay image.
 disp.image(image)
 disp.show()

@@ -206,7 +206,7 @@ group = displayio.Group()
 # Add the patchwork to the main
 group.append(patchwork_group)
 
-# Add the Group to the Display
+# Add the Group to the MatrixPortalDisplay
 display.show(group)
 
 cur_color = 0

@@ -17,7 +17,7 @@ for count in range(0, 3):
     display.fill(False)
     sleep(0.5)
 
-# Display a number and text
+# MatrixPortalDisplay a number and text
 display.print(1234)
 sleep(1)
 display.print("Text")

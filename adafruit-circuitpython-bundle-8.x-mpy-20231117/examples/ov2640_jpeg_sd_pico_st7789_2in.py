@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Unlicense
 
 """
-Display an image on the LCD, then record an image when a button is pressed/held.
+MatrixPortalDisplay an image on the LCD, then record an image when a button is pressed/held.
 
 Uses the SD Card present on the 2inch st7789 breakout board
 

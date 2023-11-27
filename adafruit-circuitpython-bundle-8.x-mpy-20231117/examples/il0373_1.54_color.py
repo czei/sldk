@@ -4,7 +4,7 @@
 """Simple test script for 1.54" 152x152 tri-color display.
 
 Supported products:
-  * Adafruit 1.54" Tri-Color Display Breakout
+  * Adafruit 1.54" Tri-Color MatrixPortalDisplay Breakout
     * https://www.adafruit.com/product/3625
   """
 

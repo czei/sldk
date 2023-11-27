@@ -3,7 +3,7 @@
 
 """Simple test script for Adafruit 2.9" 296x128 tri-color display
 Supported products:
-  * Adafruit 2.9" Tri-Color Display Breakout
+  * Adafruit 2.9" Tri-Color MatrixPortalDisplay Breakout
   * https://www.adafruit.com/product/1028
 """
 
@@ -43,7 +43,7 @@ display = adafruit_uc8151d.UC8151D(
 # Create a display group for our screen objects
 g = displayio.Group()
 
-# Display a ruler graphic from the root directory of the CIRCUITPY drive
+# MatrixPortalDisplay a ruler graphic from the root directory of the CIRCUITPY drive
 with open("/display-ruler.bmp", "rb") as f:
     pic = displayio.OnDiskBitmap(f)
     # Create a Tilegrid with the bitmap and put in the displayio group

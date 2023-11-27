@@ -35,6 +35,6 @@ else:
 # Alternatively load a different format image, resize it, and convert to 1 bit color.
 # image = Image.open('happycat.png').resize((disp.width, disp.height), Image.ANTIALIAS).convert('1')
 
-# Display image.
+# MatrixPortalDisplay image.
 disp.image(image)
 disp.show()

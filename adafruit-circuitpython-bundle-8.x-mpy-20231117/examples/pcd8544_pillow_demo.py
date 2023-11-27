@@ -71,6 +71,6 @@ draw.text(
     fill=255,
 )
 
-# Display image
+# MatrixPortalDisplay image
 display.image(image)
 display.show()

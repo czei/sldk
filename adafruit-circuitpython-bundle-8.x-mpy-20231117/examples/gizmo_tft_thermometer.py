@@ -78,7 +78,7 @@ with open("/thermometer_background.bmp", "rb") as bitmap_file:
     # Add the text_group to main Group
     group.append(text_group)
 
-    # Add the main Group to the Display
+    # Add the main Group to the MatrixPortalDisplay
     display.root_group = group
 
     # Loop forever

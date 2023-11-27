@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 """
-ePaper Display Shapes and Text demo using the Pillow Library.
+ePaper MatrixPortalDisplay Shapes and Text demo using the Pillow Library.
 
 """
 
@@ -99,6 +99,6 @@ draw.text(
     fill=TEXT_COLOR,
 )
 
-# Display image.
+# MatrixPortalDisplay image.
 display.image(image)
 display.display()

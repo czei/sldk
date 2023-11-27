@@ -124,7 +124,7 @@ font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 20)
 draw.text((x, top), "Hello", font=font, fill=RED)
 draw.text((x, top + 20), "World!", font=font, fill=RED)
 
-# Display image.
+# MatrixPortalDisplay image.
 display.image(image)
 
 display.display()

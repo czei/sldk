@@ -4,7 +4,7 @@
 """Simple test script for 1.54" 200x200 monochrome display.
 
 Supported products:
-  * Adafruit 1.54" Monochrome ePaper Display Breakout
+  * Adafruit 1.54" Monochrome ePaper MatrixPortalDisplay Breakout
     * https://www.adafruit.com/product/4196
   """
 

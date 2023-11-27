@@ -78,7 +78,7 @@ while True:
     draw.text((x, top + 16), MemUsage, font=font, fill=255)
     draw.text((x, top + 25), Disk, font=font, fill=255)
 
-    # Display image.
+    # MatrixPortalDisplay image.
     disp.image(image)
     disp.show()
     time.sleep(0.1)

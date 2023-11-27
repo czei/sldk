@@ -4,13 +4,9 @@ from urllib.request import urlopen, Request
 from theme_park_api import get_park_url_from_name
 from theme_park_api import ThemePark
 from theme_park_api import get_theme_parks_from_json
-from theme_park_api import DisplayMode
-from theme_park_api import DisplayMessage
-from theme_park_api import DisplayStyle
-from theme_park_api import display_message_renderer
 from theme_park_api import get_park_name_from_id
 from theme_park_api import Vacation
-from theme_park_api import Display
+from theme_park_api import MatrixPortalDisplay
 from theme_park_api import MessageQueue
 import json
 import time
@@ -198,28 +194,6 @@ class Test(TestCase):
         self.assertTrue(ride_name == "Jungle Cruise")
         self.assertTrue(park_class_instance.get_current_ride_time() == 5)
 
-    def test_display_mode(self):
-        mode = DisplayMode(2)
-        self.assertTrue(mode.get_current_mode() == "Scrolling")
-        mode.increment_mode()
-        self.assertTrue(mode.get_current_mode() == "Wait")
-        mode.increment_mode()
-        self.assertTrue(mode.get_current_mode() == "Scrolling")
-
-        self.assertTrue(mode.time_to_switch_mode() is False)
-        time.sleep(5)
-        self.assertTrue(mode.time_to_switch_mode() is True)
-
-    def test_display_message(self):
-        style = DisplayStyle()
-        display_message = DisplayMessage("Haunted Mansion", style.SCROLLING, display_message_renderer)
-        self.assertTrue(display_message.render() == "Haunted Mansion")
-
-    # Doesn't work on macOS
-    # def test_populate_park_list(self):
-    #    park_list = populate_park_list()
-    #    self.assertTrue(len(park_list) >= 20)
-
     def test_theme_park_class(self):
         park = ThemePark()
         self.assertTrue(type(park) is ThemePark)
@@ -238,16 +212,20 @@ class Test(TestCase):
         self.assertTrue(get_park_name_from_id(park_list, 6) == "Disney Magic Kingdom")
 
     def test_vacation(self):
-        params = "Name=Wdw&Year=2024&Month=10&Day=20"
+        params = "Name=Wdw&Year=2034&Month=10&Day=20"
         vac = Vacation()
+        self.assertTrue(vac.is_set() is False)
         vac.parse(params)
         self.assertTrue(vac.name == "Wdw")
-        self.assertTrue(vac.year == 2024)
+        self.assertTrue(vac.year == 2034)
         self.assertTrue(vac.month == 10)
         self.assertTrue(vac.day == 20)
+        self.assertTrue(vac.is_set() is True)
+        self.assertTrue(vac.get_days_util() > 0 )
 
-#    def test_message_queue(self):
+
+    #    def test_message_queue(self):
 #        mocker = Mock()
-#        runtime_display = Display(mocker)
+#        runtime_display = MatrixPortalDisplay(mocker)
 #        queue = MessageQueue(runtime_display)
 #        self.assertTrue(len(queue.queue) is 2)

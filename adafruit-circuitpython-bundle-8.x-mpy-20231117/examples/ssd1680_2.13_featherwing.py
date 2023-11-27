@@ -4,11 +4,11 @@
 # SPDX-License-Identifier: Unlicense
 
 
-"""Simple test script for 2.13" 250x122 eInk Display FeatherWing
+"""Simple test script for 2.13" 250x122 eInk MatrixPortalDisplay FeatherWing
 Supported products:
-  * Adafruit 2.13" Tri-Color eInk Display FeatherWing
+  * Adafruit 2.13" Tri-Color eInk MatrixPortalDisplay FeatherWing
     * https://www.adafruit.com/product/4814
-  * Adafruit 2.13" Mono eInk Display FeatherWing
+  * Adafruit 2.13" Mono eInk MatrixPortalDisplay FeatherWing
     * https://www.adafruit.com/product/4195
 
 

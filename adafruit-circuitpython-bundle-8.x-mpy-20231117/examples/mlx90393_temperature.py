@@ -15,7 +15,7 @@ while True:
 
     print("Temperature: {} °C".format(temp))
 
-    # Display the status field if an error occurred, etc.
+    # MatrixPortalDisplay the status field if an error occurred, etc.
     if SENSOR.last_status > adafruit_mlx90393.STATUS_OK:
         SENSOR.display_status()
     time.sleep(1.0)

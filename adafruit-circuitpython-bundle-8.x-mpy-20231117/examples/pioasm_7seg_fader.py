@@ -56,9 +56,9 @@ delay:
     jmp y--, delay
     """
 
-# Display Pins 1-7 are GP 15-9 [need to re-wire 9]
-# Display Pins 8-12 are GP 22-16 [need to re-wire 22]
-# GP#       Display#    Function
+# MatrixPortalDisplay Pins 1-7 are GP 15-9 [need to re-wire 9]
+# MatrixPortalDisplay Pins 8-12 are GP 22-16 [need to re-wire 22]
+# GP#       MatrixPortalDisplay#    Function
 # 15 (+ 6)   1          E SEG
 # 14 (+ 5)   2          D SEG
 # 13 (+ 4)   3          DP SEG

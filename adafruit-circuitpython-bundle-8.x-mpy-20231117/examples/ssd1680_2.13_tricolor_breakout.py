@@ -4,9 +4,9 @@
 # SPDX-License-Identifier: Unlicense
 
 
-"""Simple test script for Adafruit 2.13" Tri-Color eInk Display Breakout
+"""Simple test script for Adafruit 2.13" Tri-Color eInk MatrixPortalDisplay Breakout
 Supported products:
-  * Adafruit 2.13" Tri-Color eInk Display Breakout
+  * Adafruit 2.13" Tri-Color eInk MatrixPortalDisplay Breakout
     * https://www.adafruit.com/product/4947
 
 """

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Unlicense
 
 """
-Display an image on the LCD, then record an image when the REC button is pressed/held.
+MatrixPortalDisplay an image on the LCD, then record an image when the REC button is pressed/held.
 
 The Kaluga development kit comes in two versions (v1.2 and v1.3); this demo is
 tested on v1.3.

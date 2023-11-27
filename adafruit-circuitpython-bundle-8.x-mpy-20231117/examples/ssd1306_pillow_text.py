@@ -39,6 +39,6 @@ draw.text((0, 0), "Hello!", font=font, fill=255)
 draw.text((0, 30), "Hello!", font=font2, fill=255)
 draw.text((34, 46), "Hello!", font=font2, fill=255)
 
-# Display image
+# MatrixPortalDisplay image
 oled.image(image)
 oled.show()

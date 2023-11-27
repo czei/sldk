@@ -15,7 +15,7 @@ import adafruit_stmpe610
 # Release any resources currently in use for the display
 displayio.release_displays()
 
-# Instantiate the 2.4" 320x240 TFT FeatherWing Display(#3315).
+# Instantiate the 2.4" 320x240 TFT FeatherWing MatrixPortalDisplay(#3315).
 cs_pin = digitalio.DigitalInOut(board.D9)
 dc_pin = digitalio.DigitalInOut(board.D10)
 display = ili9341.ILI9341(board.SPI(), cs=cs_pin, dc=dc_pin)
@@ -37,7 +37,7 @@ ts = adafruit_stmpe610.Adafruit_STMPE610_SPI(
 while True:
     point = ts.touch_point
     if point:
-        # Display the touched point
+        # MatrixPortalDisplay the touched point
         x = point[0]
         y = point[1]
         display.fill_rectangle(x - 2, y - 2, 4, 4, color565(255, 0, 0))

@@ -1,10 +1,13 @@
-import time
 import wifi
 import ssl
 import adafruit_requests
 import socketpool
 import terminalio
 import asyncio
+import displayio
+import adafruit_display_text
+import datetime
+from adafruit_display_text.label import Label
 
 
 def populate_park_list():
@@ -133,6 +136,18 @@ class ThemePark:
         self.new_flag = False
 
     @staticmethod
+    def remove_non_ascii(orig_str):
+        """
+        Removes non-ascii characters from the data feed assigned
+        park names that includes foreign languages.
+        """
+        new_str = ""
+        for c in orig_str:
+            if ord(c) < 128:
+                new_str += c
+        return new_str
+
+    @staticmethod
     def get_rides_from_json(json_data):
         """
         Returns a list of the names of rides at a particular park contained in the JSON
@@ -217,64 +232,6 @@ class ThemeParkIterator:
         self.park = park
 
 
-class DisplayMode:
-    """
-    Is the display showing the name of the ride or the wait time?
-    """
-
-    def __init__(self, wait_delay):
-        self.modes = ["Scrolling", "Wait"]
-        self.current_mode = 0
-        self.WAIT_DELAY = wait_delay
-        self.last_update = time.monotonic()
-
-    def get_current_mode(self):
-        return self.modes[self.current_mode]
-
-    def time_to_switch_mode(self):
-        the_time = time.monotonic()
-        if the_time > (self.last_update + self.WAIT_DELAY):
-            self.last_update = time.monotonic()
-            self.increment_mode()
-            return True
-        return False
-
-    def print_status(self):
-        the_time = time.monotonic()
-        print(
-            f"Time is {the_time} last update is {self.last_update} delay is {self.WAIT_DELAY}"
-        )
-
-    def increment_mode(self):
-        self.current_mode += 1
-        self.last_update = time.monotonic()
-        if self.current_mode >= len(self.modes):
-            self.current_mode = 0
-
-
-class ParkUpdateTimer:
-    """
-    Is the display showing the name of the ride or the wait time?
-    """
-
-    def __init__(self, wait_delay):
-        self.WAIT_DELAY = wait_delay
-        self.last_update = time.monotonic()
-
-    def time_to_do_something(self):
-        the_time = time.monotonic()
-        if the_time > (self.last_update + self.WAIT_DELAY):
-            self.last_update = time.monotonic()
-            return True
-        return False
-
-    def print_status(self):
-        the_time = time.monotonic()
-        print(
-            f"Time is {the_time} last update is {self.last_update} delay is {self.WAIT_DELAY}"
-        )
-
-
 class DisplayStyle:
     """
     Mostly static or scrolling, but could expand in the future
@@ -285,27 +242,8 @@ class DisplayStyle:
         self.STATIC = 1
 
 
-def display_message_renderer(message, style):
-    print(f"message={message}, style={style}")
-    return message
-
-
-class DisplayMessage:
-    """
-    Something to put on the screen, like a ride wait time.
-    """
-
-    def __init__(self, message, style, renderer):
-        self.message = message
-        self.display_style = style
-        self.renderer = renderer
-
-    def render(self):
-        return self.renderer(self.message, self.display_style)
-
-
 class Vacation:
-    def __init_(self, park_name="", year=0, month=0, day=0):
+    def __init__(self, park_name="", year=0, month=0, day=0):
         self.name = park_name
         self.year = year
         self.month = month
@@ -318,17 +256,161 @@ class Vacation:
         self.month = int(params[2].split("=")[1])
         self.day = int(params[3].split("=")[1])
 
+    def get_days_util(self):
+        today = datetime.date.today()
+        future = datetime.date(self.year, self.month, self.day)
+        diff = future - today
+        return diff.days
+
+    def is_set(self):
+        isset = False
+        if len(self.name) > 0 and self.year > 0 and self.month > 0 and self.day > 0:
+            isset = True
+
+        return isset
 
 class Display:
-    def __init__(self, mp, scrolldelay=0.03):
-        self.matrix_portal = mp
-        print(f"Setting matrix to {self.matrix_portal}")
+    def __init__(self, scrolldelay=0.03):
         self.scroll_delay = scrolldelay
         self.RED_COLOR = 0xCC3333
         self.BLUE_COLOR = 0x0000AA
         self.BLACK_COLOR = 0x000000
+        self.WHITE_COLOR = 0xFFFFFF
 
-        self.WAIT_TIME = 0
+    async def show_ride_closed(self, dummy):
+        print("Ride closed")
+
+    async def show_ride_wait_time(self, ride_wait_time):
+        print(f"Ride wait time is {ride_wait_time}")
+
+    async def show_configuration_message(self):
+        print(f"Showing configuration message: {CONFIGURATION_MESSAGE}")
+
+    async def show_ride_name(self, ride_name):
+        print(f"Ride name is {ride_name}")
+
+    async def show_scroll_message(self, message):
+        print(f"Scrolling message: {message}")
+
+
+class AsyncScrollingDisplay(Display):
+    def __init__(self, display_hardware, scrolldelay=0.03):
+        super().__init__(scrolldelay)
+        # self.scrolling_label = ScrollingLabel(terminalio.FONT, text="Test Text That You Should Not See", max_characters=10, animate_time=self.scroll_delay)
+        self.font = terminalio.FONT
+        self.hardware = display_hardware
+
+        # Configure generic scrolling message
+        self.scrolling_label = adafruit_display_text.label.Label(terminalio.FONT)
+        self.scrolling_label.x = 0
+        self.scrolling_label.y = 15
+        self.scrolling_label.color = self.BLUE_COLOR
+        self.scrolling_group = displayio.Group()
+        self.scrolling_group.append(self.scrolling_label)
+        self.scrolling_group.hidden = True
+
+        # Configure Ride Times
+        self.wait_time_name = adafruit_display_text.label.Label(terminalio.FONT)
+        self.wait_time_name.x = 0
+        self.wait_time_name.y = 6
+        self.wait_time_name.scale = 1
+        self.wait_time_name.color = self.BLUE_COLOR
+        self.wait_time_name_group = displayio.Group()
+        self.wait_time_name_group.append(self.wait_time_name)
+        self.wait_time_name_group.hidden = True
+
+        self.wait_time = adafruit_display_text.label.Label(terminalio.FONT)
+        self.wait_time.x = 0
+        self.wait_time.y = 22
+        self.wait_time.scale = (2)
+        self.wait_time_name.color = self.BLUE_COLOR
+        self.wait_time_group = displayio.Group()
+        self.wait_time_group.append(self.wait_time)
+        self.wait_time_group.hidden = True
+
+        self.closed = adafruit_display_text.label.Label(terminalio.FONT)
+        self.closed.x = 14
+        self.closed.y = 22
+        self.closed.scale = (1)
+        self.closed.text = "Closed"
+        self.closed.color = self.WHITE_COLOR
+        self.closed_group = displayio.Group()
+        self.closed_group.append(self.closed)
+        self.closed_group.hidden = True
+
+        self.main_group = displayio.Group()
+        self.hardware.root_group = self.main_group
+        self.main_group.hidden = False
+        self.main_group.append(self.scrolling_group)
+        self.main_group.append(self.wait_time_name_group)
+        self.main_group.append(self.wait_time_group)
+        self.main_group.append(self.closed_group)
+        self.hardware.show(self.main_group)
+
+    async def off(self):
+        self.scrolling_group.hidden = True
+        self.wait_time_name_group.hidden = True
+        self.wait_time_group.hidden = True
+        self.closed_group.hidden = True
+
+    async def show_ride_closed(self, dummy):
+        await super().show_ride_closed(dummy)
+        self.closed_group.hidden = False
+
+    async def show_ride_wait_time(self, ride_wait_time):
+        await super().show_ride_wait_time(ride_wait_time)
+        self.wait_time.text = ride_wait_time
+        self.center_time(self.wait_time)
+        self.wait_time_group.hidden = False
+
+    async def show_configuration_message(self):
+        self.wait_time_group.hidden = True
+        self.wait_time_name_group.hidden = True
+        await super().show_configuration_message()
+
+    async def show_ride_name(self, ride_name):
+        await super().show_ride_name(ride_name)
+        self.wait_time_name.text = ride_name
+        self.wait_time_name_group.hidden = False
+        while self.scroll(self.wait_time_name) is True:
+            await asyncio.sleep(self.scroll_delay)
+        await asyncio.sleep(1)
+        self.wait_time.text = ""
+        self.wait_time_name.text = ""
+        self.wait_time_group.hidden = True
+        self.wait_time_name_group.hidden = True
+        self.closed_group.hidden = True
+
+    async def show_scroll_message(self, message):
+        print(f"Scrolling message: {message}")
+        self.wait_time_group.hidden = True
+        self.wait_time_name_group.hidden = True
+        self.scrolling_label.text = message
+        self.scrolling_group.hidden = False
+        while self.scroll(self.scrolling_label) is True:
+            await asyncio.sleep(self.scroll_delay)
+        self.scrolling_group.hidden = True
+
+    def scroll(self, line):
+        line.x = line.x - 1
+        line_width = line.bounding_box[2]
+        if line.x < -line_width:
+            line.x = self.hardware.width
+            return False
+        return True
+
+    def center_time(self, text_label):
+        label_width = text_label.bounding_box[2]
+        text_label.x = int(self.hardware.width / 2 - (label_width * len(text_label)))
+
+
+class MatrixPortalDisplay(Display):
+    def __init__(self, mp, scrolldelay=0.03):
+        super().__init__(scrolldelay)
+
+        self.matrix_portal=mp
+
+        self.WAIT_TIME=0
         self.matrix_portal.add_text(
             text_font=terminalio.FONT,
             text_position=(
@@ -341,7 +423,7 @@ class Display:
         )
 
         # Ride Name
-        self.RIDE_NAME = 1
+        self.RIDE_NAME=1
         self.matrix_portal.add_text(
             text_font=terminalio.FONT,
             text_position=(
@@ -354,7 +436,7 @@ class Display:
         )
 
         # Standby
-        self.STANDBY = 2
+        self.STANDBY=2
         self.matrix_portal.add_text(
             text_font=terminalio.FONT,
             text_position=(
@@ -386,7 +468,7 @@ class Display:
         self.matrix_portal.set_text(ride_name, self.RIDE_NAME)
         self.matrix_portal.scroll_text(self.scroll_delay)
 
-    def show_scroll_message(self, message):
+    async def show_scroll_message(self, message):
         print(f"Scrolling message: {message}")
         self.matrix_portal.set_text("", self.STANDBY)
         self.matrix_portal.set_text("", self.WAIT_TIME)
@@ -401,20 +483,26 @@ CONFIGURATION_MESSAGE = "Configure at http://themeparkwaits.local"
 #  The things to display on the screen
 class MessageQueue:
 
-    def __init__(self, d):
+    def __init__(self, d, delay_param=4):
         self.display = d
+        self.delay = delay_param
         self.func_queue = []
         self.param_queue = []
         self.delay_queue = []
         self.func_queue.append(d.show_scroll_message)
         self.param_queue.append(REQUIRED_MESSAGE)
-        self.delay_queue.append(4)
+        self.delay_queue.append(self.delay)
         self.func_queue.append(d.show_scroll_message)
         self.param_queue.append(CONFIGURATION_MESSAGE)
-        self.delay_queue.append(4)
+        self.delay_queue.append(self.delay)
         self.index = 0
 
-    async def init_message_queue(self, park):
+    async def add_vacation(self, vac):
+        self.func_queue = []
+        self.param_queue = []
+        self.delay_queue = []
+
+    async def add_rides(self, park):
         print(f"Initalizing message for park: {park.name}")
         self.func_queue = []
         self.param_queue = []
@@ -427,26 +515,22 @@ class MessageQueue:
         self.param_queue.append(park.name + ":")
         self.delay_queue.append(0)
 
-
         for ride in park.rides:
-            self.func_queue.append(self.display.show_scroll_message)
-            self.param_queue.append(ride.name)
-            self.delay_queue.append(0)
-
-
-            if park.is_current_ride_open():
+            if ride.is_open is True:
                 self.func_queue.append(self.display.show_ride_wait_time)
-                self.param_queue.append(park.get_current_ride_time())
+                self.param_queue.append(str(ride.wait_time))
             else:
                 self.func_queue.append(self.display.show_ride_closed)
                 self.param_queue.append("Closed")
-            self.delay_queue.append(4)
+            self.delay_queue.append(0)
+
+            self.func_queue.append(self.display.show_ride_name)
+            self.param_queue.append(ride.name)
+            self.delay_queue.append(self.delay)
 
     async def show(self):
-        local_func = self.func_queue[self.index]
-        # print(f"queue is {self.func_queue}")
-        # print(f"queue item is {local_func} at index {self.index}")
-        self.func_queue[self.index](self.param_queue[self.index])
+        await asyncio.create_task(
+            self.func_queue[self.index](self.param_queue[self.index]))
         await asyncio.sleep(self.delay_queue[self.index])
         self.index += 1
         if self.index >= len(self.func_queue):

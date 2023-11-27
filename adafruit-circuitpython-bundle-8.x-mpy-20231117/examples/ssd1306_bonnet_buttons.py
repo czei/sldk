@@ -106,7 +106,7 @@ while True:
         catImage = Image.open("happycat_oled_64.ppm").convert("1")
         disp.image(catImage)
     else:
-        # Display image.
+        # MatrixPortalDisplay image.
         disp.image(image)
 
     disp.show()

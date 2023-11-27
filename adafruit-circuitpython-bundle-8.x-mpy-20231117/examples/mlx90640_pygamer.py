@@ -86,7 +86,7 @@ group.append(scale_group)
 group.append(min_label)
 group.append(max_label)
 
-# Add the SuperGroup to the Display
+# Add the SuperGroup to the MatrixPortalDisplay
 board.DISPLAY.root_group = group
 
 min_t = 20  # Initial minimum temperature range, before auto scale

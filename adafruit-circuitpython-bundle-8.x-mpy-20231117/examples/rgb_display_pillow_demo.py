@@ -99,5 +99,5 @@ draw.text(
     fill=(255, 255, 0),
 )
 
-# Display image.
+# MatrixPortalDisplay image.
 disp.image(image)

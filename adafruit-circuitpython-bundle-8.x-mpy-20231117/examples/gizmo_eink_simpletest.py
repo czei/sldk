@@ -12,7 +12,7 @@ display = eink_gizmo.EInk_Gizmo()
 # Create a display group for our screen objects
 display_group = displayio.Group()
 
-# Display a ruler graphic from the root directory of the CIRCUITPY drive
+# MatrixPortalDisplay a ruler graphic from the root directory of the CIRCUITPY drive
 with open("/display-ruler.bmp", "rb") as file:
     picture = displayio.OnDiskBitmap(file)
     # Create a Tilegrid with the bitmap and put in the displayio group

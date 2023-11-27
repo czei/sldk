@@ -3,7 +3,7 @@
 
 # Copyright (c) 2017 Adafruit Industries
 # Author: James DeVito
-# Ported to RGB Display by Melissa LeBlanc-Williams
+# Ported to RGB MatrixPortalDisplay by Melissa LeBlanc-Williams
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -163,7 +163,7 @@ while True:
     rcolor = tuple(int(x * 255) for x in hsv_to_rgb(random.random(), 1, 1))
     draw.text((20, 210), "Hello World", font=fnt, fill=rcolor)
 
-    # Display the Image
+    # MatrixPortalDisplay the Image
     disp.image(image)
 
     time.sleep(0.01)

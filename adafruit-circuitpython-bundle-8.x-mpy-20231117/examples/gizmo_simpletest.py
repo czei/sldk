@@ -29,7 +29,7 @@ group = displayio.Group()
 # Add the TileGrid to the Group
 group.append(tile_grid)
 
-# Add the Group to the Display
+# Add the Group to the MatrixPortalDisplay
 display.root_group = group
 
 # Draw pixels

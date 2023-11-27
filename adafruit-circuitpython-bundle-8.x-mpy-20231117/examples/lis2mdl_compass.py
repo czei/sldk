@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021 ladyada for Adafruit Industries
 # SPDX-License-Identifier: MIT
 
-""" Display compass heading data from a calibrated magnetometer """
+""" MatrixPortalDisplay compass heading data from a calibrated magnetometer """
 
 import time
 import math
