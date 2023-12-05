@@ -6,9 +6,10 @@ from theme_park_api import ThemePark
 from theme_park_api import get_theme_parks_from_json
 from theme_park_api import get_park_name_from_id
 from theme_park_api import Vacation
-from theme_park_api import MatrixPortalDisplay
-from theme_park_api import MessageQueue
+from theme_park_api import set_system_clock
 import json
+# import rtc
+import datetime
 import time
 
 """
@@ -208,20 +209,75 @@ class Test(TestCase):
 
         park_list = get_theme_parks_from_json(data)
         self.assertTrue(len(park_list) > 0)
+        self.assertTrue(get_park_name_from_id(park_list, 7) == "Disney Hollywood Studios")
         self.assertTrue(get_park_name_from_id(park_list, 16) == "Disneyland")
         self.assertTrue(get_park_name_from_id(park_list, 6) == "Disney Magic Kingdom")
 
     def test_vacation(self):
-        params = "Name=Wdw&Year=2034&Month=10&Day=20"
+        params = "Name=Wdw&Year=2024&Month=1&Day=2"
         vac = Vacation()
         self.assertTrue(vac.is_set() is False)
         vac.parse(params)
         self.assertTrue(vac.name == "Wdw")
-        self.assertTrue(vac.year == 2034)
-        self.assertTrue(vac.month == 10)
-        self.assertTrue(vac.day == 20)
+        self.assertTrue(vac.year == 2024)
+        self.assertTrue(vac.month == 1)
+        self.assertTrue(vac.day == 2)
         self.assertTrue(vac.is_set() is True)
-        self.assertTrue(vac.get_days_util() > 0 )
+
+        # Can't test day counting without RTC
+        #rtc.RTC().datetime = (2023, 1, 2, 0, 1, 34, 0, 0, 0)
+        #today = datetime.now()
+        self.assertTrue(vac.get_days_util() >= 0)
+
+    def test_park_param_parsing(self):
+        str_params = "park-id=7&Name=WDW&Year=2027&Month=1&Day=4"
+        park = ThemePark()
+
+        f = open('theme-park-list.json')
+        data = json.load(f)
+        f.close()
+        park_list = get_theme_parks_from_json(data)
+        self.assertTrue(len(park_list) > 0)
+
+        park.parse(str_params, park_list)
+        self.assertTrue(park.id == 7)
+        self.assertTrue(park.name == "Disney Hollywood Studios")
+
+    def test_set_system_clock(self):
+        # set_system_clock()
+        # self.assertTrue(rtc.RTC().datetime == (2023, 1, 1, 0, 1, 34, 0, 0, 0))
+
+        time_data = {'timezone': 'America/New_York', 'utc_datetime': '2023-12-04T15:16:28.262657+00:00',
+                     'raw_offset': -18000, 'client_ip': '74.124.189.239', 'dst_from': None, 'unixtime': 1701702988,
+                     'utc_offset': '-05:00', 'datetime': '2023-12-04T10:16:28.262657-05:00', 'week_number': 49,
+                     'abbreviation': 'EST', 'day_of_year': 338, 'day_of_week': 1, 'dst': False, 'dst_offset': 0,
+                     'dst_until': None}
+
+        print(f"Datetime is {time_data["datetime"]}")
+        date_string = time_data["datetime"]
+        date_elements = date_string.split("T")
+        date = date_elements[0].split("-")
+        time = date_elements[1].split(".")
+        offset = time[1]
+        time = time[0].split(":")
+
+        # Pass elements to datetime constructor
+        #            int(float(offset)*1000000)
+        datetime_object = time.struct_time(
+            int(date[0]),
+            int(date[1]),
+            int(date[2]),
+            int(time[0]),
+            int(time[1]),
+            int(time[2])
+        )
+
+        print(f"The new datetime is {datetime_object}")
+        self.assertTrue(datetime_object.year == 2023)
+        self.assertTrue(datetime_object.day == 4)
+        self.assertTrue(datetime_object.month == 12)
+
+
 
 
     #    def test_message_queue(self):

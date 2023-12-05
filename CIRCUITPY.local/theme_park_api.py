@@ -1,4 +1,5 @@
 import time
+import datetime
 import wifi
 import ssl
 import adafruit_requests
@@ -304,8 +305,9 @@ class DisplayMessage:
         return self.renderer(self.message, self.display_style)
 
 
+
 class Vacation:
-    def __init_(self, park_name="", year=0, month=0, day=0):
+    def __init__(self, park_name="", year=0, month=0, day=0):
         self.name = park_name
         self.year = year
         self.month = month
@@ -318,6 +320,18 @@ class Vacation:
         self.month = int(params[2].split("=")[1])
         self.day = int(params[3].split("=")[1])
 
+    def get_days_util(self):
+        today = datetime.date.today()
+        future = datetime.date(self.year, self.month, self.day)
+        diff = future - today
+        return diff.days
+
+    def is_set(self):
+        isset = False
+        if len(self.name) > 0 and self.year > 0 and self.month > 0 and self.day > 0:
+            self.isset = True
+
+        return isset
 
 class Display:
     def __init__(self, mp, scrolldelay=0.03):
@@ -414,7 +428,7 @@ class MessageQueue:
         self.delay_queue.append(4)
         self.index = 0
 
-    async def init_message_queue(self, park):
+    async def init_message_queue(self, park, vac):
         print(f"Initalizing message for park: {park.name}")
         self.func_queue = []
         self.param_queue = []
@@ -427,12 +441,15 @@ class MessageQueue:
         self.param_queue.append(park.name + ":")
         self.delay_queue.append(0)
 
+        if vac.is_set() is True:
+            self.func_queue.append(self.display.show_scroll_message)
+            self.param_queue.append(f"Countdown to vacation at: {vac.name} {vac.get_days_util()} days")
+            self.delay_queue.append(0)
 
         for ride in park.rides:
             self.func_queue.append(self.display.show_scroll_message)
             self.param_queue.append(ride.name)
             self.delay_queue.append(0)
-
 
             if park.is_current_ride_open():
                 self.func_queue.append(self.display.show_ride_wait_time)
@@ -452,3 +469,46 @@ class MessageQueue:
         if self.index >= len(self.func_queue):
             self.index = 0
 
+
+
+class ColorUtils:
+    colors = [("White", "0xffffff"),
+              ("Red", "0xcc3333"),
+              ("Yellow", "0xff9600"),
+              ("Orange", "0xff2800"),
+              ("Green", "0x00ff00"),
+              ("Teal", "0x00ff78"),
+              ("Cyan", "0x00ffff"),
+              ("Blue", "0x0000aa"),
+              ("Purple", "0xb400ff"),
+              ("Magenta", "0xff0016"),
+              ("White", "0xffffff"),
+              ("Black", "0x000000"),
+              ("Gold", "0xffde1e"),
+              ("Pink", "0xf25aff"),
+              ("Aqua", "0x32ffff"),
+              ("Jade", "0x00ff28"),
+              ("Amber", "0xff6400"),
+              ("Old Lace", "0xfdf5e6")]
+
+    @staticmethod
+    def html_color_chooser(name, id, hex_num):
+        str_hex_num = hex(hex_num)
+        html = ""
+        html += f"<select name=\"{name}\" id=\"{id}\">\n"
+        for color in ColorUtils.colors:
+            if color[1] == str_hex_num:
+                html += f"<option value=\"{color[1]}\" selected>{color[0]}</option>\n"
+            else:
+                html += f"<option value=\"{color[1]}\">{color[0]}</option>\n"
+
+        html += "</select>"
+        return html
+
+    @staticmethod
+    def hex_str_to_number(hex_string):
+        return int(hex_string, 16)
+
+    @staticmethod
+    def number_to_hex_string(num):
+        return hex(num)

@@ -8,115 +8,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Refactored into message queue.">
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/api-nytimes-com-chain.pem" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/cv2/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/cv2/data/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/cv2/version.py" afterDir="false" />
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Display is fully async.">
+      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_ticks.mpy" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/biplane.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/webgui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/boot_out.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/boot_out.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/code.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_portalbase/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_portalbase/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_portalbase/graphics.py" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_portalbase/graphics.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/theme_park_api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/bitmap_font_displayio_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/bitmap_font_displayio_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/bitmapsaver_screenshot_tft_featherwing.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/bitmapsaver_screenshot_tft_featherwing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_customcharacter.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_customcharacter.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_i2c_mono_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_i2c_mono_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_i2c_rgb_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_i2c_rgb_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_mono_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_mono_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_rgb_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_rgb_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_rpi_mono_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_rpi_mono_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_rpi_rgb_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_rpi_rgb_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_spi_mono_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/charlcd_spi_mono_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/clue_ble_color_patchwork.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/clue_ble_color_patchwork.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/clue_slideshow/clue_slideshow.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/clue_slideshow/clue_slideshow.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/display_text_label_vs_bitmap_label_comparison.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/display_text_label_vs_bitmap_label_comparison.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ek79686_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ek79686_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/epd_blinka.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/epd_blinka.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/epd_pillow_demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/epd_pillow_demo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/epd_pillow_image.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/epd_pillow_image.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/featherwing_alphanum_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/featherwing_alphanum_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/featherwing_sevensegment_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/featherwing_sevensegment_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/focaltouch_paint_rgb666.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/focaltouch_paint_rgb666.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/gizmo_eink_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/gizmo_eink_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/gizmo_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/gizmo_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/gizmo_tft_thermometer.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/gizmo_tft_thermometer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/hotplug_sensor_examples/displayio_layout_hotplug_temp_sensor.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/hotplug_sensor_examples/displayio_layout_hotplug_temp_sensor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ht16k33_segments_14x4_demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ht16k33_segments_14x4_demo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/il0373_1.54_color.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/il0373_1.54_color.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/il0373_2.13_color.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/il0373_2.13_color.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/il0373_2.9_color.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/il0373_2.9_color.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/il91874_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/il91874_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_blink_example.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_blink_example.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_frame_example.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_frame_example.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_pillow_animated_gif.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_pillow_animated_gif.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_pillow_marquee.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_pillow_marquee.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_pillow_numbers.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_pillow_numbers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_text_example.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_text_example.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_wave_example.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/is31fl3731_wave_example.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lis2mdl_compass.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lis2mdl_compass.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lis2mdl_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lis2mdl_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lis3mdl_compass.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lis3mdl_compass.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lis3mdl_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lis3mdl_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lsm303_accel_inclinometer.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lsm303_accel_inclinometer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lsm303_accel_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lsm303_accel_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lsm303dlh_mag_compass.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lsm303dlh_mag_compass.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lsm303dlh_mag_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/lsm303dlh_mag_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/mlx90393_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/mlx90393_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/mlx90393_temperature.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/mlx90393_temperature.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/mlx90640_pygamer.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/mlx90640_pygamer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/mmc56x3_continuous.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/mmc56x3_continuous.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/mmc56x3_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/mmc56x3_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/mpu6050_inclinometer.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/mpu6050_inclinometer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/oauth2_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/oauth2_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/oauth2_simpletest_cpython.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/oauth2_simpletest_cpython.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/oauth2_simpletest_esp32spi.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/oauth2_simpletest_esp32spi.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ov2640_bmp_sd_kaluga1_3.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ov2640_bmp_sd_kaluga1_3.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ov2640_directio_kaluga1_3_ili9341.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ov2640_directio_kaluga1_3_ili9341.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ov2640_jpeg_sd_kaluga1_3.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ov2640_jpeg_sd_kaluga1_3.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ov2640_jpeg_sd_pico_st7789_2in.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ov2640_jpeg_sd_pico_st7789_2in.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ov5640_directio_kaluga1_3_ili9341.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ov5640_directio_kaluga1_3_ili9341.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ov5640_stopmotion_kaluga1_3.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ov5640_stopmotion_kaluga1_3.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/pcd8544_pillow_demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/pcd8544_pillow_demo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/pioasm_7seg.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/pioasm_7seg.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/pioasm_7seg_fader.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/pioasm_7seg_fader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/progressbar_matrixportal.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/progressbar_matrixportal.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/qualia_paint.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/qualia_paint.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rfm69_node1_bonnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rfm69_node1_bonnet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rfm9x_node1_bonnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rfm9x_node1_bonnet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rgb_display_minipitftstats.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rgb_display_minipitftstats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rgb_display_pillow_bonnet_buttons.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rgb_display_pillow_bonnet_buttons.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rgb_display_pillow_demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rgb_display_pillow_demo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rgb_display_pillow_image.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rgb_display_pillow_image.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rgb_display_pillow_stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/rgb_display_pillow_stats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/sharpmemorydisplay_pillow_demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/sharpmemorydisplay_pillow_demo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/sharpmemorydisplay_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/sharpmemorydisplay_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/simple_text_display_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/simple_text_display_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1305_pillow_demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1305_pillow_demo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1305_stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1305_stats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_bonnet_buttons.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_bonnet_buttons.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_pillow_demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_pillow_demo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_pillow_image_display.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_pillow_image_display.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_pillow_images.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_pillow_images.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_pillow_ip.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_pillow_ip.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_pillow_shapes.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_pillow_shapes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_pillow_text.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_pillow_text.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_stats.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1306_stats.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1608_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1608_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1675_2.13_monochrome.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1675_2.13_monochrome.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1680_2.13_featherwing.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1680_2.13_featherwing.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1680_2.13_mono_eink_bonnet.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1680_2.13_mono_eink_bonnet.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1680_2.13_tricolor_breakout.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1680_2.13_tricolor_breakout.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1680_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1680_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1681_simpletest.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/ssd1681_simpletest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/stmpe610_button_demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/stmpe610_button_demo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/stmpe610_touch_calibrator.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/stmpe610_touch_calibrator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/stmpe610_touch_point_paint_demo.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/stmpe610_touch_point_paint_demo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/touchscreen_calibrator_built_in.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/touchscreen_calibrator_built_in.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/uc8151d_1.54_grayscale.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/uc8151d_1.54_grayscale.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/uc8151d_2.9_color.py" beforeDir="false" afterPath="$PROJECT_DIR$/adafruit-circuitpython-bundle-8.x-mpy-20231117/examples/uc8151d_2.9_color.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/code.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_theme-park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_theme-park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/theme_park_api.py" afterDir="false" />
@@ -162,7 +60,7 @@
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/czei/Library/Mobile Documents/com~apple~CloudDocs/Projects/Disney/ThemeParkAPI&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Volumes/CIRCUITPY&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -173,7 +71,7 @@
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.32068965&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.general&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -185,6 +83,9 @@
     </option>
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="/Volumes/CIRCUITPY" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/CIRCUITPY" />
     </key>
@@ -252,7 +153,27 @@
       <workItem from="1700971384992" duration="2208000" />
       <workItem from="1701003017430" duration="4812000" />
       <workItem from="1701099710134" duration="180000" />
-      <workItem from="1701099899242" duration="345000" />
+      <workItem from="1701099899242" duration="419000" />
+      <workItem from="1701110803641" duration="3235000" />
+      <workItem from="1701120129618" duration="1203000" />
+      <workItem from="1701134667707" duration="14000" />
+      <workItem from="1701134687801" duration="5376000" />
+      <workItem from="1701186444799" duration="1854000" />
+      <workItem from="1701267784831" duration="616000" />
+      <workItem from="1701282775649" duration="462000" />
+      <workItem from="1701303767337" duration="141000" />
+      <workItem from="1701303915810" duration="5875000" />
+      <workItem from="1701480809706" duration="274000" />
+      <workItem from="1701481279717" duration="23011000" />
+      <workItem from="1701640225989" duration="3241000" />
+      <workItem from="1701655096141" duration="2461000" />
+      <workItem from="1701660046953" duration="1214000" />
+      <workItem from="1701702675539" duration="9472000" />
+      <workItem from="1701718088199" duration="4342000" />
+      <workItem from="1701741341813" duration="2902000" />
+      <workItem from="1701745232424" duration="1119000" />
+      <workItem from="1701780720212" duration="1539000" />
+      <workItem from="1701791209322" duration="64000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <option name="closed" value="true" />
@@ -342,7 +263,15 @@
       <option name="project" value="LOCAL" />
       <updated>1700956416744</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Display is fully async.">
+      <option name="closed" value="true" />
+      <created>1701100301862</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1701100301862</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -375,7 +304,8 @@
     <MESSAGE value="Basic park selector GUI working." />
     <MESSAGE value="Refactored display code into Display class." />
     <MESSAGE value="Refactored into message queue." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactored into message queue." />
+    <MESSAGE value="Display is fully async." />
+    <option name="LAST_COMMIT_MESSAGE" value="Display is fully async." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -400,10 +330,10 @@
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/ThemeParkAPI$code.coverage" NAME="code Coverage Results" MODIFIED="1698962133526" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Volumes/CIRCUITPY" />
-    <SUITE FILE_PATH="coverage/ThemeParkAPI$theme_park_api.coverage" NAME="theme_park_api Coverage Results" MODIFIED="1701099943847" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ThemeParkAPI$theme_park_api.coverage" NAME="theme_park_api Coverage Results" MODIFIED="1701570077849" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Volumes/CIRCUITPY" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$webgui.coverage" NAME="webgui Coverage Results" MODIFIED="1700400556244" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$test_webgui.coverage" NAME="test-webgui Coverage Results" MODIFIED="1700433660538" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1701100177911" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1701715284822" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Volumes/CIRCUITPY" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$Doctests_in___init__.coverage" NAME="Doctests in __init__ Coverage Results" MODIFIED="1697475842243" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$main.coverage" NAME="main Coverage Results" MODIFIED="1697480086211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>

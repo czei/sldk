@@ -1,24 +1,54 @@
 import wifi
 import ssl
+import rtc
 import adafruit_requests
 import socketpool
 import terminalio
 import asyncio
 import displayio
-import adafruit_display_text
-import datetime
+from adafruit_datetime import datetime
 from adafruit_display_text.label import Label
 
 
-def populate_park_list():
+def set_system_clock(http_requests):
+    # Set device time from the internet
+    response = http_requests.get('http://worldtimeapi.org/api/timezone/America/New_York')
+    time_data = response.json()
+    date_string = time_data["datetime"]
+    date_elements = date_string.split("T")
+    date = date_elements[0].split("-")
+    the_time = date_elements[1].split(".")
+    offset = the_time[1]
+    the_time = the_time[0].split(":")
+
+    # Pass elements to datetime constructor
+    #            int(float(offset)*1000000)
+    datetime_object = (
+         int(date[0]),
+         int(date[1]),
+         int(date[2]),
+         int(the_time[0]),
+         int(the_time[1]),
+         int(the_time[2]),
+         -1,
+         -1,
+         -1
+    )
+
+    print(f"Setting the time to {datetime_object}")
+    rtc.RTC().datetime = datetime_object
+    return datetime_object
+
+
+def populate_park_list(requests):
     """
     Returns an iterable list of theme parks and their ids from Queue Times.
     ONLY WORKS ON CircuitPython hardware.
     :return:
     """
     url = "https://queue-times.com/parks.json"
-    pool = socketpool.SocketPool(wifi.radio)
-    requests = adafruit_requests.Session(pool, ssl.create_default_context())
+    # pool = socketpool.SocketPool(wifi.radio)
+    # requests = adafruit_requests.Session(pool, ssl.create_default_context())
     response = requests.get(url)
     json_response = response.json()
     return sorted(get_theme_parks_from_json(json_response))
@@ -108,6 +138,7 @@ def get_park_url_from_id(park_list, park_id):
 
 
 def get_park_name_from_id(park_list, park_id):
+    park_name = ""
     for park in park_list:
         if park[1] == park_id:
             park_name = park[0]
@@ -133,7 +164,6 @@ class ThemePark:
         self.name = name
         self.id = id
         self.rides = self.get_rides_from_json(json_data)
-        self.new_flag = False
 
     @staticmethod
     def remove_non_ascii(orig_str):
@@ -195,7 +225,6 @@ class ThemePark:
 
     def update(self, json_data):
         self.rides = self.get_rides_from_json(json_data)
-        self.new_flag = False
 
     def get_current_ride_name(self):
         return self.rides[self.counter].name
@@ -219,8 +248,20 @@ class ThemePark:
     def change_parks(self, new_name, new_id):
         self.name = new_name
         self.id = new_id
-        self.new_flag = True
         self.counter = 0
+
+    def parse(self, str_params, park_list):
+        params = str_params.split("&")
+        print(f"Params = {params}")
+        for param in params:
+            name_value = param.split("=")
+            # print(f"param = {param}")
+            # print(f"Name_value = {name_value}")
+            if name_value[0] == "park-id":
+                self.id = int(name_value[1])
+                self.name = get_park_name_from_id(park_list, self.id)
+                print(f"New park name = {self.name}")
+                print(f"New park id = {self.id}")
 
 
 class ThemeParkIterator:
@@ -249,25 +290,35 @@ class Vacation:
         self.month = month
         self.day = day
 
+    def print(self):
+        print(f"Vacation: {self.name}, {self.year}, {self.month}, {self.day}, isset={self.is_set()}")
+
     def parse(self, str_params):
         params = str_params.split("&")
-        self.name = params[0].split("=")[1]
-        self.year = int(params[1].split("=")[1])
-        self.month = int(params[2].split("=")[1])
-        self.day = int(params[3].split("=")[1])
+        for param in params:
+            name_value = param.split("=")
+            if name_value[0] == "Name":
+                self.name = str(name_value[1])
+            if name_value[0] == "Year":
+                self.year = int(name_value[1])
+            if name_value[0] == "Month":
+                self.month = int(name_value[1])
+            if name_value[0] == "Day":
+                self.day = int(name_value[1])
 
-    def get_days_util(self):
-        today = datetime.date.today()
-        future = datetime.date(self.year, self.month, self.day)
+    def get_days_until(self):
+        today = datetime.now()
+        print(f"The current year is {today.year}")
+        future = datetime(self.year, self.month, self.day)
         diff = future - today
-        return diff.days
+        return diff.days+1
 
     def is_set(self):
-        isset = False
-        if len(self.name) > 0 and self.year > 0 and self.month > 0 and self.day > 0:
-            isset = True
+        if len(self.name) > 0 and self.year > 1999 and self.month > 0 and self.day > 0:
+            return True
 
-        return isset
+        return False
+
 
 class Display:
     def __init__(self, scrolldelay=0.03):
@@ -294,14 +345,13 @@ class Display:
 
 
 class AsyncScrollingDisplay(Display):
-    def __init__(self, display_hardware, scrolldelay=0.03):
+    def __init__(self, display_hardware, scrolldelay=0.04):
         super().__init__(scrolldelay)
-        # self.scrolling_label = ScrollingLabel(terminalio.FONT, text="Test Text That You Should Not See", max_characters=10, animate_time=self.scroll_delay)
         self.font = terminalio.FONT
         self.hardware = display_hardware
 
         # Configure generic scrolling message
-        self.scrolling_label = adafruit_display_text.label.Label(terminalio.FONT)
+        self.scrolling_label = Label(terminalio.FONT)
         self.scrolling_label.x = 0
         self.scrolling_label.y = 15
         self.scrolling_label.color = self.BLUE_COLOR
@@ -310,7 +360,7 @@ class AsyncScrollingDisplay(Display):
         self.scrolling_group.hidden = True
 
         # Configure Ride Times
-        self.wait_time_name = adafruit_display_text.label.Label(terminalio.FONT)
+        self.wait_time_name = Label(terminalio.FONT)
         self.wait_time_name.x = 0
         self.wait_time_name.y = 6
         self.wait_time_name.scale = 1
@@ -319,7 +369,7 @@ class AsyncScrollingDisplay(Display):
         self.wait_time_name_group.append(self.wait_time_name)
         self.wait_time_name_group.hidden = True
 
-        self.wait_time = adafruit_display_text.label.Label(terminalio.FONT)
+        self.wait_time = Label(terminalio.FONT)
         self.wait_time.x = 0
         self.wait_time.y = 22
         self.wait_time.scale = (2)
@@ -328,7 +378,7 @@ class AsyncScrollingDisplay(Display):
         self.wait_time_group.append(self.wait_time)
         self.wait_time_group.hidden = True
 
-        self.closed = adafruit_display_text.label.Label(terminalio.FONT)
+        self.closed = Label(terminalio.FONT)
         self.closed.x = 14
         self.closed.y = 22
         self.closed.scale = (1)
@@ -339,13 +389,12 @@ class AsyncScrollingDisplay(Display):
         self.closed_group.hidden = True
 
         self.main_group = displayio.Group()
-        self.hardware.root_group = self.main_group
         self.main_group.hidden = False
         self.main_group.append(self.scrolling_group)
         self.main_group.append(self.wait_time_name_group)
         self.main_group.append(self.wait_time_group)
         self.main_group.append(self.closed_group)
-        self.hardware.show(self.main_group)
+        self.hardware.root_group = self.main_group
 
     async def off(self):
         self.scrolling_group.hidden = True
@@ -393,6 +442,7 @@ class AsyncScrollingDisplay(Display):
 
     def scroll(self, line):
         line.x = line.x - 1
+        # self.hardware.refresh(minimum_frames_per_second=0)
         line_width = line.bounding_box[2]
         if line.x < -line_width:
             line.x = self.hardware.width
@@ -408,9 +458,9 @@ class MatrixPortalDisplay(Display):
     def __init__(self, mp, scrolldelay=0.03):
         super().__init__(scrolldelay)
 
-        self.matrix_portal=mp
+        self.matrix_portal = mp
 
-        self.WAIT_TIME=0
+        self.WAIT_TIME = 0
         self.matrix_portal.add_text(
             text_font=terminalio.FONT,
             text_position=(
@@ -423,7 +473,7 @@ class MatrixPortalDisplay(Display):
         )
 
         # Ride Name
-        self.RIDE_NAME=1
+        self.RIDE_NAME = 1
         self.matrix_portal.add_text(
             text_font=terminalio.FONT,
             text_position=(
@@ -436,7 +486,7 @@ class MatrixPortalDisplay(Display):
         )
 
         # Standby
-        self.STANDBY=2
+        self.STANDBY = 2
         self.matrix_portal.add_text(
             text_font=terminalio.FONT,
             text_position=(
@@ -486,6 +536,7 @@ class MessageQueue:
     def __init__(self, d, delay_param=4):
         self.display = d
         self.delay = delay_param
+        self.regenerate_flag = False
         self.func_queue = []
         self.param_queue = []
         self.delay_queue = []
@@ -497,12 +548,7 @@ class MessageQueue:
         self.delay_queue.append(self.delay)
         self.index = 0
 
-    async def add_vacation(self, vac):
-        self.func_queue = []
-        self.param_queue = []
-        self.delay_queue = []
-
-    async def add_rides(self, park):
+    async def add_rides(self, park, vac):
         print(f"Initalizing message for park: {park.name}")
         self.func_queue = []
         self.param_queue = []
@@ -515,7 +561,20 @@ class MessageQueue:
         self.param_queue.append(park.name + ":")
         self.delay_queue.append(0)
 
+        print("Vacation setting in add_rides:")
+        vac.print()
+
+        if vac.is_set() is True:
+            days_until = vac.get_days_until()
+            if days_until >= 0:
+                vac_message = f"Vacation to {vac.name} in: {days_until} days"
+                print(f"Adding vacation message: {vac_message}")
+                self.func_queue.insert(0, self.display.show_scroll_message)
+                self.param_queue.insert(0, vac_message)
+                self.delay_queue.insert(0, 0)
+
         for ride in park.rides:
+            await asyncio.sleep(0)
             if ride.is_open is True:
                 self.func_queue.append(self.display.show_ride_wait_time)
                 self.param_queue.append(str(ride.wait_time))
@@ -528,6 +587,8 @@ class MessageQueue:
             self.param_queue.append(ride.name)
             self.delay_queue.append(self.delay)
 
+            self.regenerate_flag = False
+
     async def show(self):
         await asyncio.create_task(
             self.func_queue[self.index](self.param_queue[self.index]))
@@ -536,3 +597,45 @@ class MessageQueue:
         if self.index >= len(self.func_queue):
             self.index = 0
 
+
+class ColorUtils:
+    colors = [("White", "0xffffff"),
+              ("Red", "0xcc3333"),
+              ("Yellow", "0xff9600"),
+              ("Orange", "0xff2800"),
+              ("Green", "0x00ff00"),
+              ("Teal", "0x00ff78"),
+              ("Cyan", "0x00ffff"),
+              ("Blue", "0x0000aa"),
+              ("Purple", "0xb400ff"),
+              ("Magenta", "0xff0016"),
+              ("White", "0xffffff"),
+              ("Black", "0x000000"),
+              ("Gold", "0xffde1e"),
+              ("Pink", "0xf25aff"),
+              ("Aqua", "0x32ffff"),
+              ("Jade", "0x00ff28"),
+              ("Amber", "0xff6400"),
+              ("Old Lace", "0xfdf5e6")]
+
+    @staticmethod
+    def html_color_chooser(name, id, hex_num):
+        str_hex_num = hex(hex_num)
+        html = ""
+        html += f"<select name=\"{name}\" id=\"{id}\">\n"
+        for color in ColorUtils.colors:
+            if color[1] == str_hex_num:
+                html += f"<option value=\"{color[1]}\" selected>{color[0]}</option>\n"
+            else:
+                html += f"<option value=\"{color[1]}\">{color[0]}</option>\n"
+
+        html += "</select>"
+        return html
+
+    @staticmethod
+    def hex_str_to_number(hex_string):
+        return int(hex_string, 16)
+
+    @staticmethod
+    def number_to_hex_string(num):
+        return hex(num)

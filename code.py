@@ -1,12 +1,7 @@
-# SPDX-FileCopyrightText: 2020 John Park for Adafruit Industries
+# Theme Park Waits
+# View information about ride wait times at any theme park
 #
-# SPDX-License-Identifier: MIT
-
-# Scoreboard matrix display
-# uses AdafruitIO to set scores and team names for a scoreboard
-# Perfect for cornhole, ping pong, and other games
-
-# Web server library
+import rtc
 import biplane
 import asyncio
 import mdns
@@ -15,18 +10,24 @@ import board
 import wifi
 import ssl
 import socketpool
-import adafruit_requests
 import displayio
 import rgbmatrix
 import framebufferio
+import adafruit_requests
+import adafruit_datetime
+import adafruit_matrixportal.matrix
+from adafruit_datetime import datetime, date, time
 
 from theme_park_api import get_theme_parks_from_json
+from theme_park_api import set_system_clock
 from theme_park_api import get_park_name_from_id
 from theme_park_api import ThemePark
 from theme_park_api import Vacation
 from theme_park_api import AsyncScrollingDisplay
 from theme_park_api import MessageQueue
 from theme_park_api import get_park_url_from_id
+from theme_park_api import populate_park_list
+
 import supervisor
 
 supervisor.runtime.autoreload = False
@@ -42,7 +43,7 @@ def wifi_setup():
     wifi.radio.connect(secrets["ssid"], secrets["password"])
     while wifi.radio.connected is False:
         print("Not connected to Wifi")
-        time.sleep(2)
+        time.sleep(1)
     ssid = secrets["ssid"]
     print(f"Connected to Wifi: {ssid} at {wifi.radio.ipv4_address}")
 
@@ -51,15 +52,15 @@ def mdns_setup():
     mdns_server = mdns.Server(wifi.radio)
     mdns_server.hostname = "themeparkwaits"
     mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=80)
-    print(f"IP address is {mdns.RemoteService}")
 
 
-# Setup WIFI
+# Setup Networking and WIFI
 wifi_setup()
+mdns_setup()
 
 # Setup Global Sockets and Server
-http_requests = adafruit_requests.Session(
-    socketpool.SocketPool(wifi.radio), ssl.create_default_context())
+socket_pool = socketpool.SocketPool(wifi.radio)
+http_requests = adafruit_requests.Session(socket_pool, ssl.create_default_context())
 web_server = biplane.Server()
 
 # Display Setup
@@ -87,32 +88,7 @@ matrix = rgbmatrix.RGBMatrix(
     serpentine=False,
     doublebuffer=True)
 
-# Associate the RGB matrix with a Display so we can use displayio
-display_hardware = framebufferio.FramebufferDisplay(
-    matrix, auto_refresh=AUTO_REFRESH, rotation=DISPLAY_ROTATION)
 
-# The messages class contains a list of function calls
-# to the local Display class, which in turn uses the displayio Display
-SCROLL_DELAY = 4
-messages = MessageQueue(AsyncScrollingDisplay(display_hardware), SCROLL_DELAY)
-
-# Params for the next vacation, if set
-vacation = Vacation()
-
-# The current selected park, empty at first
-park = ThemePark()
-
-
-# get List of theme parks to choose from
-def populate_park_list():
-    print("Getting master list of theme parks")
-    url = "https://queue-times.com/parks.json"
-    response = http_requests.get(url)
-    json_response = response.json()
-    return sorted(get_theme_parks_from_json(json_response))
-
-# A list of all ~150 supported parks
-park_list = populate_park_list()
 
 # Get a list of rides to populate the currently selected ride
 async def populate_ride_list(parks, park_id):
@@ -120,78 +96,115 @@ async def populate_ride_list(parks, park_id):
     print(f"Configuring park {park_id} from {url}")
     response = http_requests.get(url)
     await asyncio.sleep(0)
-    park.name = get_park_name_from_id(parks, park_id)
+    current_park.name = get_park_name_from_id(parks, park_id)
     await asyncio.sleep(0)
-    park.set_rides(response.json())
+    current_park.set_rides(response.json())
 
 async def update_live_wait_time():
-    if park.id <= 0:
+    if current_park.id <= 0:
         return
-    url = get_park_url_from_id(park_list, park.id)
+    url = get_park_url_from_id(park_list, current_park.id)
     print(f"Park URL: {url}")
-    pool = socketpool.SocketPool(wifi.radio)
-    requests = adafruit_requests.Session(pool, ssl.create_default_context())
-    await asyncio.sleep(0)
-    response = requests.get(url)
+    # pool = socketpool.SocketPool(wifi.radio)
+    # requests = adafruit_requests.Session(pool, ssl.create_default_context())
+    response = http_requests.get(url)
     await asyncio.sleep(0)
     json_response = response.json()
-    park.update(json_response)
+    await asyncio.sleep(0)
+    current_park.update(json_response)
+    await asyncio.sleep(0)
 
 
-def main_page(park_id):
-    print("Generating main web GUI")
+# Set device time from the internet
+set_system_clock(http_requests)
+
+# Associate the RGB matrix with a Display so we can use displayio
+display_hardware = framebufferio.FramebufferDisplay(
+    matrix, auto_refresh=AUTO_REFRESH, rotation=DISPLAY_ROTATION)
+
+# The current selected park, empty at first
+# A list of all ~150 supported parks
+park_list = populate_park_list(http_requests)
+current_park = ThemePark()
+
+# The messages class contains a list of function calls
+# to the local Display class, which in turn uses the displayio Display
+SCROLL_DELAY = 4
+messages = MessageQueue(AsyncScrollingDisplay(display_hardware), SCROLL_DELAY)
+
+# Params for the next vacation, if set
+vacation_date = Vacation()
+
+
+def main_page():
     page = "<link rel=\"stylesheet\" href=\"style.css\">"
     page += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
     page += "</head>"
     page += "<body style=\"background-color:white;\">"
 
     page += "<div class=\"navbar\">"
-    page += "<a href=\"/\">Theme Park Wait Times</a>"
+    page += "<a href=\"#home\">Theme Park Wait Times</a>"
     page += "</div>"
 
     page += "<br>"
     page += "<h2>Choose a Park</h2>"
     page += "<div>"
-    page += "<form action=\"/action\">"
-    page += "<p>"
-    page += "<select name=\"park-names\" id=\"park-id\">\n"
+    page += "<form action=\"/\" method=\"GET\">"
+    page += "<p><select name=\"park-id\" id=\"park-id\">\n"
     for park in park_list:
         park_name = ThemePark.remove_non_ascii(park[0])
-        if park[1] == park_id:
+        if park[1] == current_park.id:
             page += f"<option value=\"{park[1]}\" selected>{park_name}</option>\n"
         else:
             page += f"<option value=\"{park[1]}\">{park_name}</option>\n"
-    page += "</select>"
-    page += "</p>"
+    page += "</select></p>"
 
-    page += "<p>"
-    page += "<label for=\"Name\"></label>"
-    page += "</p>"
-    page += "<p>"
-    page += "<input type=\"submit\">"
-    page += "</p>"
-    page += "</form>"
+    page += "<p><label for=\"Name\"></label></p>"
+#    page += "<p><input type=\"submit\"></p>"
+#   page += "</form>"
     page += "</div>"
 
     page += "<h2>Configure Next Visit</h2>"
     page += "<div>"
-    page += "<form action=\"/vacation\">"
     page += "<p>"
     page += "<label for=\"Name\">Park:</label>"
-    page += "<input type=\"text\" id=\"Name\" name=\"Name\">"
+    page += f"<input type=\"text\" name=\"Name\" style=\"text-align: left;\" value=\"{vacation_date.name}\">"
     page += "</p>"
+
     page += "<p>"
-    page += "<label for=\"Year\">Year:</label>"
-    page += "<input type=\"text\" id=\"Year\" name=\"Year\">"
+    page += "<label for=\"Date\">Date:</label>"
+    page += "<select id=\"Year\" name=\"Year\">"
+    year_now = datetime.now().year
+    for year in range(year_now, 2044):
+        if vacation_date.is_set() is True and year == vacation_date.year:
+            page += f"<option value=\"{year}\" selected>{year}</option>\n"
+        else:
+            page += f"<option value=\"{year}\">{year}</option>\n"
+    page += "</select>"
+    # page += "</p>"
+
+    # page += "<p>"
+    # page += "<label for=\"Month\">Month:</label>"
+    page += "<select id=\"Month\" name=\"Month\">"
+    for month in range(1,13):
+        if vacation_date.is_set() is True and month == vacation_date.month:
+            page += f"<option value=\"{month}\" selected>{month}</option>\n"
+        else:
+            page += f"<option value=\"{month}\">{month}</option>\n"
+    page += "</select>"
+    # page += "</p>"
+
+    # page += "<p>"
+    # page += "<label for=\"Day\">Day:</label>"
+    page += "<select id=\"Day\" name=\"Day\">"
+    for day in range(1,32):
+        if vacation_date.is_set() is True and day == vacation_date.day:
+            page += f"<option value=\"{day}\" selected>{day}</option>\n"
+        else:
+            page += f"<option value=\"{day}\">{day}</option>\n"
+    page += "</select>"
     page += "</p>"
-    page += "<p>"
-    page += "<label for=\"Month\">Month:</label>"
-    page += "<input type=\"text\" id=\"Month\" name=\"Month\">"
-    page += "</p>"
-    page += "<p>"
-    page += "<label for=\"Day\">Day:</label>"
-    page += "<input type=\"text\" id=\"Day\" name=\"Day\">"
-    page += "</p>"
+
     page += "<p>"
     page += "</p>"
 
@@ -214,44 +227,41 @@ def main(query_parameters, headers, body):
 
 @web_server.route("/", "GET")
 def main(query_parameters, headers, body):
-    page = main_page(-1)
-    response = biplane.Response(page, content_type="text/html")
-    return response
 
+    if len(query_parameters) > 0:
+        params = query_parameters.split("&")
+        vacation_date.parse(query_parameters)
+        current_park.parse(query_parameters, park_list)
 
-@web_server.route("/action", "GET")
-def main(query_parameters, headers, body):
-    new_park_id = int(query_parameters.split("=")[1])
-    new_park_name = get_park_name_from_id(park_list, new_park_id)
-    park.change_parks(new_park_name, new_park_id)
-    print(f"Selecting park {new_park_name}:{new_park_id}")
-    page = main_page(new_park_id)
-    return biplane.Response(page, content_type="text/html")
+        # The user may not have set a new flag, but this
+        # triggers the messages to reload.
+        messages.regenerate_flag = True
 
-
-@web_server.route("/vacation", "GET")
-def main(query_parameters, headers, body):
-    print(f"Vacation Form sent parameters: {query_parameters}")
-    vacation.parse(query_parameters)
-    page = main_page(park.id)
-    return biplane.Response(page, content_type="text/html")
+    return biplane.Response(main_page(), content_type="text/html")
 
 
 async def run_server():
-    for _ in web_server.circuitpython_start_wifi_ap(
-            "FBI Surveillance Van 112", "9196190607", "themeparkwaits"):
-        await asyncio.sleep(0)  # let other tasks run
+    for _ in web_server.circuitpython_start_wifi_ap("Test", "Param2", "Param3"):
+       await asyncio.sleep(0)  # let other tasks run
+    # with socket_pool.socket() as server_socket:
+    # print("http server yielding")
+    #    await web_server.start(server_socket, ('0.0.0.0', 80), 3)
+    #    await asyncio.sleep(0)
 
+messages.regenerate_flag = True
+current_park.id = 7
 
 async def run_display():
     while True:
         display_hardware.refresh(minimum_frames_per_second=0)
-        if park.new_flag is True:
+        if messages.regenerate_flag is True:
             await asyncio.create_task(update_live_wait_time())
-            await asyncio.create_task(messages.add_rides(park))
+            await asyncio.create_task(messages.add_rides(current_park,vacation_date))
 
-        await asyncio.create_task(messages.show())
-        # await asyncio.sleep(4)  # let other tasks run
+        # await asyncio.create_task(messages.show())
+        # Messages.show() uses create_task in its calls
+        await messages.show()
+        await asyncio.sleep(1)  # let other tasks run
 
 
 async def update_ride_times():
@@ -262,16 +272,15 @@ async def update_ride_times():
     while True:
         try:
             await asyncio.sleep(300)
-            if len(park.rides) > 0:
+            if len(current_park.rides) > 0:
                 await asyncio.create_task(update_live_wait_time())
-                await asyncio.create_task(messages.add_rides(park))
+                await asyncio.create_task(messages.add_rides(current_park, vacation_date))
 
         except RuntimeError:
             print("Runtime error getting wait times")
 
 
-mdns_setup()
 
 # run both coroutines at the same time
 asyncio.run(asyncio.gather(run_display(), run_server(), update_ride_times()))
-
+# asyncio.run(asyncio.gather(run_display()))

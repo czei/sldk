@@ -9,6 +9,7 @@
 # Web server library
 import biplane
 import asyncio
+import datetime
 import mdns
 import time
 import re
@@ -21,6 +22,7 @@ import displayio
 from theme_park_api import get_theme_parks_from_json
 from theme_park_api import get_park_name_from_id
 from theme_park_api import ThemePark
+from theme_park_api import Vacation
 from theme_park_api import Display
 from theme_park_api import MessageQueue
 from theme_park_api import get_park_url_from_id
@@ -63,8 +65,8 @@ web_server = biplane.Server()
 # --- MatrixPortalDisplay setup ---
 displayio.release_displays()
 runtime_display = Display(MatrixPortal(status_neopixel=board.NEOPIXEL, debug=False))
+vacation_settings = Vacation()
 messages = MessageQueue(runtime_display)
-
 
 
 # get List of theme parks to choose from
@@ -90,7 +92,6 @@ async def populate_ride_list(parks, park_id):
 park_list = populate_park_list()
 UPDATE_DELAY = 4
 display_wait = False
-
 
 
 async def update_live_wait_time():
@@ -165,14 +166,29 @@ def main_page(park_id):
     page += "<label for=\"Name\">Park:</label>"
     page += "<input type=\"text\" id=\"Name\" name=\"Name\">"
     page += "</p>"
+
     page += "<p>"
     page += "<label for=\"Year\">Year:</label>"
-    page += "<input type=\"text\" id=\"Year\" name=\"Year\">"
+    page += "<select id=\"Year\" name=\"Year\">"
+    for year in range(datetime.date.today().year, 2044):
+        if vacation_settings.is_set() is True and year == vacation_settings.year:
+            page += f"<option value=\"{year}\" selected>{year}</option>\n"
+        else:
+            page += f"<option value=\"{year}\">{year}</option>\n"
+    page += "</select>"
     page += "</p>"
+
     page += "<p>"
     page += "<label for=\"Month\">Month:</label>"
-    page += "<input type=\"text\" id=\"Month\" name=\"Month\">"
+    page += "<select id=\"Month\" name=\"Month\">"
+    for month in range(1,12):
+        if vacation_settings.is_set() is True and month == vacation_settings.month:
+            page += f"<option value=\"{month}\" selected>{month}</option>\n"
+        else:
+            page += f"<option value=\"{month}\">{month}</option>\n"
+    page += "</select>"
     page += "</p>"
+
     page += "<p>"
     page += "<label for=\"Day\">Day:</label>"
     page += "<input type=\"text\" id=\"Day\" name=\"Day\">"
@@ -218,11 +234,10 @@ def main(query_parameters, headers, body):
 @web_server.route("/vacation", "GET")
 def main(query_parameters, headers, body):
     print(f"Vacation Form sent parameters: {query_parameters}")
+    vacation_settings.parse(query_parameters)
+    park.new_flag = True
     page = main_page(park.id)
     return biplane.Response(page, content_type="text/html")
-
-
-
 
 
 async def run_server():
@@ -234,7 +249,7 @@ async def run_display():
     while True:
         if park.new_flag is True:
             await asyncio.create_task(update_live_wait_time())
-            await asyncio.create_task(messages.init_message_queue(park))
+            await asyncio.create_task(messages.init_message_queue(park, vacation_settings))
 
         await asyncio.create_task(messages.show())
         # await asyncio.sleep(4)  # let other tasks run
