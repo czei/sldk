@@ -53,16 +53,16 @@ def wifi_setup():
     ssid = secrets["ssid"]
     print(f"Connected to Wifi: {ssid} at {wifi.radio.ipv4_address}")
 
+
+def mdns_setup():
+    mdns_server = mdns.Server(wifi.radio)
+    mdns_server.hostname = "themeparkwaits"
+    mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=80)
+
+
 # Setup Networking and WI-FI
 wifi_setup()
-
-# def mdns_setup():
-# Putting mdns in function causes it to stop working
-mdns_server = mdns.Server(wifi.radio)
-mdns_server.hostname = "themeparkwaits"
-mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=80)
-
-# mdns_setup()
+mdns_setup()
 
 # Setup Global Sockets and Server
 socket_pool = socketpool.SocketPool(wifi.radio)
@@ -273,11 +273,11 @@ def start_web_server(wserver):
 start_web_server(web_server)
 
 
-async def run_web_server(wserver):
+async def run_web_server():
     while True:
         try:
             # Process any waiting requests
-            pool_result = wserver.poll()
+            pool_result = web_server.poll()
             await asyncio.sleep(.2)
             if pool_result == REQUEST_HANDLED_RESPONSE_SENT:
                 # Do something only after handling a request
@@ -324,14 +324,13 @@ async def update_ride_times():
 
 
 # Gives unknown host error
-asyncio.run(asyncio.gather(
-    run_display(),
-    run_web_server(web_server),
-    update_ride_times(),
-))
+#asyncio.run(asyncio.gather(
+#    run_display(),
+#    run_web_server(),
+#))
 #    update_ride_times())
 # Tried by itself, mDNS works
 # asyncio.run(run_display())
 
 # Gives unknown host error
-# asyncio.run(run_web_server())
+asyncio.run(run_web_server())

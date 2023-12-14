@@ -154,7 +154,7 @@ class Server:
       if e.errno not in (errno.ECONNRESET, errno.ENOTCONN):
         raise
 
-  def start(self, server_socket, listen_on=('0.0.0.0', 80), max_parallel_connections=5):
+  async def start(self, server_socket, listen_on=('0.0.0.0', 80), max_parallel_connections=5):
     server_socket.setblocking(False)
     server_socket.bind(listen_on)
     server_socket.listen(max_parallel_connections)
@@ -199,6 +199,18 @@ class Server:
     server.advertise_service(service_type="_http", protocol="_tcp", port=listen_on[1])
     pool = socketpool.SocketPool(wifi.radio)
     with pool.socket() as server_socket:
+      yield from self.start(server_socket, listen_on, max_parallel_connections)
+
+  def circuitpython_start_existing_wifi(self, pool, listen_on=('0.0.0.0', 80), max_parallel_connections=5):
+    import socketpool
+    # wifi.radio.start_ap(ssid=ssid, password=password)
+    # print(f"starting mDNS at {mdns_hostname}.local (IP address {wifi.radio.ipv4_address_ap})")
+    # server = mdns.Server(wifi.radio)
+    # server.hostname = mdns_hostname
+    # server.advertise_service(service_type="_http", protocol="_tcp", port=listen_on[1])
+    # pool = socketpool.SocketPool(wifi.radio)
+    with pool.socket() as server_socket:
+      print("Getting another socket")
       yield from self.start(server_socket, listen_on, max_parallel_connections)
 
   def circuitpython_start_wifi_station(self, ssid, password, mdns_hostname, listen_on=('0.0.0.0', 80), max_parallel_connections=5):

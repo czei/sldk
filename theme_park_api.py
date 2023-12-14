@@ -1,38 +1,35 @@
-import wifi
-import ssl
 import rtc
-import adafruit_requests
-import socketpool
 import terminalio
 import asyncio
 import displayio
 from adafruit_datetime import datetime
 from adafruit_display_text.label import Label
+import json
 
 
 def set_system_clock(http_requests):
     # Set device time from the internet
-    response = http_requests.get('http://worldtimeapi.org/api/timezone/America/New_York')
+    response = http_requests.get(
+        'http://worldtimeapi.org/api/timezone/America/New_York')
     time_data = response.json()
     date_string = time_data["datetime"]
     date_elements = date_string.split("T")
     date = date_elements[0].split("-")
     the_time = date_elements[1].split(".")
-    offset = the_time[1]
     the_time = the_time[0].split(":")
 
     # Pass elements to datetime constructor
     #            int(float(offset)*1000000)
     datetime_object = (
-         int(date[0]),
-         int(date[1]),
-         int(date[2]),
-         int(the_time[0]),
-         int(the_time[1]),
-         int(the_time[2]),
-         -1,
-         -1,
-         -1
+        int(date[0]),
+        int(date[1]),
+        int(date[2]),
+        int(the_time[0]),
+        int(the_time[1]),
+        int(the_time[2]),
+        -1,
+        -1,
+        -1
     )
 
     print(f"Setting the time to {datetime_object}")
@@ -204,6 +201,9 @@ class ThemePark:
 
         return ride_list
 
+    def is_valid(self):
+        return self.id >= 0
+
     def set_rides(self, ride_json):
         self.rides = self.get_rides_from_json(ride_json)
         self.counter = 0
@@ -263,6 +263,16 @@ class ThemePark:
                 print(f"New park name = {self.name}")
                 print(f"New park id = {self.id}")
 
+    def store_settings(self, sm):
+        sm.settings["current_park_name"] = self.name
+        sm.settings["current_park_id"] = self.id
+
+    def load_settings(self, sm):
+        if "current_park_name" in sm.settings.keys():
+            self.name = sm.settings.get("current_park_name")
+        if "current_park_id" in sm.settings.keys():
+            self.id = sm.settings.get("current_park_id")
+
 
 class ThemeParkIterator:
     def __init__(self, park):
@@ -311,13 +321,29 @@ class Vacation:
         print(f"The current year is {today.year}")
         future = datetime(self.year, self.month, self.day)
         diff = future - today
-        return diff.days+1
+        return diff.days + 1
 
     def is_set(self):
         if len(self.name) > 0 and self.year > 1999 and self.month > 0 and self.day > 0:
             return True
 
         return False
+
+    def store_settings(self, sm):
+        sm.settings["next_visit"] = self.name
+        sm.settings["next_visit_year"] = self.year
+        sm.settings["next_visit_month"] = self.month
+        sm.settings["next_visit_day"] = self.day
+
+    def load_settings(self, sm):
+        if "next_visit" in sm.settings.keys():
+            self.name = sm.settings.get("next_visit")
+        if "next_visit_year" in sm.settings.keys():
+            self.year = sm.settings.get("next_visit_year")
+        if "next_visit_month" in sm.settings.keys():
+            self.month = sm.settings.get("next_visit_month")
+        if "next_visit_day" in sm.settings.keys():
+            self.day = sm.settings.get("next_visit_day")
 
 
 class Display:
@@ -354,7 +380,6 @@ class AsyncScrollingDisplay(Display):
         self.scrolling_label = Label(terminalio.FONT)
         self.scrolling_label.x = 0
         self.scrolling_label.y = 15
-        self.scrolling_label.color = self.BLUE_COLOR
         self.scrolling_group = displayio.Group()
         self.scrolling_group.append(self.scrolling_label)
         self.scrolling_group.hidden = True
@@ -364,7 +389,6 @@ class AsyncScrollingDisplay(Display):
         self.wait_time_name.x = 0
         self.wait_time_name.y = 6
         self.wait_time_name.scale = 1
-        self.wait_time_name.color = self.BLUE_COLOR
         self.wait_time_name_group = displayio.Group()
         self.wait_time_name_group.append(self.wait_time_name)
         self.wait_time_name_group.hidden = True
@@ -373,7 +397,6 @@ class AsyncScrollingDisplay(Display):
         self.wait_time.x = 0
         self.wait_time.y = 22
         self.wait_time.scale = (2)
-        self.wait_time_name.color = self.BLUE_COLOR
         self.wait_time_group = displayio.Group()
         self.wait_time_group.append(self.wait_time)
         self.wait_time_group.hidden = True
@@ -383,7 +406,6 @@ class AsyncScrollingDisplay(Display):
         self.closed.y = 22
         self.closed.scale = (1)
         self.closed.text = "Closed"
-        self.closed.color = self.WHITE_COLOR
         self.closed_group = displayio.Group()
         self.closed_group.append(self.closed)
         self.closed_group.hidden = True
@@ -395,6 +417,14 @@ class AsyncScrollingDisplay(Display):
         self.main_group.append(self.wait_time_group)
         self.main_group.append(self.closed_group)
         self.hardware.root_group = self.main_group
+
+    def set_colors(self, settings):
+        new_color = int(settings.settings["ride_wait_time_color"])
+        print(f"The new color is {new_color}")
+        self.wait_time_name.color = int(settings.settings["ride_wait_time_color"])
+        self.closed.color = int(settings.settings["ride_wait_time_color"])
+        self.scrolling_label.color = int(settings.settings["default_color"])
+        self.wait_time_name.color = int(settings.settings["ride_name_color"])
 
     async def off(self):
         self.scrolling_group.hidden = True
@@ -442,7 +472,6 @@ class AsyncScrollingDisplay(Display):
 
     def scroll(self, line):
         line.x = line.x - 1
-        # self.hardware.refresh(minimum_frames_per_second=0)
         line_width = line.bounding_box[2]
         if line.x < -line_width:
             line.x = self.hardware.width
@@ -532,7 +561,6 @@ CONFIGURATION_MESSAGE = "Configure at http://themeparkwaits.local"
 
 #  The things to display on the screen
 class MessageQueue:
-
     def __init__(self, d, delay_param=4):
         self.display = d
         self.delay = delay_param
@@ -556,10 +584,10 @@ class MessageQueue:
         self.index = 0
         self.func_queue.append(self.display.show_scroll_message)
         self.param_queue.append(REQUIRED_MESSAGE)
-        self.delay_queue.append(0)
+        self.delay_queue.append(self.delay)
         self.func_queue.append(self.display.show_scroll_message)
         self.param_queue.append(park.name + ":")
-        self.delay_queue.append(0)
+        self.delay_queue.append(self.delay)
 
         print("Vacation setting in add_rides:")
         vac.print()
@@ -574,7 +602,6 @@ class MessageQueue:
                 self.delay_queue.insert(0, 0)
 
         for ride in park.rides:
-            await asyncio.sleep(0)
             if ride.is_open is True:
                 self.func_queue.append(self.display.show_ride_wait_time)
                 self.param_queue.append(str(ride.wait_time))
@@ -599,35 +626,40 @@ class MessageQueue:
 
 
 class ColorUtils:
-    colors = [("White", "0xffffff"),
-              ("Red", "0xcc3333"),
-              ("Yellow", "0xff9600"),
-              ("Orange", "0xff2800"),
-              ("Green", "0x00ff00"),
-              ("Teal", "0x00ff78"),
-              ("Cyan", "0x00ffff"),
-              ("Blue", "0x0000aa"),
-              ("Purple", "0xb400ff"),
-              ("Magenta", "0xff0016"),
-              ("White", "0xffffff"),
-              ("Black", "0x000000"),
-              ("Gold", "0xffde1e"),
-              ("Pink", "0xf25aff"),
-              ("Aqua", "0x32ffff"),
-              ("Jade", "0x00ff28"),
-              ("Amber", "0xff6400"),
-              ("Old Lace", "0xfdf5e6")]
+    # def __init__(self, d, delay_param=4):
+    colors = {'White': '0xffffff',
+              'Red': '0xcc3333',
+              'Yellow': '0xff9600',
+              'Orange': '0xff2800',
+              'Green': '0x00ff00',
+              'Teal': '0x00ff78',
+              'Cyan': '0x00ffff',
+              'Blue': '0x0000aa',
+              'Purple': '0xb400ff',
+              'Magenta': '0xff0016',
+              'Black': '0x000000',
+              'Gold': '0xffde1e',
+              'Pink': '0xf25aff',
+              'Aqua': '0x32ffff',
+              'Jade': '0x00ff28',
+              'Amber': '0xff6400',
+              'Old Lace': '0xfdf5e6'}
 
     @staticmethod
-    def html_color_chooser(name, id, hex_num):
-        str_hex_num = hex(hex_num)
+    def html_color_chooser(self, name, hex_num_str):
+        """
+        :param self:
+        :param name: Name of the HTML select field
+        :param hex_num_str:  A string representation of the selected color
+        :return:
+        """
         html = ""
         html += f"<select name=\"{name}\" id=\"{id}\">\n"
         for color in ColorUtils.colors:
-            if color[1] == str_hex_num:
-                html += f"<option value=\"{color[1]}\" selected>{color[0]}</option>\n"
+            if self.colors[color] == hex_num_str:
+                html += f"<option value=\"{self.colors[color]}\" selected>{color}</option>\n"
             else:
-                html += f"<option value=\"{color[1]}\">{color[0]}</option>\n"
+                html += f"<option value=\"{self.colors[color]}\">{color}</option>\n"
 
         html += "</select>"
         return html
@@ -639,3 +671,34 @@ class ColorUtils:
     @staticmethod
     def number_to_hex_string(num):
         return hex(num)
+
+
+# Can't get dataclasses to work on MatrixPortal S3.
+# @dataclasses.dataclass
+class SettingsManager:
+    def __init__(self, filename):
+        self.filename = filename
+        self.settings = self.load_settings()
+        if self.settings.get("display_closed_rides") is None:
+            self.settings["display_closed_rides"] = True
+        if self.settings.get("default_color") is None:
+            self.settings["default_color"] = ColorUtils.colors["Yellow"]
+        if self.settings.get("park_name_color") is None:
+            self.settings["park_name_color"] = ColorUtils.colors["Blue"]
+        if self.settings.get("ride_name_color") is None:
+            self.settings["ride_name_color"] = ColorUtils.colors["Blue"]
+        if self.settings.get("ride_wait_time_color") is None:
+            self.settings["ride_wait_time_color"] = ColorUtils.colors["White"]
+        if self.settings.get("vacation_color") is None:
+            self.settings["vacation_color"] = ColorUtils.colors["Red"]
+
+    def load_settings(self):
+        try:
+            with open(self.filename, 'r') as f:
+                return json.load(f)
+        except OSError:
+            return {}
+
+    def save_settings(self):
+        with open(self.filename, 'w') as f:
+            json.dump(self.settings, f, indent=4)

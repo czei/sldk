@@ -1,3 +1,4 @@
-Adafruit CircuitPython 8.2.7 on 2023-10-19; Adafruit MatrixPortal S3 with ESP32S3
+Adafruit CircuitPython 8.2.6 on 2023-09-12; Adafruit MatrixPortal S3 with ESP32S3
 Board ID:adafruit_matrixportal_s3
 UID:4358812B84C6
+boot.py output:
