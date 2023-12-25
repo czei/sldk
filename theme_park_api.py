@@ -65,6 +65,8 @@ def get_theme_parks_from_json(json):
                 park = company[parks]
                 name = ""
                 park_id = 0
+                latitude = 0
+                longitude = 0
                 for item in park:
                     # print(f"park = {item}")
                     for element in item:
@@ -72,11 +74,13 @@ def get_theme_parks_from_json(json):
                             name = item[element]
                         if element == "id":
                             park_id = item[element]
-                    name_id = tuple([name, park_id])
+                        if element == "latitude":
+                            latitude = item[element]
+                        if element == "longitude":
+                            longitude = item[element]
+                    name_id = tuple([name, park_id, latitude, longitude])
                     # print(f"Adding tuple {name_id}")
                     park_list.append(name_id)
-
-    # print(park_list)
 
     return park_list
 
@@ -93,11 +97,7 @@ def get_rides_from_json(json_data):
         # print(f"company = {company}")
         rides = land["rides"]
         for ride in rides:
-            name = ride["name"]
-            ride_id = ride["id"]
-            wait_time = ride["wait_time"]
-            is_open = ride["is_open"]
-            park_desc = [name, ride_id, wait_time, is_open]
+            park_desc = [ride["name"], ride["id"], ride["wait_time"], ride["is_open"]]
             ride_list.append(park_desc)
     return ride_list
 
@@ -134,6 +134,20 @@ def get_park_url_from_id(park_list, park_id):
     return url1 + str(park_id) + url2
 
 
+def get_park_location_from_id(park_list, park_id):
+    """
+    Takes the output from get_theme_parks_from_json and assembles
+    the URL to get individual ride data.
+    :param park_list: A list of tuples of park names and ids
+    :param park_id: The id from QueueTimes.com
+    :return: JSON url for a particular theme park
+    """
+    # Magic Kingdom URL example: https://queue-times.com/parks/6/queue_times.json
+    for park in park_list:
+        if park[1] == park_id:
+            return park[2], park[3]
+
+
 def get_park_name_from_id(park_list, park_id):
     park_name = ""
     for park in park_list:
@@ -151,7 +165,7 @@ class ThemeParkRide:
 
 
 class ThemePark:
-    def __init__(self, json_data=(), name="", id=0):
+    def __init__(self, json_data=(), name="", id=0, latitude=0.0, longitude=0.0):
         """
         :param self:
         :param json_data: Python JSON objects from a single park
@@ -160,6 +174,8 @@ class ThemePark:
         self.counter = 0
         self.name = name
         self.id = id
+        self.latitude = latitude
+        self.longitude = longitude
         self.rides = self.get_rides_from_json(json_data)
 
     @staticmethod
@@ -260,8 +276,13 @@ class ThemePark:
             if name_value[0] == "park-id":
                 self.id = int(name_value[1])
                 self.name = get_park_name_from_id(park_list, self.id)
+                location = get_park_location_from_id(park_list, self.id)
+                self.latitude = location[0]
+                self.longitude = location[1]
                 print(f"New park name = {self.name}")
                 print(f"New park id = {self.id}")
+                print(f"New park latitude = {self.latitude}")
+                print(f"New park longitude = {self.longitude}")
 
     def store_settings(self, sm):
         sm.settings["current_park_name"] = self.name
@@ -561,10 +582,10 @@ CONFIGURATION_MESSAGE = "Configure at http://themeparkwaits.local"
 
 #  The things to display on the screen
 class MessageQueue:
-    def __init__(self, d, delay_param=4):
+    def __init__(self, d, delay_param=4, regen_flag = False):
         self.display = d
         self.delay = delay_param
-        self.regenerate_flag = False
+        self.regenerate_flag = regen_flag
         self.func_queue = []
         self.param_queue = []
         self.delay_queue = []
@@ -701,4 +722,4 @@ class SettingsManager:
 
     def save_settings(self):
         with open(self.filename, 'w') as f:
-            json.dump(self.settings, f, indent=4)
+            json.dump(self.settings, f)

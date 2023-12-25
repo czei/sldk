@@ -8,15 +8,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Runs with all 3 processes, but goes into safe mode after 30-90 minutes from watchdog reset.">
-      <change afterPath="$PROJECT_DIR$/boot.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code-http-test.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code-mdns-test.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/screenlog.0" afterDir="false" />
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Works without crashing with mDNS and updating in the background. boot.py is hosed and will lock drive in read-only mode.">
+      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/boot-orig.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/code-bak.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/settings.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/boot.py" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/boot.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/boot.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/boot.py" beforeDir="false" afterPath="$PROJECT_DIR$/boot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/code.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_theme-park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_theme-park_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/theme-park-list.json" beforeDir="false" afterPath="$PROJECT_DIR$/theme-park-list.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/theme_park_api.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -195,6 +196,25 @@
       <workItem from="1702343599973" duration="2175000" />
       <workItem from="1702482540747" duration="11139000" />
       <workItem from="1702518141017" duration="3665000" />
+      <workItem from="1702563223968" duration="108000" />
+      <workItem from="1702601957390" duration="684000" />
+      <workItem from="1702602649828" duration="923000" />
+      <workItem from="1702603627440" duration="1524000" />
+      <workItem from="1702646818948" duration="2823000" />
+      <workItem from="1702658139219" duration="63000" />
+      <workItem from="1702658222202" duration="13073000" />
+      <workItem from="1702677818896" duration="253000" />
+      <workItem from="1702742083951" duration="722000" />
+      <workItem from="1702744586680" duration="920000" />
+      <workItem from="1702758562064" duration="2472000" />
+      <workItem from="1702761051747" duration="1872000" />
+      <workItem from="1702866543074" duration="86000" />
+      <workItem from="1702866636033" duration="600000" />
+      <workItem from="1703192304326" duration="5000" />
+      <workItem from="1703195477428" duration="1647000" />
+      <workItem from="1703197140054" duration="1648000" />
+      <workItem from="1703203313068" duration="2421000" />
+      <workItem from="1703448496948" duration="286000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <option name="closed" value="true" />
@@ -300,7 +320,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701791333942</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="Works without crashing with mDNS and updating in the background. boot.py is hosed and will lock drive in read-only mode.">
+      <option name="closed" value="true" />
+      <created>1702563296603</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1702563296603</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -335,7 +363,8 @@
     <MESSAGE value="Refactored into message queue." />
     <MESSAGE value="Display is fully async." />
     <MESSAGE value="Runs with all 3 processes, but goes into safe mode after 30-90 minutes from watchdog reset." />
-    <option name="LAST_COMMIT_MESSAGE" value="Runs with all 3 processes, but goes into safe mode after 30-90 minutes from watchdog reset." />
+    <MESSAGE value="Works without crashing with mDNS and updating in the background. boot.py is hosed and will lock drive in read-only mode." />
+    <option name="LAST_COMMIT_MESSAGE" value="Works without crashing with mDNS and updating in the background. boot.py is hosed and will lock drive in read-only mode." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -343,6 +372,16 @@
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/webgui.py</url>
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test_theme-park_api.py</url>
+          <line>235</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/test_theme-park_api.py</url>
+          <line>151</line>
+          <option name="timeStamp" value="10" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -363,8 +402,8 @@
     <SUITE FILE_PATH="coverage/ThemeParkAPI$main.coverage" NAME="main Coverage Results" MODIFIED="1697480086211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$Doctests_in___init__.coverage" NAME="Doctests in __init__ Coverage Results" MODIFIED="1697475842243" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$webgui.coverage" NAME="webgui Coverage Results" MODIFIED="1700400556244" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/ThemeParkAPI$theme_park_api.coverage" NAME="theme_park_api Coverage Results" MODIFIED="1702263098371" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Volumes/CIRCUITPY" />
+    <SUITE FILE_PATH="coverage/ThemeParkAPI$theme_park_api.coverage" NAME="theme_park_api Coverage Results" MODIFIED="1702603819132" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$code.coverage" NAME="code Coverage Results" MODIFIED="1698962133526" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Volumes/CIRCUITPY" />
-    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1702263361178" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Volumes/CIRCUITPY" />
+    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1702761700965" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

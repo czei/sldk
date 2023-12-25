@@ -6,6 +6,7 @@ from theme_park_api import ThemePark
 from theme_park_api import get_theme_parks_from_json
 from theme_park_api import get_park_name_from_id
 from theme_park_api import Vacation
+from theme_park_api import get_park_location_from_id
 from theme_park_api import set_system_clock
 import json
 # import rtc
@@ -200,19 +201,20 @@ class Test(TestCase):
         park = ThemePark()
         self.assertTrue(type(park) is ThemePark)
 
-    def test_get_park_name_from_id(self):
+    def test_get_park_location_from_id(self):
         url1 = "https://queue-times.com/parks.json"
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3"}
         req = Request(url=url1, headers=headers)
         response = urlopen(req).read()
         data = json.loads(response)
-
         park_list = get_theme_parks_from_json(data)
+
+        location = get_park_location_from_id(park_list, 6)
+        print(f"Location of park id 6 is {location}: {location[0]}, {location[1]}")
         self.assertTrue(len(park_list) > 0)
-        self.assertTrue(get_park_name_from_id(park_list, 7) == "Disney Hollywood Studios")
-        self.assertTrue(get_park_name_from_id(park_list, 16) == "Disneyland")
-        self.assertTrue(get_park_name_from_id(park_list, 6) == "Disney Magic Kingdom")
+        self.assertTrue(location[0] == "28.417663")
+        self.assertTrue(location[1] == "-81.581212")
 
     def test_vacation(self):
         params = "Name=Wdw&Year=2024&Month=1&Day=2"
@@ -226,8 +228,8 @@ class Test(TestCase):
         self.assertTrue(vac.is_set() is True)
 
         # Can't test day counting without RTC
-        #rtc.RTC().datetime = (2023, 1, 2, 0, 1, 34, 0, 0, 0)
-        #today = datetime.now()
+        # rtc.RTC().datetime = (2023, 1, 2, 0, 1, 34, 0, 0, 0)
+        # today = datetime.now()
         self.assertTrue(vac.get_days_until() >= 0)
 
     def test_park_param_parsing(self):
@@ -263,7 +265,7 @@ class Test(TestCase):
         ltime = ltime[0].split(":")
 
         # Pass elements to datetime constructor
-        datetime_object = time.struct_time(
+        datetime_object = ltime.struct_time(
             int(date[0]),
             int(date[1]),
             int(date[2]),
@@ -277,23 +279,21 @@ class Test(TestCase):
         self.assertTrue(datetime_object.day == 4)
         self.assertTrue(datetime_object.month == 12)
 
+    def test_settings_manager(self):
+        manager = SettingsManager("settings.json")
+        manager.settings["new_param"] = 12
+        self.assertTrue(manager.settings["display_closed_rides"] is True)
+        manager.settings["display_closed_rides"] = False
+        self.assertTrue(manager.settings["display_closed_rides"] is False)
+        self.assertTrue(manager.settings["new_param"] == 12)
 
-def test_settings_manager(self):
-    manager = SettingsManager("settings.json")
-    manager.settings["new_param"] = 12
-    self.assertTrue(manager.settings["display_closed_rides"] is True)
-    manager.settings["display_closed_rides"] = False
-    self.assertTrue(manager.settings["display_closed_rides"] is False)
-    self.assertTrue(manager.settings["new_param"] == 12 )
-
-    manager.save_settings()
-    manager1 = SettingsManager("settings.json")
-    manager1.load_settings()
-    self.assertTrue(manager1.settings["display_closed_rides"] is False)
-    self.assertTrue(manager1.settings["new_param"] == 12 )
-
-
-
+        manager.save_settings()
+        manager1 = SettingsManager("settings.json")
+        manager1.load_settings()
+        self.assertTrue(manager1.settings["display_closed_rides"] is False)
+        self.assertTrue(manager1.settings["new_param"] == 12)
+        manager.settings["display_closed_rides"] = True
+        manager.save_settings()
 
     #    def test_message_queue(self):
 #        mocker = Mock()

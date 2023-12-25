@@ -1,5 +1,5 @@
 # Theme Park Waits
-# V]��Winformation about ride wait times at any theme park
+# View information about ride wait times at any theme park
 #
 # import biplane
 import asyncio
@@ -53,19 +53,21 @@ def wifi_setup():
     ssid = secrets["ssid"]
     print(f"Connected to Wifi: {ssid} at {wifi.radio.ipv4_address}")
 
-# Configure DNS so that users can configure at http://themeparkwaits.local
+# Setup Networking and WI-FI
+wifi_setup()
+
+# def mdns_setup():
+# Putting mdns in function causes it to stop working
 mdns_server = mdns.Server(wifi.radio)
 mdns_server.hostname = "themeparkwaits"
 mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=80)
 
-
-# Setup Networking and WI-FI
-wifi_setup()
+# mdns_setup()
 
 # Setup Global Sockets and Server
 socket_pool = socketpool.SocketPool(wifi.radio)
 http_requests = adafruit_requests.Session(socket_pool, ssl.create_default_context())
-web_server = adafruit_httpserver.Server(socket_pool, "/static", debug=False)
+web_server = adafruit_httpserver.Server(socket_pool, "/static", debug=True)
 
 # Display Setup
 displayio.release_displays()
@@ -119,8 +121,8 @@ async def update_live_wait_time():
     # await asyncio.sleep(0)
 
 
-
-
+# Set device time from the internet
+set_system_clock(http_requests)
 
 # Associate the RGB matrix with a Display so we can use displayio
 display_hardware = framebufferio.FramebufferDisplay(
@@ -237,6 +239,7 @@ def base(request: Request):
 
 
 @web_server.route("/")
+# def main(query_parameters, headers, body):
 def base(request: Request):
     if len(request.query_params) > 0:
         vacation_date.parse(str(request.query_params))
@@ -249,11 +252,8 @@ def base(request: Request):
         # This # triggers the messages to reload with new info.
         messages.regenerate_flag = True
 
-        try:
-            # Save the settings to disk
-            settings.save_settings()
-        except OSError:
-            print("Unable to save settings, drive is read only.")
+        # Save the settings to disk
+        settings.save_settings()
 
     return adafruit_httpserver.Response(request, main_page(), content_type="text/html")
 
@@ -273,11 +273,11 @@ def start_web_server(wserver):
 start_web_server(web_server)
 
 
-async def run_web_server():
+async def run_web_server(wserver):
     while True:
         try:
             # Process any waiting requests
-            pool_result = web_server.poll()
+            pool_result = wserver.poll()
             await asyncio.sleep(.2)
             if pool_result == REQUEST_HANDLED_RESPONSE_SENT:
                 # Do something only after handling a request
@@ -322,11 +322,16 @@ async def update_ride_times():
         except RuntimeError:
             print("Runtime error getting wait times")
 
-# Set device time from the internet
-set_system_clock(http_requests)
 
+# Gives unknown host error
 asyncio.run(asyncio.gather(
     run_display(),
-    run_web_server(),
-    update_ride_times()
+    run_web_server(web_server),
+    update_ride_times(),
 ))
+#    update_ride_times())
+# Tried by itself, mDNS works
+# asyncio.run(run_display())
+
+# Gives unknown host error
+# asyncio.run(run_web_server())
