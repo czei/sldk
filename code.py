@@ -18,13 +18,16 @@ import adafruit_httpserver
 from adafruit_datetime import datetime, time
 
 from adafruit_httpserver import (
-    Server,
+    Status,
     REQUEST_HANDLED_RESPONSE_SENT,
     Request,
-    FileResponse,
+    Response,
+    Headers,
+    GET,
+    POST
 )
 
-from theme_park_api import set_system_clock
+from theme_park_api import set_system_clock, ColorUtils
 from theme_park_api import get_park_name_from_id
 from theme_park_api import ThemePark
 from theme_park_api import Vacation
@@ -144,19 +147,25 @@ vacation_date.load_settings(settings)
 display = AsyncScrollingDisplay(display_hardware)
 display.set_colors(settings)
 SCROLL_DELAY = 4
-messages = MessageQueue(display, SCROLL_DELAY)
+messages = MessageQueue(display, SCROLL_DELAY, current_park.is_valid())
 
 
-def main_page():
+def generate_header():
     page = "<link rel=\"stylesheet\" href=\"style.css\">"
     page += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
     page += "</head>"
     page += "<body style=\"background-color:white;\">"
 
     page += "<div class=\"navbar\">"
-    page += "<a href=\"#home\">Theme Park Wait Times</a>"
+    page += "<a href=\"/\">Theme Park Wait Times</a>\n"
+    page += "<div class=\"settings\">"
+    page += "<a href=\"/settings.html\" class=\"settings\">&#x2699;</a>\n"
     page += "</div>"
+    page += "</div>"
+    return page
 
+def generate_main_page():
+    page = generate_header()
     page += "<br>"
     page += "<h2>Choose a Park</h2>"
     page += "<div>"
@@ -171,8 +180,6 @@ def main_page():
     page += "</select></p>"
 
     page += "<p><label for=\"Name\"></label></p>"
-    #    page += "<p><input type=\"submit\"></p>"
-    #   page += "</form>"
     page += "</div>"
 
     page += "<h2>Configure Next Visit</h2>"
@@ -192,10 +199,7 @@ def main_page():
         else:
             page += f"<option value=\"{year}\">{year}</option>\n"
     page += "</select>"
-    # page += "</p>"
 
-    # page += "<p>"
-    # page += "<label for=\"Month\">Month:</label>"
     page += "<select id=\"Month\" name=\"Month\">"
     for month in range(1, 13):
         if vacation_date.is_set() is True and month == vacation_date.month:
@@ -203,10 +207,7 @@ def main_page():
         else:
             page += f"<option value=\"{month}\">{month}</option>\n"
     page += "</select>"
-    # page += "</p>"
 
-    # page += "<p>"
-    # page += "<label for=\"Day\">Day:</label>"
     page += "<select id=\"Day\" name=\"Day\">"
     for day in range(1, 32):
         if vacation_date.is_set() is True and day == vacation_date.day:
@@ -225,6 +226,7 @@ def main_page():
     page += "</p>"
     page += "</form>"
     page += "</div>"
+    page += "<body>"
     return page
 
 
@@ -236,7 +238,47 @@ def base(request: Request):
     return adafruit_httpserver.Response(request, data, content_type="text/html")
 
 
-@web_server.route("/")
+@web_server.route("/settings.html", [GET,POST])
+def base(request: Request):
+
+    # Parse new settings
+    if request.method == POST:
+        for name, value in request.form_data.items():
+            settings.settings[name] = value
+        display.set_colors(settings)
+        try:
+        # Save the settings to disk
+            settings.save_settings()
+        except OSError:
+            print("Unable to save settings, drive is read only.")
+
+    page = generate_header()
+    page += "<h2>Display Colors</h2>"
+    page += "<div>"
+    page += "<form action=\"/settings.html\" method=\"POST\">"
+
+    for color_setting_name, color_value in settings.settings.items():
+        if "color" in color_setting_name:
+            page += "<p>"
+            page += f"<label for=\"Name\">{SettingsManager.get_pretty_name(color_setting_name)}</label>"
+            page += ColorUtils.html_color_chooser(color_setting_name, hex_num_str=color_value)
+            page += "</p>"
+
+    page += "<p>"
+    page += "<label for=\"Submit\"></label>"
+    page += "<input type=\"submit\">"
+    page += "</p>"
+    page += "</form>"
+    page += "</div>"
+    page += "<body>"
+
+    return adafruit_httpserver.Response(request, page, content_type="text/html")
+
+# @web_server.route("/settings.html", [POST])
+# def base(request: Request):
+#     return adafruit_httpserver.Response(request, page, content_type="text/html")
+
+@web_server.route("/", [GET])
 def base(request: Request):
     if len(request.query_params) > 0:
         vacation_date.parse(str(request.query_params))
@@ -255,7 +297,12 @@ def base(request: Request):
         except OSError:
             print("Unable to save settings, drive is read only.")
 
-    return adafruit_httpserver.Response(request, main_page(), content_type="text/html")
+        request.query_params = ({})
+        head = Headers({"Location": "/"})
+        response = Response(request, "", headers=head,status=Status(302, "Moved temporarily"), content_type="text/html")
+        return response
+
+    return adafruit_httpserver.Response(request, generate_main_page(), content_type="text/html")
 
 
 def start_web_server(wserver):

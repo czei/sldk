@@ -8,16 +8,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Works without crashing with mDNS and updating in the background. boot.py is hosed and will lock drive in read-only mode.">
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/boot-orig.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/code-bak.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/settings.json" afterDir="false" />
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Backup before adding settings GUI.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/boot.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/boot.py" beforeDir="false" afterPath="$PROJECT_DIR$/boot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/code.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_theme-park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_theme-park_api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/theme-park-list.json" beforeDir="false" afterPath="$PROJECT_DIR$/theme-park-list.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/settings.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/theme_park_api.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -215,6 +209,17 @@
       <workItem from="1703197140054" duration="1648000" />
       <workItem from="1703203313068" duration="2421000" />
       <workItem from="1703448496948" duration="286000" />
+      <workItem from="1703463871622" duration="926000" />
+      <workItem from="1703464819186" duration="5282000" />
+      <workItem from="1703526322080" duration="803000" />
+      <workItem from="1703527136210" duration="1089000" />
+      <workItem from="1703528242964" duration="63000" />
+      <workItem from="1703528329946" duration="288000" />
+      <workItem from="1703528628003" duration="57000" />
+      <workItem from="1703528689954" duration="1856000" />
+      <workItem from="1703534261129" duration="467000" />
+      <workItem from="1703534740543" duration="1283000" />
+      <workItem from="1703536036282" duration="141000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <option name="closed" value="true" />
@@ -328,7 +333,15 @@
       <option name="project" value="LOCAL" />
       <updated>1702563296603</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Backup before adding settings GUI.">
+      <option name="closed" value="true" />
+      <created>1703463943983</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1703463943983</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -364,7 +377,8 @@
     <MESSAGE value="Display is fully async." />
     <MESSAGE value="Runs with all 3 processes, but goes into safe mode after 30-90 minutes from watchdog reset." />
     <MESSAGE value="Works without crashing with mDNS and updating in the background. boot.py is hosed and will lock drive in read-only mode." />
-    <option name="LAST_COMMIT_MESSAGE" value="Works without crashing with mDNS and updating in the background. boot.py is hosed and will lock drive in read-only mode." />
+    <MESSAGE value="Backup before adding settings GUI." />
+    <option name="LAST_COMMIT_MESSAGE" value="Backup before adding settings GUI." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

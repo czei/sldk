@@ -442,10 +442,10 @@ class AsyncScrollingDisplay(Display):
     def set_colors(self, settings):
         new_color = int(settings.settings["ride_wait_time_color"])
         print(f"The new color is {new_color}")
-        self.wait_time_name.color = int(settings.settings["ride_wait_time_color"])
+        self.wait_time_name.color = int(settings.settings["ride_name_color"])
+        self.wait_time.color = int(settings.settings["ride_wait_time_color"])
         self.closed.color = int(settings.settings["ride_wait_time_color"])
         self.scrolling_label.color = int(settings.settings["default_color"])
-        self.wait_time_name.color = int(settings.settings["ride_name_color"])
 
     async def off(self):
         self.scrolling_group.hidden = True
@@ -582,7 +582,7 @@ CONFIGURATION_MESSAGE = "Configure at http://themeparkwaits.local"
 
 #  The things to display on the screen
 class MessageQueue:
-    def __init__(self, d, delay_param=4, regen_flag = False):
+    def __init__(self, d, delay_param=4, regen_flag=False):
         self.display = d
         self.delay = delay_param
         self.regenerate_flag = regen_flag
@@ -667,9 +667,8 @@ class ColorUtils:
               'Old Lace': '0xfdf5e6'}
 
     @staticmethod
-    def html_color_chooser(self, name, hex_num_str):
+    def html_color_chooser(name, hex_num_str):
         """
-        :param self:
         :param name: Name of the HTML select field
         :param hex_num_str:  A string representation of the selected color
         :return:
@@ -677,10 +676,10 @@ class ColorUtils:
         html = ""
         html += f"<select name=\"{name}\" id=\"{id}\">\n"
         for color in ColorUtils.colors:
-            if self.colors[color] == hex_num_str:
-                html += f"<option value=\"{self.colors[color]}\" selected>{color}</option>\n"
+            if ColorUtils.colors[color] == hex_num_str:
+                html += f"<option value=\"{ColorUtils.colors[color]}\" selected>{color}</option>\n"
             else:
-                html += f"<option value=\"{self.colors[color]}\">{color}</option>\n"
+                html += f"<option value=\"{ColorUtils.colors[color]}\">{color}</option>\n"
 
         html += "</select>"
         return html
@@ -695,6 +694,7 @@ class ColorUtils:
 
 
 # Can't get dataclasses to work on MatrixPortal S3.
+# Saving to JSON by hand.
 # @dataclasses.dataclass
 class SettingsManager:
     def __init__(self, filename):
@@ -704,14 +704,20 @@ class SettingsManager:
             self.settings["display_closed_rides"] = True
         if self.settings.get("default_color") is None:
             self.settings["default_color"] = ColorUtils.colors["Yellow"]
-        if self.settings.get("park_name_color") is None:
-            self.settings["park_name_color"] = ColorUtils.colors["Blue"]
+        #if self.settings.get("park_name_color") is None:
+        #    self.settings["park_name_color"] = ColorUtils.colors["Blue"]
         if self.settings.get("ride_name_color") is None:
             self.settings["ride_name_color"] = ColorUtils.colors["Blue"]
         if self.settings.get("ride_wait_time_color") is None:
             self.settings["ride_wait_time_color"] = ColorUtils.colors["White"]
-        if self.settings.get("vacation_color") is None:
-            self.settings["vacation_color"] = ColorUtils.colors["Red"]
+        #if self.settings.get("vacation_color") is None:
+        #    self.settings["vacation_color"] = ColorUtils.colors["Red"]
+
+    @staticmethod
+    def get_pretty_name(settings_name):
+        # Change underscore to spaces
+        new_name = settings_name.replace("_", " ")
+        return " ".join(word[0].upper() + word[1:] for word in new_name.split(' '))
 
     def load_settings(self):
         try:
