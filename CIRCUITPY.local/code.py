@@ -96,29 +96,14 @@ matrix = rgbmatrix.RGBMatrix(
 
 
 # Get a list of rides to populate the currently selected ride
-async def populate_ride_list(parks, park_id):
-    url = get_park_url_from_id(parks, park_id)
-    print(f"Configuring park {park_id} from {url}")
-    response = http_requests.get(url)
-    await asyncio.sleep(0)
-    current_park.name = get_park_name_from_id(parks, park_id)
-    await asyncio.sleep(0)
-    current_park.set_rides(response.json())
-
-
 async def update_live_wait_time():
-    if current_park.id <= 0:
-        return
     url = get_park_url_from_id(park_list, current_park.id)
     print(f"Park URL: {url}")
-    # pool = socketpool.SocketPool(wifi.radio)
-    # requests = adafruit_requests.Session(pool, ssl.create_default_context())
+    if current_park.id <= 0:
+        return
     response = http_requests.get(url)
-    # await asyncio.sleep(0)
     json_response = response.json()
-    # await asyncio.sleep(0)
     current_park.update(json_response)
-    # await asyncio.sleep(0)
 
 
 # Set device time from the internet
@@ -293,8 +278,6 @@ async def run_display():
     while True:
         display_hardware.refresh(minimum_frames_per_second=0)
         if messages.regenerate_flag is True and current_park.is_valid() is True:
-            # await asyncio.create_task(update_live_wait_time())
-            # await asyncio.create_task(messages.add_rides(current_park, vacation_date))
             await update_live_wait_time()
             await messages.add_rides(current_park, vacation_date)
             messages.regenerate_flag = False
@@ -314,9 +297,7 @@ async def update_ride_times():
         try:
             await asyncio.sleep(300)
             if len(current_park.rides) > 0:
-                # await asyncio.create_task(update_live_wait_time())
                 await update_live_wait_time()
-                # await asyncio.create_task(messages.add_rides(current_park, vacation_date))
                 await messages.add_rides(current_park, vacation_date)
 
         except RuntimeError:

@@ -1,4 +1,3 @@
-import rtc
 import terminalio
 import asyncio
 import displayio
@@ -6,6 +5,16 @@ from adafruit_datetime import datetime
 from adafruit_display_text.label import Label
 import json
 
+try:
+    import rtc
+    import microcontroller
+except ModuleNotFoundError:
+    # Mocking the unavailable modules in non-embedded environments
+    # You can add more according to your needs, these are just placeholders
+    class rtc:
+        class RTC:
+            def __init__(self):
+                self.datetime = datetime()
 
 def set_system_clock(http_requests):
     # Set device time from the internet
@@ -85,22 +94,6 @@ def get_theme_parks_from_json(json):
     return park_list
 
 
-def get_rides_from_json(json_data):
-    """
-    Returns a list of the names of rides at a particular park contained in the JSON
-    :param json_data: A JSON file containing data for a particular park
-    :return: name, id, wait_time, is_open
-    """
-    ride_list = []
-    lands_list = json_data["lands"]
-    for land in lands_list:
-        # print(f"company = {company}")
-        rides = land["rides"]
-        for ride in rides:
-            park_desc = [ride["name"], ride["id"], ride["wait_time"], ride["is_open"]]
-            ride_list.append(park_desc)
-    return ride_list
-
 
 def get_park_url_from_name(park_list, park_name):
     """
@@ -157,12 +150,21 @@ def get_park_name_from_id(park_list, park_id):
 
 
 class ThemeParkRide:
-    def __init__(self, name, new_id, wait_time, is_open):
+    def __init__(self, name, new_id, wait_time, open_flag):
         self.name = name
         self.id = new_id
         self.wait_time = wait_time
-        self.is_open = is_open
+        self.open_flag = open_flag
 
+    def is_open(self):
+        """
+        The listings will often mark a ride as "open" when its obvious
+        after hours and the park is closed, but the wait time will be zero.
+        Because of this discrepancy we have to check both.
+        :return:
+        """
+        return self.open_flag is True and self.wait_time > 0
+        # return self.open_flag
 
 class ThemePark:
     def __init__(self, json_data=(), name="", id=0, latitude=0.0, longitude=0.0):
@@ -171,12 +173,15 @@ class ThemePark:
         :param json_data: Python JSON objects from a single park
         :return:
         """
+        self.is_open = False
         self.counter = 0
         self.name = name
         self.id = id
         self.latitude = latitude
         self.longitude = longitude
         self.rides = self.get_rides_from_json(json_data)
+        self.skip_meet = False
+        self.skip_closed = False
 
     @staticmethod
     def remove_non_ascii(orig_str):
@@ -190,19 +195,21 @@ class ThemePark:
                 new_str += c
         return new_str
 
-    @staticmethod
-    def get_rides_from_json(json_data):
+    def get_rides_from_json(self,json_data):
         """
         Returns a list of the names of rides at a particular park contained in the JSON
         :param json_data: A JSON file containing data for a particular park
-        :return: name, id, wait_time, is_open
+        :return: name, id, wait_time, open_flag
         """
         ride_list = []
+        self.is_open = False
 
         # print(f"Json_data is: {json_data}")
         if len(json_data) <= 0:
             return ride_list
 
+        # Some parks consist of Lands, and some don't.  We'll
+        # try to parse both.
         lands_list = json_data["lands"]
         for land in lands_list:
             rides = land["rides"]
@@ -211,8 +218,25 @@ class ThemePark:
                 # print(f"Ride = {name}")
                 ride_id = ride["id"]
                 wait_time = ride["wait_time"]
-                is_open = ride["is_open"]
-                this_ride_object = ThemeParkRide(name, ride_id, wait_time, is_open)
+                open_flag = ride["is_open"]
+                this_ride_object = ThemeParkRide(name, ride_id, wait_time, open_flag)
+                if this_ride_object.is_open() is True:
+                    self.is_open = True
+                ride_list.append(this_ride_object)
+
+        # Some parks dont' have lands, but we also want to avoid
+        # double-counting
+        if len(lands_list) == 0:
+            rides_list = json_data["rides"]
+            for ride in rides_list:
+                name = ride["name"]
+                # print(f"Ride = {name}")
+                ride_id = ride["id"]
+                wait_time = ride["wait_time"]
+                open_flag = ride["is_open"]
+                this_ride_object = ThemeParkRide(name, ride_id, wait_time, open_flag)
+                if this_ride_object.is_open() is True:
+                    self.is_open = True
                 ride_list.append(this_ride_object)
 
         return ride_list
@@ -232,7 +256,7 @@ class ThemePark:
     def is_ride_open(self, ride_name):
         for ride in self.rides:
             if ride.name == ride_name:
-                return ride.is_open
+                return ride.open_flag
 
     def increment(self):
         self.counter += 1
@@ -246,7 +270,7 @@ class ThemePark:
         return self.rides[self.counter].name
 
     def is_current_ride_open(self):
-        if self.rides[self.counter].is_open is False:
+        if self.rides[self.counter].open_flag is False:
             return False
         else:
             return True
@@ -269,6 +293,8 @@ class ThemePark:
     def parse(self, str_params, park_list):
         params = str_params.split("&")
         print(f"Params = {params}")
+        self.skip_meet = "False"
+        self.skip_closed = "False"
         for param in params:
             name_value = param.split("=")
             # print(f"param = {param}")
@@ -283,16 +309,29 @@ class ThemePark:
                 print(f"New park id = {self.id}")
                 print(f"New park latitude = {self.latitude}")
                 print(f"New park longitude = {self.longitude}")
-
+            if name_value[0] == "skip_closed":
+                print("Skip closed is True")
+                self.skip_closed = "True"
+            if name_value[0] == "skip_meet":
+                print("Skip meet is True")
+                self.skip_meet = "True"
     def store_settings(self, sm):
         sm.settings["current_park_name"] = self.name
         sm.settings["current_park_id"] = self.id
+        sm.settings["skip_meet"] = self.skip_meet
+        sm.settings["skip_closed"] = self.skip_closed
 
     def load_settings(self, sm):
-        if "current_park_name" in sm.settings.keys():
-            self.name = sm.settings.get("current_park_name")
-        if "current_park_id" in sm.settings.keys():
-            self.id = sm.settings.get("current_park_id")
+        keys = sm.settings.keys()
+        if "current_park_name" in keys:
+            self.name = sm.settings["current_park_name"]
+        if "current_park_id" in keys:
+            self.id = sm.settings["current_park_id"]
+        if "skip_meet" in keys:
+            self.skip_meet = sm.settings["skip_meet"]
+        if "skip_closed" in keys:
+            self.skip_closed = sm.settings["skip_closed"]
+        print(f"Loaded park {self.name} at ID: {self.id}")
 
 
 class ThemeParkIterator:
@@ -576,7 +615,7 @@ class MatrixPortalDisplay(Display):
         self.matrix_portal.scroll_text(self.scroll_delay)
 
 
-REQUIRED_MESSAGE = "Data provided by http://queue-times.com"
+REQUIRED_MESSAGE = "http://queue-times.com"
 CONFIGURATION_MESSAGE = "Configure at http://themeparkwaits.local"
 
 
@@ -589,29 +628,24 @@ class MessageQueue:
         self.func_queue = []
         self.param_queue = []
         self.delay_queue = []
-        self.func_queue.append(d.show_scroll_message)
-        self.param_queue.append(REQUIRED_MESSAGE)
-        self.delay_queue.append(self.delay)
-        self.func_queue.append(d.show_scroll_message)
-        self.param_queue.append(CONFIGURATION_MESSAGE)
-        self.delay_queue.append(self.delay)
+        #self.func_queue.append(d.show_scroll_message)
+        #self.param_queue.append(REQUIRED_MESSAGE)
+        #self.delay_queue.append(self.delay)
+        #self.func_queue.append(d.show_scroll_message)
+        #self.param_queue.append(CONFIGURATION_MESSAGE)
+        #self.delay_queue.append(self.delay)
         self.index = 0
 
     async def add_rides(self, park, vac):
-        print(f"Initalizing message for park: {park.name}")
+        print(f"MessageQueue.add_rides() called for: {park.name}")
         self.func_queue = []
         self.param_queue = []
         self.delay_queue = []
         self.index = 0
         self.func_queue.append(self.display.show_scroll_message)
-        self.param_queue.append(REQUIRED_MESSAGE)
+        required_message = f"Wait times for {park.name} provided by {REQUIRED_MESSAGE}"
+        self.param_queue.append(required_message)
         self.delay_queue.append(self.delay)
-        self.func_queue.append(self.display.show_scroll_message)
-        self.param_queue.append(park.name + ":")
-        self.delay_queue.append(self.delay)
-
-        print("Vacation setting in add_rides:")
-        vac.print()
 
         if vac.is_set() is True:
             days_until = vac.get_days_until()
@@ -622,14 +656,27 @@ class MessageQueue:
                 self.param_queue.insert(0, vac_message)
                 self.delay_queue.insert(0, 0)
 
+        if park.is_open is False:
+            self.func_queue.append(self.display.show_scroll_message)
+            self.delay_queue.append(self.delay)
+            self.param_queue.append(park.name + " is closed")
+            return
+
         for ride in park.rides:
-            if ride.is_open is True:
+            if "Meet" in ride.name and park.skip_meet == "True":
+                continue
+
+            if ride.open_flag is False and park.skip_closed == "True":
+                continue
+
+            if ride.open_flag is True:
                 self.func_queue.append(self.display.show_ride_wait_time)
                 self.param_queue.append(str(ride.wait_time))
+                self.delay_queue.append(0)
             else:
                 self.func_queue.append(self.display.show_ride_closed)
                 self.param_queue.append("Closed")
-            self.delay_queue.append(0)
+                self.delay_queue.append(0)
 
             self.func_queue.append(self.display.show_ride_name)
             self.param_queue.append(ride.name)
@@ -700,18 +747,29 @@ class SettingsManager:
     def __init__(self, filename):
         self.filename = filename
         self.settings = self.load_settings()
-        if self.settings.get("display_closed_rides") is None:
-            self.settings["display_closed_rides"] = True
+        self.scroll_speed = {"Slow": 0.6, "Medium": 0.4, "Fast": 0.2}
+
+        if self.settings.get("skip_closed") is None:
+            self.settings["skip_closed"] = False
+        if self.settings.get("skip_meet") is None:
+            self.settings["skip_meet"] = False
         if self.settings.get("default_color") is None:
             self.settings["default_color"] = ColorUtils.colors["Yellow"]
-        #if self.settings.get("park_name_color") is None:
-        #    self.settings["park_name_color"] = ColorUtils.colors["Blue"]
         if self.settings.get("ride_name_color") is None:
             self.settings["ride_name_color"] = ColorUtils.colors["Blue"]
         if self.settings.get("ride_wait_time_color") is None:
             self.settings["ride_wait_time_color"] = ColorUtils.colors["White"]
+        if self.settings.get("scroll_speed") is None:
+            self.settings["scroll_speed"] = "Medium"
+
+        # Features not implemented yet
+        #if self.settings.get("park_name_color") is None:
+        #    self.settings["park_name_color"] = ColorUtils.colors["Blue"]
         #if self.settings.get("vacation_color") is None:
         #    self.settings["vacation_color"] = ColorUtils.colors["Red"]
+
+    def get_scroll_speed(self):
+        return self.scroll_speed[self.settings["scroll_speed"]]
 
     @staticmethod
     def get_pretty_name(settings_name):

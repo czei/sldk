@@ -1,11 +1,33 @@
 # Theme Park Waits
-# V]��Winformation about ride wait times at any theme park
+# View information about ride wait times at any theme park
 #
-# import biplane
 import asyncio
 import mdns
 import time
-import board
+import traceback
+
+try:
+    import board
+except (ModuleNotFoundError, NotImplementedError):
+    # Mocking the unavailable modules in non-embedded environments
+    # You can add more according to your needs, these are just placeholders
+
+    class Board:
+        def __init__(self):
+            self.MTX_R1 = 0
+            self.MTX_G1 = 0
+            self.MTX_B1 = 0
+            self.MTX_R2 = 0
+            self.MTX_G2 = 0
+            self.MTX_B2 = 0
+            self.MTX_ADDRA = 0
+            self.MTX_ADDRB = 0
+            self.MTX_ADDRC = 0
+            self.MTX_ADDRD = 0
+            self.MTX_CLK = 0
+            self.MTX_LAT = 0
+            self.MTX_OE = 0
+
 import wifi
 import microcontroller
 import ssl
@@ -111,18 +133,10 @@ async def update_live_wait_time():
     if current_park.id <= 0:
         return
     url = get_park_url_from_id(park_list, current_park.id)
-    print(f"Park URL: {url}")
-    # pool = socketpool.SocketPool(wifi.radio)
-    # requests = adafruit_requests.Session(pool, ssl.create_default_context())
+    print(f"Updating Park from URL: {url}")
     response = http_requests.get(url)
-    # await asyncio.sleep(0)
     json_response = response.json()
-    # await asyncio.sleep(0)
     current_park.update(json_response)
-    # await asyncio.sleep(0)
-
-
-
 
 
 # Associate the RGB matrix with a Display so we can use displayio
@@ -134,12 +148,12 @@ display_hardware = framebufferio.FramebufferDisplay(
 park_list = populate_park_list(http_requests)
 current_park = ThemePark()
 
-# Params for the next vacation, if set
-vacation_date = Vacation()
-
 # Load settings from JSON file
 settings = SettingsManager("settings.json")
 current_park.load_settings(settings)
+
+# Params for the next vacation, if set
+vacation_date = Vacation()
 vacation_date.load_settings(settings)
 
 # The messages class contains a list of function calls
@@ -147,7 +161,7 @@ vacation_date.load_settings(settings)
 display = AsyncScrollingDisplay(display_hardware)
 display.set_colors(settings)
 SCROLL_DELAY = 4
-messages = MessageQueue(display, SCROLL_DELAY, current_park.is_valid())
+messages = MessageQueue(display, delay_param=SCROLL_DELAY, regen_flag=True)
 
 
 def generate_header():
@@ -182,7 +196,25 @@ def generate_main_page():
     page += "<p><label for=\"Name\"></label></p>"
     page += "</div>"
 
-    page += "<h2>Configure Next Visit</h2>"
+    # page += "<div style=\"display: flex; align-items: center;\">"
+    page += "<div style=\"display: flex;\">"
+    if settings.settings["skip_meet"] == "True":
+        page += "<input type=\"checkbox\" id=\"skip_meet\" name=\"skip_meet\" Checked>"
+    else:
+        page += "<input type=\"checkbox\" id=\"skip_meet\" name=\"skip_meet\">"
+    page += "<label for=\"skip_meet\">Skip Character Meets</label>"
+    page += "</div>"
+
+    page += "<div style=\"display: flex;\">"
+    print(f"skip_closed is {settings.settings["skip_closed"]}")
+    if settings.settings["skip_closed"] == "True":
+        page += "<input type=\"checkbox\" id=\"skip_closed\" name=\"skip_closed\" Checked>"
+    else:
+        page += "<input type=\"checkbox\" id=\"skip_closed\" name=\"skip_closed\">"
+    page += "<label for=\"skip_closed\">Skip Closed Rides</label>"
+    page += "</div>"
+
+    page += "<h2>Configure Vacation</h2>"
     page += "<div>"
     page += "<p>"
     page += "<label for=\"Name\">Park:</label>"
@@ -253,7 +285,7 @@ def base(request: Request):
             print("Unable to save settings, drive is read only.")
 
     page = generate_header()
-    page += "<h2>Display Colors</h2>"
+    page += "<h2>Settings</h2>"
     page += "<div>"
     page += "<form action=\"/settings.html\" method=\"POST\">"
 
@@ -338,19 +370,23 @@ async def run_web_server():
 
 async def run_display():
     while True:
-        display_hardware.refresh(minimum_frames_per_second=0)
-        if messages.regenerate_flag is True and current_park.is_valid() is True:
-            # await asyncio.create_task(update_live_wait_time())
-            # await asyncio.create_task(messages.add_rides(current_park, vacation_date))
-            await update_live_wait_time()
-            await messages.add_rides(current_park, vacation_date)
-            messages.regenerate_flag = False
+        try:
+            display_hardware.refresh(minimum_frames_per_second=0)
+            print(f"Messages regen_flag is {messages.regenerate_flag}")
+            print(f"Park valid flag is {current_park.is_valid()}")
+            if messages.regenerate_flag is True and current_park.is_valid() is True:
+                await update_live_wait_time()
+                await messages.add_rides(current_park, vacation_date)
+                messages.regenerate_flag = False
 
-        # Messages.show() uses create_task in its calls
-        # await asyncio.create_task(messages.show())
-        await messages.show()
-        await asyncio.sleep(0)  # let other tasks run
+            await messages.show()
+            await asyncio.sleep(0)  # let other tasks run
 
+            now = datetime.now()
+            print(f"The current time:  {now.hour}:{now.minute}")
+
+        except RuntimeError:
+            traceback.print_exc()
 
 async def update_ride_times():
     """
@@ -359,15 +395,17 @@ async def update_ride_times():
     """
     while True:
         try:
-            await asyncio.sleep(300)
+            if current_park.is_open is True:
+                await asyncio.sleep(300)
+            else:
+                await asyncio.sleep(3600)
+
             if len(current_park.rides) > 0:
-                # await asyncio.create_task(update_live_wait_time())
                 await update_live_wait_time()
-                # await asyncio.create_task(messages.add_rides(current_park, vacation_date))
                 await messages.add_rides(current_park, vacation_date)
 
         except RuntimeError:
-            print("Runtime error getting wait times")
+            traceback.print_exc()
 
 # Set device time from the internet
 set_system_clock(http_requests)

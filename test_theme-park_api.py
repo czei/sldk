@@ -4,15 +4,21 @@ from urllib.request import urlopen, Request
 from theme_park_api import get_park_url_from_name
 from theme_park_api import ThemePark
 from theme_park_api import get_theme_parks_from_json
-from theme_park_api import get_park_name_from_id
 from theme_park_api import Vacation
 from theme_park_api import get_park_location_from_id
-from theme_park_api import set_system_clock
 import json
-# import rtc
 import datetime
 from adafruit_datetime import datetime, time
 from theme_park_api import SettingsManager
+try:
+    import rtc
+except ModuleNotFoundError:
+    # Mocking the unavailable modules in non-embedded environments
+    # You can add more according to your needs, these are just placeholders
+    class rtc:
+        class RTC:
+            def __init__(self):
+                self.datetime = datetime()
 
 """
 This file ensures everything is in place to run PyTest based unit tests against
@@ -123,7 +129,7 @@ class Test(TestCase):
                 ride_found = True
                 ride_id = ride.id
                 wait_time = ride.wait_time
-                is_open = ride.is_open
+                is_open = ride.open_flag
         self.assertTrue(ride_found)
         self.assertTrue(wait_time == 15)
         self.assertTrue(is_open is True)
@@ -138,7 +144,7 @@ class Test(TestCase):
                 ride_found = True
                 ride_id = ride.id
                 wait_time = ride.wait_time
-                is_open = ride.is_open
+                is_open = ride.open_flag
         self.assertTrue(ride_found)
         self.assertTrue(wait_time == 0)
         self.assertTrue(is_open is False)
@@ -227,13 +233,13 @@ class Test(TestCase):
         self.assertTrue(vac.day == 2)
         self.assertTrue(vac.is_set() is True)
 
-        # Can't test day counting without RTC
+        # This only works running on MatrixPortal board
         # rtc.RTC().datetime = (2023, 1, 2, 0, 1, 34, 0, 0, 0)
         # today = datetime.now()
         self.assertTrue(vac.get_days_until() >= 0)
 
     def test_park_param_parsing(self):
-        str_params = "park-id=7&Name=WDW&Year=2027&Month=1&Day=4"
+        str_params = "park-id=7&Name=WDW&Year=2027&Month=1&Day=4&skip_closed=on"
         park = ThemePark()
 
         f = open('theme-park-list.json')
@@ -245,8 +251,10 @@ class Test(TestCase):
         park.parse(str_params, park_list)
         self.assertTrue(park.id == 7)
         self.assertTrue(park.name == "Disney Hollywood Studios")
+        self.assertTrue(park.skip_closed == "True")
 
     def test_set_system_clock(self):
+        # Only works running on actual board
         # set_system_clock()
         # self.assertTrue(rtc.RTC().datetime == (2023, 1, 1, 0, 1, 34, 0, 0, 0))
 
@@ -265,13 +273,13 @@ class Test(TestCase):
         ltime = ltime[0].split(":")
 
         # Pass elements to datetime constructor
-        datetime_object = ltime.struct_time(
+        datetime_object = datetime(
             int(date[0]),
             int(date[1]),
             int(date[2]),
-            int(time[0]),
-            int(time[1]),
-            int(time[2])
+            int(ltime[0]),
+            int(ltime[1]),
+            int(ltime[2])
         )
 
         print(f"The new datetime is {datetime_object}")
@@ -281,22 +289,59 @@ class Test(TestCase):
 
     def test_settings_manager(self):
         manager = SettingsManager("settings.json")
-        manager.settings["new_param"] = 12
+        manager.load_settings()
+
         self.assertTrue(manager.settings["display_closed_rides"] is True)
+        self.assertTrue(manager.settings["current_park_id"] == 6)
+        self.assertTrue(manager.settings["current_park_name"] == "Disney Magic Kingdom")
         manager.settings["display_closed_rides"] = False
         self.assertTrue(manager.settings["display_closed_rides"] is False)
+
+        manager.settings["new_param"] = 12
         self.assertTrue(manager.settings["new_param"] == 12)
 
         manager.save_settings()
         manager1 = SettingsManager("settings.json")
-        manager1.load_settings()
         self.assertTrue(manager1.settings["display_closed_rides"] is False)
         self.assertTrue(manager1.settings["new_param"] == 12)
         manager.settings["display_closed_rides"] = True
         manager.save_settings()
 
-    #    def test_message_queue(self):
-#        mocker = Mock()
-#        runtime_display = MatrixPortalDisplay(mocker)
-#        queue = MessageQueue(runtime_display)
-#        self.assertTrue(len(queue.queue) is 2)
+        ride = ThemePark()
+        self.assertTrue(ride.id == 0)
+        self.assertTrue(ride.name != "Disney Magic Kingdom")
+        self.assertTrue(ride.skip_closed is False)
+        self.assertTrue(ride.skip_meet is False)
+        ride.load_settings(manager)
+        self.assertTrue(ride.id == 6)
+        self.assertTrue(ride.name == "Disney Magic Kingdom")
+        self.assertTrue(ride.skip_closed is True)
+        self.assertTrue(ride.skip_meet is True)
+
+        scroll_speed = manager.get_scroll_speed()
+        self.assertTrue(scroll_speed == 0.4)
+        manager.settings["scroll_speed"] = "Fast"
+        scroll_speed = manager.get_scroll_speed()
+        self.assertTrue(scroll_speed == 0.2)
+        manager.settings["scroll_speed"] = "Slow"
+        scroll_speed = manager.get_scroll_speed()
+        self.assertTrue(scroll_speed == 0.6)
+
+
+
+    def test_closed_park(self):
+        f = open('closed-park.json')
+        data = json.load(f)
+        f.close()
+
+        tokyo_disneyland = ThemePark(data, "Tokyo Disneyland", 274)
+        self.assertTrue(tokyo_disneyland.is_open is False)
+        self.assertTrue(len(tokyo_disneyland.rides) > 10)
+
+        f = open('magic-kingdom.json')
+        data = json.load(f)
+        f.close()
+
+        magic_kingdom = ThemePark(data, "Disney Magic Kingdom", 6)
+        self.assertTrue(len(magic_kingdom.rides) > 10)
+        self.assertTrue(magic_kingdom.is_open is True)

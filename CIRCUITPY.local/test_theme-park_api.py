@@ -122,7 +122,7 @@ class Test(TestCase):
                 ride_found = True
                 ride_id = ride.id
                 wait_time = ride.wait_time
-                is_open = ride.is_open
+                is_open = ride.open_flag
         self.assertTrue(ride_found)
         self.assertTrue(wait_time == 15)
         self.assertTrue(is_open is True)
@@ -137,7 +137,7 @@ class Test(TestCase):
                 ride_found = True
                 ride_id = ride.id
                 wait_time = ride.wait_time
-                is_open = ride.is_open
+                is_open = ride.open_flag
         self.assertTrue(ride_found)
         self.assertTrue(wait_time == 0)
         self.assertTrue(is_open is False)
