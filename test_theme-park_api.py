@@ -223,11 +223,11 @@ class Test(TestCase):
         self.assertTrue(location[1] == "-81.581212")
 
     def test_vacation(self):
-        params = "Name=Wdw&Year=2024&Month=1&Day=2"
+        params = "Name=Orlando+Vacation&Year=2024&Month=1&Day=2"
         vac = Vacation()
         self.assertTrue(vac.is_set() is False)
         vac.parse(params)
-        self.assertTrue(vac.name == "Wdw")
+        self.assertTrue(vac.name == "Orlando Vacation")
         self.assertTrue(vac.year == 2024)
         self.assertTrue(vac.month == 1)
         self.assertTrue(vac.day == 2)
@@ -251,7 +251,7 @@ class Test(TestCase):
         park.parse(str_params, park_list)
         self.assertTrue(park.id == 7)
         self.assertTrue(park.name == "Disney Hollywood Studios")
-        self.assertTrue(park.skip_closed == "True")
+        self.assertTrue(park.skip_closed is True)
 
     def test_set_system_clock(self):
         # Only works running on actual board
@@ -292,10 +292,11 @@ class Test(TestCase):
         manager.load_settings()
 
         self.assertTrue(manager.settings["skip_closed"] is True)
-        self.assertTrue(manager.settings["skip_meet"] is True)
+        self.assertTrue(manager.settings["skip_meet"] is False )
         self.assertTrue(manager.settings["current_park_id"] == 6)
         self.assertTrue(manager.settings["current_park_name"] == "Disney Magic Kingdom")
         manager.settings["skip_closed"] = False
+        manager.settings["skip_meet"] = False
         self.assertTrue(manager.settings["skip_closed"] is False)
 
         manager.settings["new_param"] = 12
@@ -305,7 +306,8 @@ class Test(TestCase):
         manager1 = SettingsManager("settings.json")
         self.assertTrue(manager1.settings["skip_closed"] is False)
         self.assertTrue(manager1.settings["new_param"] == 12)
-        manager.settings["skip_closed"] = True
+        manager.settings["skip_closed"] = False
+        manager.settings["skip_Meet"] = False
         manager.save_settings()
 
         park = ThemePark()
@@ -316,8 +318,12 @@ class Test(TestCase):
         park.load_settings(manager)
         self.assertTrue(park.id == 6)
         self.assertTrue(park.name == "Disney Magic Kingdom")
-        self.assertTrue(park.skip_closed is True)
-        self.assertTrue(park.skip_meet is True)
+        self.assertTrue(park.skip_closed is False)
+        self.assertTrue(park.skip_meet is False)
+
+        manager.settings["skip_closed"] = True
+        manager.settings["skip_Meet"] = False
+        manager.save_settings()
 
         scroll_speed = manager.get_scroll_speed()
         self.assertTrue(scroll_speed == 0.04)

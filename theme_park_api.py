@@ -293,8 +293,8 @@ class ThemePark:
     def parse(self, str_params, park_list):
         params = str_params.split("&")
         print(f"Params = {params}")
-        self.skip_meet = "False"
-        self.skip_closed = "False"
+        self.skip_meet = False
+        self.skip_closed = False
         for param in params:
             name_value = param.split("=")
             # print(f"param = {param}")
@@ -311,10 +311,10 @@ class ThemePark:
                 print(f"New park longitude = {self.longitude}")
             if name_value[0] == "skip_closed":
                 print("Skip closed is True")
-                self.skip_closed = "True"
+                self.skip_closed = True
             if name_value[0] == "skip_meet":
                 print("Skip meet is True")
-                self.skip_meet = "True"
+                self.skip_meet = True
     def store_settings(self, sm):
         sm.settings["current_park_name"] = self.name
         sm.settings["current_park_id"] = self.id
@@ -368,7 +368,7 @@ class Vacation:
         for param in params:
             name_value = param.split("=")
             if name_value[0] == "Name":
-                self.name = str(name_value[1])
+                self.name = str(name_value[1]).replace("+", " ")
             if name_value[0] == "Year":
                 self.year = int(name_value[1])
             if name_value[0] == "Month":
