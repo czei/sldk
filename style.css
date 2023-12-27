@@ -101,3 +101,7 @@ input { display: table-cell;
 .myCheckbox {
    vertical-align: middle;
 }
+
+.settings {
+   float: right;
+}
