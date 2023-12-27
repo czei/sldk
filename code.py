@@ -198,7 +198,7 @@ def generate_main_page():
 
     # page += "<div style=\"display: flex; align-items: center;\">"
     page += "<div class=\"myCheckbox\">\n"
-    if settings.settings["skip_meet"] == "True":
+    if settings.settings["skip_meet"] is True:
         page += "<label><input class=\"myCheckbox\" type=\"checkbox\" id=\"skip_meet\" name=\"skip_meet\" Checked>Skip Character Meets</label>\n"
     else:
         page += "<label><input class=\"myCheckbox\" type=\"checkbox\" id=\"skip_meet\" name=\"skip_meet\">Skip Character Meets</label>\n"
@@ -206,7 +206,7 @@ def generate_main_page():
 
     page += "<div class=\"myCheckbox\">\n"
     print(f"skip_closed is {settings.settings["skip_closed"]}")
-    if settings.settings["skip_closed"] == "True":
+    if settings.settings["skip_closed"] is True:
         page += "<label><input type=\"checkbox\" id=\"skip_closed\" name=\"skip_closed\" Checked>Skip Closed Rides</label>"
     else:
         page += "<label><input type=\"checkbox\" id=\"skip_closed\" name=\"skip_closed\">Skip Closed Rides</label>"

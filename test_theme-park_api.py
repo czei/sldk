@@ -291,41 +291,42 @@ class Test(TestCase):
         manager = SettingsManager("settings.json")
         manager.load_settings()
 
-        self.assertTrue(manager.settings["display_closed_rides"] is True)
+        self.assertTrue(manager.settings["skip_closed"] is True)
+        self.assertTrue(manager.settings["skip_meet"] is True)
         self.assertTrue(manager.settings["current_park_id"] == 6)
         self.assertTrue(manager.settings["current_park_name"] == "Disney Magic Kingdom")
-        manager.settings["display_closed_rides"] = False
-        self.assertTrue(manager.settings["display_closed_rides"] is False)
+        manager.settings["skip_closed"] = False
+        self.assertTrue(manager.settings["skip_closed"] is False)
 
         manager.settings["new_param"] = 12
         self.assertTrue(manager.settings["new_param"] == 12)
 
         manager.save_settings()
         manager1 = SettingsManager("settings.json")
-        self.assertTrue(manager1.settings["display_closed_rides"] is False)
+        self.assertTrue(manager1.settings["skip_closed"] is False)
         self.assertTrue(manager1.settings["new_param"] == 12)
-        manager.settings["display_closed_rides"] = True
+        manager.settings["skip_closed"] = True
         manager.save_settings()
 
-        ride = ThemePark()
-        self.assertTrue(ride.id == 0)
-        self.assertTrue(ride.name != "Disney Magic Kingdom")
-        self.assertTrue(ride.skip_closed is False)
-        self.assertTrue(ride.skip_meet is False)
-        ride.load_settings(manager)
-        self.assertTrue(ride.id == 6)
-        self.assertTrue(ride.name == "Disney Magic Kingdom")
-        self.assertTrue(ride.skip_closed is True)
-        self.assertTrue(ride.skip_meet is True)
+        park = ThemePark()
+        self.assertTrue(park.id == 0)
+        self.assertTrue(park.name != "Disney Magic Kingdom")
+        self.assertTrue(park.skip_closed is False)
+        self.assertTrue(park.skip_meet is False)
+        park.load_settings(manager)
+        self.assertTrue(park.id == 6)
+        self.assertTrue(park.name == "Disney Magic Kingdom")
+        self.assertTrue(park.skip_closed is True)
+        self.assertTrue(park.skip_meet is True)
 
         scroll_speed = manager.get_scroll_speed()
-        self.assertTrue(scroll_speed == 0.4)
+        self.assertTrue(scroll_speed == 0.04)
         manager.settings["scroll_speed"] = "Fast"
         scroll_speed = manager.get_scroll_speed()
-        self.assertTrue(scroll_speed == 0.2)
+        self.assertTrue(scroll_speed == 0.03)
         manager.settings["scroll_speed"] = "Slow"
         scroll_speed = manager.get_scroll_speed()
-        self.assertTrue(scroll_speed == 0.6)
+        self.assertTrue(scroll_speed == 0.06)
 
 
 
