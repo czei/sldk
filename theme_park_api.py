@@ -407,8 +407,8 @@ class Vacation:
 
 
 class Display:
-    def __init__(self, scrolldelay=0.03):
-        self.scroll_delay = scrolldelay
+    def __init__(self, sm):
+        self.settings_manager = sm
         self.RED_COLOR = 0xCC3333
         self.BLUE_COLOR = 0x0000AA
         self.BLACK_COLOR = 0x000000
@@ -431,8 +431,8 @@ class Display:
 
 
 class AsyncScrollingDisplay(Display):
-    def __init__(self, display_hardware, scrolldelay=0.04):
-        super().__init__(scrolldelay)
+    def __init__(self, display_hardware, sm):
+        super().__init__(sm)
         self.font = terminalio.FONT
         self.hardware = display_hardware
 
@@ -512,7 +512,7 @@ class AsyncScrollingDisplay(Display):
         self.wait_time_name.text = ride_name
         self.wait_time_name_group.hidden = False
         while self.scroll(self.wait_time_name) is True:
-            await asyncio.sleep(self.scroll_delay)
+            await asyncio.sleep(self.settings_manager.get_scroll_speed())
         await asyncio.sleep(1)
         self.wait_time.text = ""
         self.wait_time_name.text = ""
@@ -527,7 +527,7 @@ class AsyncScrollingDisplay(Display):
         self.scrolling_label.text = message
         self.scrolling_group.hidden = False
         while self.scroll(self.scrolling_label) is True:
-            await asyncio.sleep(self.scroll_delay)
+            await asyncio.sleep(self.settings_manager.get_scroll_speed())
         self.scrolling_group.hidden = True
 
     def scroll(self, line):
@@ -747,7 +747,7 @@ class SettingsManager:
     def __init__(self, filename):
         self.filename = filename
         self.settings = self.load_settings()
-        self.scroll_speed = {"Slow": 0.6, "Medium": 0.4, "Fast": 0.2}
+        self.scroll_speed = {"Slow": 0.06, "Medium": 0.04, "Fast": 0.035}
 
         if self.settings.get("skip_closed") is None:
             self.settings["skip_closed"] = False

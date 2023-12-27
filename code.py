@@ -158,10 +158,10 @@ vacation_date.load_settings(settings)
 
 # The messages class contains a list of function calls
 # to the local Display class, which in turn uses the displayio Display
-display = AsyncScrollingDisplay(display_hardware)
+display = AsyncScrollingDisplay(display_hardware, settings)
 display.set_colors(settings)
 SCROLL_DELAY = 4
-messages = MessageQueue(display, delay_param=SCROLL_DELAY, regen_flag=True)
+messages = MessageQueue(display, SCROLL_DELAY, regen_flag=True)
 
 
 def generate_header():
@@ -197,22 +197,21 @@ def generate_main_page():
     page += "</div>"
 
     # page += "<div style=\"display: flex; align-items: center;\">"
-    page += "<div style=\"display: flex;\">"
+    page += "<div class=\"myCheckbox\">\n"
     if settings.settings["skip_meet"] == "True":
-        page += "<input type=\"checkbox\" id=\"skip_meet\" name=\"skip_meet\" Checked>"
+        page += "<label><input class=\"myCheckbox\" type=\"checkbox\" id=\"skip_meet\" name=\"skip_meet\" Checked>Skip Character Meets</label>\n"
     else:
-        page += "<input type=\"checkbox\" id=\"skip_meet\" name=\"skip_meet\">"
-    page += "<label for=\"skip_meet\">Skip Character Meets</label>"
-    page += "</div>"
+        page += "<label><input class=\"myCheckbox\" type=\"checkbox\" id=\"skip_meet\" name=\"skip_meet\">Skip Character Meets</label>\n"
+    page += "</div>\n"
 
-    page += "<div style=\"display: flex;\">"
+    page += "<div class=\"myCheckbox\">\n"
     print(f"skip_closed is {settings.settings["skip_closed"]}")
     if settings.settings["skip_closed"] == "True":
-        page += "<input type=\"checkbox\" id=\"skip_closed\" name=\"skip_closed\" Checked>"
+        page += "<label><input type=\"checkbox\" id=\"skip_closed\" name=\"skip_closed\" Checked>Skip Closed Rides</label>"
     else:
-        page += "<input type=\"checkbox\" id=\"skip_closed\" name=\"skip_closed\">"
-    page += "<label for=\"skip_closed\">Skip Closed Rides</label>"
-    page += "</div>"
+        page += "<label><input type=\"checkbox\" id=\"skip_closed\" name=\"skip_closed\">Skip Closed Rides</label>"
+    # page += "<label for=\"skip_closed\">Skip Closed Rides</label>\n"
+    page += "</div>\n"
 
     page += "<h2>Configure Vacation</h2>"
     page += "<div>"
@@ -295,6 +294,17 @@ def base(request: Request):
             page += f"<label for=\"Name\">{SettingsManager.get_pretty_name(color_setting_name)}</label>"
             page += ColorUtils.html_color_chooser(color_setting_name, hex_num_str=color_value)
             page += "</p>"
+
+    page += "<p>"
+    page += f"<label for=\"Name\">Scroll Speed</label>"
+    page += "<select name=\"scroll_speed\" id=\"scroll_speed\">"
+    for speed in ["Slow", "Medium", "Fast"]:
+        if speed == settings.settings.get("scroll_speed"):
+            page += f"<option value=\"{speed}\" selected>{speed}</option>\n"
+        else:
+            page += f"<option value=\"{speed}\">{speed}</option>\n"
+        page += "</p>"
+    page += "</select>"
 
     page += "<p>"
     page += "<label for=\"Submit\"></label>"

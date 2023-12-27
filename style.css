@@ -98,3 +98,6 @@ input { display: table-cell;
    display: block;
 }
 
+.myCheckbox {
+   vertical-align: middle;
+}

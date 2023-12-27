@@ -8424,4 +8424,3627 @@ TypeError: function takes 1 positional arguments but 2 were given
 Code done running.
 ]0;🐍Wi-Fi: off | Done | 8.2.9\]0;🐍Wi-Fi: off | REPL | 8.2.9\
 Adafruit CircuitPython 8.2.9 on 2023-12-06; Adafruit MatrixPortal S3 with ESP32S3
+>>> ]0;🐍192.168.68.68 | code.py | 8.2.9\The current time:  11:22
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:22
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  11:22
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:22
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  11:22
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  11:22
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  11:22
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 65
+The current time:  11:22
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  11:23
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 25
+The current time:  11:23
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  11:23
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:23
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  11:23
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:23
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:23
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:23
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:24
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:24
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:24
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 70
+The current time:  11:24
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:25
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  11:25
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+The current time:  11:25
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  11:25
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  11:25
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  11:25
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  11:26
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:26
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  11:26
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:26
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  11:26
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:26
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  11:26
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:26
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  11:27
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:27
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  11:27
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:27
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  11:27
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:27
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  11:27
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 65
+The current time:  11:27
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  11:28
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 25
+The current time:  11:28
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  11:28
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:28
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  11:28
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:28
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:28
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:28
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:29
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:29
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:29
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 70
+The current time:  11:29
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:30
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  11:30
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+The current time:  11:30
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  11:30
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Peter Pan's Flight
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  11:30
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  11:30
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  11:30
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  11:31
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:31
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  11:31
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:31
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  11:31
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:31
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  11:31
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:31
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  11:32
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:32
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  11:32
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 40
+The current time:  11:32
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  11:32
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:32
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  11:32
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 65
+The current time:  11:32
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  11:33
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  11:33
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  11:33
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:33
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  11:33
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:33
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:33
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:33
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:34
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:34
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:34
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 70
+The current time:  11:34
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:35
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  11:35
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+The current time:  11:35
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  11:35
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Peter Pan's Flight
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  11:35
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  11:35
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  11:35
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  11:36
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:36
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  11:36
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:36
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  11:36
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:36
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  11:36
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:36
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  11:37
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:37
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  11:37
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 40
+The current time:  11:37
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  11:37
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:37
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  11:37
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 65
+The current time:  11:37
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  11:38
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  11:38
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  11:38
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:38
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  11:38
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:38
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:39
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:39
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:39
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:39
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:39
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 70
+The current time:  11:39
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:40
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  11:40
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+The current time:  11:40
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  11:40
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Peter Pan's Flight
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  11:40
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  11:41
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  11:41
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  11:41
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:41
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  11:41
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:41
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  11:41
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:41
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  11:42
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:42
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  11:42
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:42
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  11:42
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  11:42
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  11:42
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:42
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  11:42
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 65
+The current time:  11:42
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  11:43
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  11:43
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  11:43
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:43
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  11:43
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:43
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:44
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:44
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:44
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:44
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:44
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 70
+The current time:  11:44
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:45
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  11:45
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  11:45
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  11:45
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  11:45
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  11:46
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:46
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  11:46
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:46
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  11:46
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:46
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  11:46
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:46
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  11:47
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:47
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  11:47
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  11:47
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  11:47
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:47
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  11:47
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 40
+The current time:  11:47
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  11:48
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  11:48
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  11:48
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  11:48
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  11:48
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:48
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:48
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:48
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:49
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:49
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:49
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 70
+The current time:  11:49
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:50
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  11:50
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+The current time:  11:50
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  11:50
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Peter Pan's Flight
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  11:50
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  11:51
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  11:51
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  11:51
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:51
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  11:51
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:51
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  11:51
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:51
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  11:51
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:51
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  11:52
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:52
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  11:52
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  11:52
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  11:52
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:52
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  11:52
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 40
+The current time:  11:52
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  11:53
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  11:53
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  11:53
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  11:53
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  11:53
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:53
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:54
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:54
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:54
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:54
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:54
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 70
+The current time:  11:54
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:55
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  11:55
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+The current time:  11:55
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  11:55
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Peter Pan's Flight
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  11:55
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  11:56
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  11:56
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  11:56
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  11:56
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  11:56
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:56
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  11:56
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:56
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  11:57
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  11:57
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  11:57
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  11:57
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  11:57
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  11:57
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  11:57
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  11:57
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  11:58
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 40
+The current time:  11:58
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  11:58
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  11:58
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  11:58
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  11:58
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  11:58
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  11:58
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  11:59
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  11:59
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:59
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  11:59
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  11:59
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  11:59
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:0
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  12:0
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  12:0
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  12:0
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  12:0
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  12:1
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  12:1
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  12:1
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  12:1
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  12:1
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:1
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  12:1
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:1
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  12:2
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:2
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  12:2
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  12:2
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  12:2
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  12:2
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  12:2
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 40
+The current time:  12:2
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  12:3
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:3
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  12:3
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  12:3
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  12:3
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:3
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:3
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  12:3
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:4
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:4
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:4
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:4
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:5
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  12:5
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+The current time:  12:5
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  12:5
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Peter Pan's Flight
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  12:5
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  12:6
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  12:6
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  12:6
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  12:6
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  12:6
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  12:6
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  12:6
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:6
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  12:6
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:6
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  12:7
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:7
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  12:7
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  12:7
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  12:7
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  12:7
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  12:7
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  12:7
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  12:8
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:8
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  12:8
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  12:8
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  12:8
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:8
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:9
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  12:9
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:9
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:9
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:9
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:9
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:10
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  12:10
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+The current time:  12:10
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  12:10
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Peter Pan's Flight
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  12:10
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  12:11
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  12:11
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  12:11
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 75
+The current time:  12:11
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  12:11
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  12:11
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  12:11
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:11
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  12:12
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:12
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  12:12
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:12
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  12:12
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  12:12
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  12:12
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:12
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  12:13
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  12:13
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  12:13
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:13
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  12:13
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  12:13
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  12:13
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:13
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:14
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 20
+The current time:  12:14
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:14
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:14
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:14
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:14
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:15
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  12:15
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  12:15
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  12:15
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  12:15
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  12:16
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  12:16
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  12:16
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  12:16
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  12:16
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:16
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  12:16
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:16
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  12:17
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:17
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  12:17
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  12:17
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  12:17
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:17
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  12:17
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 25
+The current time:  12:17
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  12:18
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:18
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  12:18
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  12:18
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  12:18
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:18
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:18
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 20
+The current time:  12:18
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:19
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:19
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:19
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:19
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:20
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  12:20
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+The current time:  12:20
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  12:20
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Peter Pan's Flight
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  12:20
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  12:21
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  12:21
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  12:21
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  12:21
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  12:21
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  12:21
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  12:21
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:21
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  12:22
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:22
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  12:22
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:22
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  12:22
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  12:22
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  12:22
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:22
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  12:22
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 25
+The current time:  12:22
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  12:23
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:23
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  12:23
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  12:23
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  12:23
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:23
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:24
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 20
+The current time:  12:24
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:24
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:24
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:24
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:24
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:25
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  12:25
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+The current time:  12:25
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  12:25
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Peter Pan's Flight
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  12:25
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  12:26
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  12:26
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  12:26
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  12:26
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  12:26
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  12:26
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  12:26
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:26
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  12:27
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:27
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  12:27
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:27
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  12:27
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:27
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  12:27
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:27
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  12:28
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  12:28
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  12:28
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:28
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  12:28
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  12:28
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  12:28
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:28
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:29
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 20
+The current time:  12:29
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:29
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:29
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:29
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:29
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:30
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  12:30
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  12:30
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  12:30
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  12:30
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  12:31
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  12:31
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  12:31
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  12:31
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  12:31
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:31
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  12:31
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:31
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  12:32
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:32
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  12:32
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:32
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  12:32
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:32
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  12:32
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  12:32
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  12:33
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:33
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  12:33
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  12:33
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  12:33
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:33
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:34
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 20
+The current time:  12:34
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:34
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:34
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:34
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:34
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:35
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  12:35
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+The current time:  12:35
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 70
+The current time:  12:35
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Peter Pan's Flight
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  12:35
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  12:36
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  12:36
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  12:36
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 85
+The current time:  12:36
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  12:36
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  12:36
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  12:36
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:36
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  12:37
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:37
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  12:37
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:37
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  12:37
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:37
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  12:37
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:37
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  12:38
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:38
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  12:38
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:38
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  12:38
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  12:38
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+Traceback (most recent call last):
+  File "code.py", line 416, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 247, in run_until_complete
+  File "asyncio/core.py", line 186, in wait_io_event
+KeyboardInterrupt: 
+]0;🐍192.168.68.68 | 186@asyncio/core.py KeyboardInterrupt | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\Auto-reload is off.
+
+Press any key to enter the REPL. Use CTRL-D to reload.
+soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 12, 38, 45, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+Traceback (most recent call last):
+  File "code.py", line 424, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 271, in run_until_complete
+  File "asyncio/core.py", line 256, in run_until_complete
+  File "asyncio/funcs.py", line 162, in gather
+  File "asyncio/core.py", line 256, in run_until_complete
+  File "code.py", line 390, in run_display
+  File "theme_park_api.py", line 689, in show
+  File "asyncio/core.py", line 256, in run_until_complete
+  File "theme_park_api.py", line 530, in show_scroll_message
+AttributeError: 'SettingsManager' object has no attribute 'get_scroll_delay'
+]0;🐍192.168.68.68 | 530@theme_park_api.py AttributeError | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\
+Press any key to enter the REPL. Use CTRL-D to reload.
+]0;🐍Wi-Fi: off | REPL | 8.2.9\
+Adafruit CircuitPython 8.2.9 on 2023-12-06; Adafruit MatrixPortal S3 with ESP32S3
 >>> 
+]0;🐍Wi-Fi: off | Done | 8.2.9\soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 12, 40, 3, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+Traceback (most recent call last):
+  File "code.py", line 424, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 271, in run_until_complete
+  File "asyncio/core.py", line 256, in run_until_complete
+  File "asyncio/funcs.py", line 162, in gather
+  File "asyncio/core.py", line 256, in run_until_complete
+  File "code.py", line 390, in run_display
+  File "theme_park_api.py", line 689, in show
+  File "asyncio/core.py", line 256, in run_until_complete
+  File "theme_park_api.py", line 530, in show_scroll_message
+AttributeError: 'SettingsManager' object has no attribute 'get_scroll_delay'
+]0;🐍192.168.68.68 | 530@theme_park_api.py AttributeError | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\
+Press any key to enter the REPL. Use CTRL-D to reload.
+]0;🐍Wi-Fi: off | REPL | 8.2.9\
+Adafruit CircuitPython 8.2.9 on 2023-12-06; Adafruit MatrixPortal S3 with ESP32S3
+>>> 
+]0;🐍Wi-Fi: off | Done | 8.2.9\soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 12, 41, 0, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+The current time:  12:42
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+Traceback (most recent call last):
+  File "code.py", line 424, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 247, in run_until_complete
+  File "asyncio/core.py", line 186, in wait_io_event
+KeyboardInterrupt: 
+]0;🐍192.168.68.68 | 186@asyncio/core.py KeyboardInterrupt | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\
+Press any key to enter the REPL. Use CTRL-D to reload.
+soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 12, 44, 7, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+The current time:  12:45
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+Traceback (most recent call last):
+  File "code.py", line 424, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 256, in run_until_complete
+  File "theme_park_api.py", line 530, in show_scroll_message
+  File "theme_park_api.py", line 536, in scroll
+KeyboardInterrupt: 
+]0;🐍192.168.68.68 | 536@theme_park_api.py KeyboardInterrupt | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\
+Press any key to enter the REPL. Use CTRL-D to reload.
+soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 12, 47, 39, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+Traceback (most recent call last):
+  File "code.py", line 426, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 247, in run_until_complete
+  File "asyncio/core.py", line 186, in wait_io_event
+KeyboardInterrupt: 
+]0;🐍192.168.68.68 | 186@asyncio/core.py KeyboardInterrupt | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\
+Press any key to enter the REPL. Use CTRL-D to reload.
+soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 12, 48, 52, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+The current time:  12:49
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+skip_closed is True
+The current time:  12:53
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  12:53
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Traceback (most recent call last):
+  File "code.py", line 425, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 247, in run_until_complete
+  File "asyncio/core.py", line 186, in wait_io_event
+KeyboardInterrupt: 
+]0;🐍192.168.68.68 | 186@asyncio/core.py KeyboardInterrupt | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\
+Press any key to enter the REPL. Use CTRL-D to reload.
+soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 12, 55, 14, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+The current time:  12:55
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The new color is 16777215
+Unable to save settings, drive is read only.
+The new color is 16777215
+Unable to save settings, drive is read only.
+The current time:  12:55
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  12:55
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  12:55
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 70
+The current time:  12:55
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  12:56
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  12:56
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  12:56
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:56
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  12:56
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 25
+The current time:  12:56
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  12:56
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  12:56
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+skip_closed is True
+The current time:  12:56
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  12:56
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  12:56
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:56
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  12:57
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  12:57
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  12:57
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  12:57
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  12:57
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  12:57
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  12:57
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:57
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:57
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  12:57
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:58
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:58
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  12:58
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  12:58
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  12:58
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  12:58
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+The current time:  12:58
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 80
+The current time:  12:58
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Peter Pan's Flight
+The current time:  12:58
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 20
+The current time:  12:58
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Prince Charming Regal Carrousel
+The current time:  12:59
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 105
+The current time:  12:59
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Seven Dwarfs Mine Train
+The current time:  12:59
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  12:59
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Barnstormer
+The current time:  12:59
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  12:59
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Many Adventures of Winnie the Pooh
+skip_closed is True
+The current time:  12:59
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  12:59
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Under the Sea - Journey of The Little Mermaid
+Traceback (most recent call last):
+  File "code.py", line 427, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 247, in run_until_complete
+  File "asyncio/core.py", line 186, in wait_io_event
+KeyboardInterrupt: 
+]0;🐍192.168.68.68 | 186@asyncio/core.py KeyboardInterrupt | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\
+Press any key to enter the REPL. Use CTRL-D to reload.
+soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 12, 59, 53, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+skip_closed is True
+The current time:  13:0
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  13:0
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  13:0
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  13:0
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 90
+The current time:  13:0
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  13:0
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  13:0
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  13:1
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  13:1
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  13:1
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 25
+The current time:  13:1
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  13:1
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  13:1
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  13:1
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  13:1
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  13:2
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  13:2
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  13:2
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  13:2
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  13:2
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  13:2
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  13:2
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  13:2
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  13:3
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  13:3
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+Traceback (most recent call last):
+  File "code.py", line 427, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 247, in run_until_complete
+  File "asyncio/core.py", line 186, in wait_io_event
+KeyboardInterrupt: 
+]0;🐍192.168.68.68 | 186@asyncio/core.py KeyboardInterrupt | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\
+Press any key to enter the REPL. Use CTRL-D to reload.
+soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 13, 3, 32, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+skip_closed is True
+The current time:  13:3
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  13:4
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  13:4
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  13:4
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 90
+The current time:  13:4
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  13:4
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  13:4
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  13:4
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  13:4
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  13:5
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 25
+The current time:  13:5
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  13:5
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  13:5
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  13:5
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  13:5
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  13:5
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  13:5
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  13:6
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  13:6
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  13:6
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 30
+The current time:  13:6
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  13:6
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  13:6
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  13:6
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  13:6
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  13:7
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  13:7
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  13:7
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  13:7
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  13:7
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  13:7
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  13:8
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  13:8
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  13:8
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  13:8
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  13:8
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  13:9
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 105
+The current time:  13:9
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+skip_closed is True
+The current time:  13:9
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  13:9
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  13:9
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  13:9
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  13:9
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 25
+The current time:  13:9
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  13:10
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  13:10
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  13:10
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  13:10
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  13:10
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  13:10
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  13:10
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  13:10
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  13:11
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 20
+The current time:  13:11
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+Traceback (most recent call last):
+  File "code.py", line 427, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 247, in run_until_complete
+  File "asyncio/core.py", line 186, in wait_io_event
+KeyboardInterrupt: 
+]0;🐍192.168.68.68 | 186@asyncio/core.py KeyboardInterrupt | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\
+Press any key to enter the REPL. Use CTRL-D to reload.
+soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 13, 11, 32, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+skip_closed is True
+The current time:  13:11
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  13:12
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  13:12
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  13:12
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 105
+The current time:  13:12
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  13:12
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  13:12
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  13:12
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  13:12
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  13:13
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  13:13
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+Traceback (most recent call last):
+  File "code.py", line 427, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 256, in run_until_complete
+  File "theme_park_api.py", line 515, in show_ride_name
+  File "asyncio/core.py", line 73, in __next__
+KeyboardInterrupt: 
+]0;🐍192.168.68.68 | 73@asyncio/core.py KeyboardInterrupt | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\
+Press any key to enter the REPL. Use CTRL-D to reload.
+soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 13, 13, 25, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+skip_closed is True
+skip_closed is True
+The current time:  13:13
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+skip_closed is True
+The current time:  13:14
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  13:14
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  13:14
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 105
+The current time:  13:14
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  13:14
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  13:14
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  13:14
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  13:14
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  13:14
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  13:15
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+Traceback (most recent call last):
+  File "code.py", line 427, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 247, in run_until_complete
+  File "asyncio/core.py", line 186, in wait_io_event
+KeyboardInterrupt: 
+]0;🐍192.168.68.68 | 186@asyncio/core.py KeyboardInterrupt | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\
+Press any key to enter the REPL. Use CTRL-D to reload.
+soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 13, 15, 25, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+The current time:  13:15
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+skip_closed is True
+skip_closed is True
+The current time:  13:16
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  13:16
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  13:16
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 105
+The current time:  13:16
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  13:16
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  13:16
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  13:16
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  13:16
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  13:16
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  13:16
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  13:17
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  13:17
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  13:17
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  13:17
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  13:17
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  13:17
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  13:17
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  13:17
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  13:18
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 20
+The current time:  13:18
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  13:18
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  13:18
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  13:18
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  13:18
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  13:19
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  13:19
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  13:19
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  13:19
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  13:19
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  13:19
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+The current time:  13:20
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  13:20
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mickey's PhilharMagic
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+The current time:  13:20
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  13:20
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  13:20
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  13:21
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 90
+The current time:  13:21
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  13:21
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  13:21
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  13:21
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  13:21
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The current time:  13:21
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  13:21
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The current time:  13:22
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  13:22
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The current time:  13:22
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  13:22
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  13:22
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  13:22
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  13:22
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  13:22
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+The current time:  13:23
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 20
+The current time:  13:23
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Mad Tea Party
+The current time:  13:23
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  13:23
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Ariel at Her Grotto
+The current time:  13:23
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 60
+The current time:  13:23
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+The current time:  13:23
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  13:23
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+The current time:  13:24
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 45
+The current time:  13:24
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+Traceback (most recent call last):
+  File "code.py", line 427, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 256, in run_until_complete
+  File "theme_park_api.py", line 515, in show_ride_name
+  File "theme_park_api.py", line 536, in scroll
+KeyboardInterrupt: 
+]0;🐍192.168.68.68 | 536@theme_park_api.py KeyboardInterrupt | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\
+Press any key to enter the REPL. Use CTRL-D to reload.
+soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 13, 24, 40, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+The current time:  13:24
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+skip_closed is True
+The current time:  13:25
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  13:25
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  13:25
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 90
+The current time:  13:25
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  13:25
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  13:25
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The current time:  13:25
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  13:25
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+Params = ['skip_closed=on', 'Year=2024', 'skip_meet=on', 'Name=WDW', 'park-id=6', 'Month=4', 'Day=1']
+Skip closed is True
+Skip meet is True
+New park name = Disney Magic Kingdom
+New park id = 6
+New park latitude = 28.417663
+New park longitude = -81.581212
+Unable to save settings, drive is read only.
+skip_closed is True
+The current time:  13:26
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+The new color is 16777215
+Unable to save settings, drive is read only.
+The current time:  13:26
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  13:26
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  13:26
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  13:26
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 90
+The current time:  13:26
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The current time:  13:27
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  13:27
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The new color is 16777215
+Unable to save settings, drive is read only.
+The current time:  13:27
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 35
+The current time:  13:27
+Messages regen_flag is False
+Park valid flag is True
+Ride name is The Magic Carpets of Aladdin
+The new color is 16777215
+Unable to save settings, drive is read only.
+The current time:  13:27
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 10
+The current time:  13:27
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Walt Disney's Enchanted Tiki Room
+The new color is 16777215
+Unable to save settings, drive is read only.
+The current time:  13:27
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  13:27
+Messages regen_flag is False
+Park valid flag is True
+Ride name is "it's a small world"
+The current time:  13:27
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 50
+The current time:  13:27
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Dumbo the Flying Elephant
+The current time:  13:28
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 55
+The current time:  13:28
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Enchanted Tales with Belle
+Traceback (most recent call last):
+  File "code.py", line 426, in <module>
+  File "asyncio/core.py", line 312, in run
+  File "asyncio/core.py", line 247, in run_until_complete
+  File "asyncio/core.py", line 186, in wait_io_event
+KeyboardInterrupt: 
+]0;🐍192.168.68.68 | 186@asyncio/core.py KeyboardInterrupt | 8.2.9\
+Code done running.
+]0;🐍Wi-Fi: off | Done | 8.2.9\
+Press any key to enter the REPL. Use CTRL-D to reload.
+soft reboot
+
+Auto-reload is off.
+code.py output:
+]0;🐍Wi-Fi: off | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍Wi-Fi: No IP | code.py | 8.2.9\]0;🐍192.168.68.68 | code.py | 8.2.9\Connected to Wifi: FBI Surveillance Van 112 at 192.168.68.68
+Loaded park Disney Magic Kingdom at ID: 6
+The new color is 16777215
+starting server..
+Listening on http://192.168.68.68:80
+Setting the time to (2023, 12, 27, 13, 28, 23, -1, -1, -1)
+Messages regen_flag is True
+Park valid flag is True
+Updating Park from URL: https://queue-times.com/parks/6/queue_times.json
+MessageQueue.add_rides() called for: Disney Magic Kingdom
+The current year is 2023
+Adding vacation message: Vacation to WDW in: 96 days
+Scrolling message: Vacation to WDW in: 96 days
+The current time:  13:28
+Messages regen_flag is False
+Park valid flag is True
+Scrolling message: Wait times for Disney Magic Kingdom provided by http://queue-times.com
+The current time:  13:28
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 0
+The current time:  13:28
+Messages regen_flag is False
+Park valid flag is True
+Ride name is A Pirate's Adventure ~ Treasures of the Seven Seas
+The current time:  13:29
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 90
+The current time:  13:29
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Jingle Cruise
+The new color is 16777215
+Unable to save settings, drive is read only.
+The current time:  13:29
+Messages regen_flag is False
+Park valid flag is True
+Ride closed
+The current time:  13:29
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Pirates of the Caribbean
+The new color is 16777215
+Unable to save settings, drive is read only.
+The current time:  13:29
+Messages regen_flag is False
+Park valid flag is True
+Ride wait time is 15
+The current time:  13:29
+Messages regen_flag is False
+Park valid flag is True
+Ride name is Swiss Family Treehouse
+The new color is 16777215
+Unable to save settings, drive is read only.

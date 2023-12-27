@@ -8,18 +8,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Color settings page basically working.">
-      <change afterPath="$PROJECT_DIR$/closed-park.json" afterDir="false" />
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added support for parks that don't have lands, and delaying reads for an hour when a park is closed.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/code.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/test_theme-park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/test_theme-park_api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/theme_park_api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ThemeParkAPI.iml" beforeDir="false" afterPath="$PROJECT_DIR$/ThemeParkAPI.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code-bak.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/code.py.bak" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/code.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/screenlog.0" beforeDir="false" afterPath="$PROJECT_DIR$/screenlog.0" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/settings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_theme-park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_theme-park_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/theme_park_api.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -62,7 +55,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Python tests.Python tests in test_theme-park_api.py.executor": "Debug",
+    "Python tests.Python tests in test_theme-park_api.py.executor": "Run",
     "Python.theme_park_api.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -236,7 +229,7 @@
       <workItem from="1703556506953" duration="3813000" />
       <workItem from="1703613023272" duration="2083000" />
       <workItem from="1703615132758" duration="4115000" />
-      <workItem from="1703621531785" duration="17994000" />
+      <workItem from="1703621531785" duration="22647000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <option name="closed" value="true" />
@@ -366,7 +359,15 @@
       <option name="project" value="LOCAL" />
       <updated>1703536205975</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="Added support for parks that don't have lands, and delaying reads for an hour when a park is closed.">
+      <option name="closed" value="true" />
+      <created>1703693993712</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1703693993712</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -404,7 +405,8 @@
     <MESSAGE value="Works without crashing with mDNS and updating in the background. boot.py is hosed and will lock drive in read-only mode." />
     <MESSAGE value="Backup before adding settings GUI." />
     <MESSAGE value="Color settings page basically working." />
-    <option name="LAST_COMMIT_MESSAGE" value="Color settings page basically working." />
+    <MESSAGE value="Added support for parks that don't have lands, and delaying reads for an hour when a park is closed." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added support for parks that don't have lands, and delaying reads for an hour when a park is closed." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -412,11 +414,6 @@
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/webgui.py</url>
           <option name="timeStamp" value="6" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test_theme-park_api.py</url>
-          <line>344</line>
-          <option name="timeStamp" value="25" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/theme_park_api.py</url>
@@ -442,8 +439,8 @@
     <SUITE FILE_PATH="coverage/ThemeParkAPI$main.coverage" NAME="main Coverage Results" MODIFIED="1697480086211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$Doctests_in___init__.coverage" NAME="Doctests in __init__ Coverage Results" MODIFIED="1697475842243" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$webgui.coverage" NAME="webgui Coverage Results" MODIFIED="1700400556244" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/ThemeParkAPI$theme_park_api.coverage" NAME="theme_park_api Coverage Results" MODIFIED="1703693468208" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ThemeParkAPI$theme_park_api.coverage" NAME="theme_park_api Coverage Results" MODIFIED="1703693805774" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$code.coverage" NAME="code Coverage Results" MODIFIED="1698962133526" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Volumes/CIRCUITPY" />
-    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1703693741513" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1703698210367" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>
