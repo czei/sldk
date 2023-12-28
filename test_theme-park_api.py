@@ -10,6 +10,7 @@ import json
 import datetime
 from adafruit_datetime import datetime, time
 from theme_park_api import SettingsManager
+
 try:
     import rtc
 except ModuleNotFoundError:
@@ -292,7 +293,7 @@ class Test(TestCase):
         manager.load_settings()
 
         self.assertTrue(manager.settings["skip_closed"] is True)
-        self.assertTrue(manager.settings["skip_meet"] is False )
+        self.assertTrue(manager.settings["skip_meet"] is False)
         self.assertTrue(manager.settings["current_park_id"] == 6)
         self.assertTrue(manager.settings["current_park_name"] == "Disney Magic Kingdom")
         manager.settings["skip_closed"] = False
@@ -334,8 +335,6 @@ class Test(TestCase):
         scroll_speed = manager.get_scroll_speed()
         self.assertTrue(scroll_speed == 0.06)
 
-
-
     def test_closed_park(self):
         f = open('closed-park.json')
         data = json.load(f)
@@ -352,3 +351,16 @@ class Test(TestCase):
         magic_kingdom = ThemePark(data, "Disney Magic Kingdom", 6)
         self.assertTrue(len(magic_kingdom.rides) > 10)
         self.assertTrue(magic_kingdom.is_open is True)
+
+        # 16 of the rides in the file have the is_open flag set to false,
+        # but 3 of them say they're open, but the wait time is zero.
+        num_open_rides = 0
+        num_closed_rides = 0
+        for ride in magic_kingdom.rides:
+            if ride.is_open() is True:
+                num_open_rides += 1
+            else:
+                num_closed_rides += 1
+
+        self.assertTrue(num_closed_rides == 19)
+

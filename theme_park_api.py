@@ -663,10 +663,10 @@ class MessageQueue:
             return
 
         for ride in park.rides:
-            if "Meet" in ride.name and park.skip_meet == "True":
+            if "Meet" in ride.name and park.skip_meet == True:
                 continue
 
-            if ride.open_flag is False and park.skip_closed == "True":
+            if ride.is_open() is False and park.skip_closed == True:
                 continue
 
             if ride.open_flag is True:
