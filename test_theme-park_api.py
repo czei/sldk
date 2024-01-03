@@ -10,6 +10,7 @@ import json
 import datetime
 from adafruit_datetime import datetime, time
 from theme_park_api import SettingsManager
+from theme_park_api import load_credentials
 
 try:
     import rtc
@@ -364,3 +365,7 @@ class Test(TestCase):
 
         self.assertTrue(num_closed_rides == 19)
 
+    def test_credentials(self):
+        ssid, password = load_credentials()
+        self.assertTrue(ssid == "Scooby")
+        self.assertTrue(password == "Myst3ryv@n")

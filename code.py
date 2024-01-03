@@ -1,10 +1,43 @@
 # Theme Park Waits
 # View information about ride wait times at any theme park
+# Copyright 2024 3DUPFitters LLC
 #
 import asyncio
 import mdns
 import time
 import traceback
+import wifi
+import microcontroller
+import ssl
+import socketpool
+import displayio
+import rgbmatrix
+import framebufferio
+import adafruit_requests
+import adafruit_httpserver
+from adafruit_datetime import datetime
+
+from adafruit_httpserver import (
+    Status,
+    REQUEST_HANDLED_RESPONSE_SENT,
+    Request,
+    Response,
+    Headers,
+    GET,
+    POST
+)
+from adafruit_matrixportal.matrixportal import MatrixPortal
+
+from theme_park_api import set_system_clock, ColorUtils, MatrixPortalDisplay
+from theme_park_api import get_park_name_from_id
+from theme_park_api import ThemePark
+from theme_park_api import Vacation
+from theme_park_api import AsyncScrollingDisplay
+from theme_park_api import MessageQueue
+from theme_park_api import get_park_url_from_id
+from theme_park_api import populate_park_list
+from theme_park_api import SettingsManager
+from theme_park_api import load_credentials
 
 try:
     import board
@@ -28,71 +61,20 @@ except (ModuleNotFoundError, NotImplementedError):
             self.MTX_LAT = 0
             self.MTX_OE = 0
 
-import wifi
-import microcontroller
-import ssl
-import socketpool
-import displayio
-import rgbmatrix
-import framebufferio
-import adafruit_requests
-import adafruit_httpserver
-from adafruit_datetime import datetime, time
+try:
+    import wifimgr
+except (ModuleNotFoundError, NotImplementedError):
+    wifimgr.get_connection.return_value = None
 
-from adafruit_httpserver import (
-    Status,
-    REQUEST_HANDLED_RESPONSE_SENT,
-    Request,
-    Response,
-    Headers,
-    GET,
-    POST
-)
-
-from theme_park_api import set_system_clock, ColorUtils
-from theme_park_api import get_park_name_from_id
-from theme_park_api import ThemePark
-from theme_park_api import Vacation
-from theme_park_api import AsyncScrollingDisplay
-from theme_park_api import MessageQueue
-from theme_park_api import get_park_url_from_id
-from theme_park_api import populate_park_list
-from theme_park_api import SettingsManager
-
+# We don't want autoreload during development, but it
+# may be useful in the field to recover after an unanticipated
+# error.
 import supervisor
 
 supervisor.runtime.autoreload = False
 
-
-def wifi_setup():
-    # Get Wifi credentials
-    try:
-        from secrets import secrets
-    except ImportError:
-        print("WiFi secrets are kept in secrets.py, please add them there!")
-        raise
-    wifi.radio.connect(secrets["ssid"], secrets["password"])
-    while wifi.radio.connected is False:
-        print("Not connected to Wifi")
-        time.sleep(1)
-    ssid = secrets["ssid"]
-    print(f"Connected to Wifi: {ssid} at {wifi.radio.ipv4_address}")
-
-# Configure DNS so that users can configure at http://themeparkwaits.local
-mdns_server = mdns.Server(wifi.radio)
-mdns_server.hostname = "themeparkwaits"
-mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=80)
-
-
-# Setup Networking and WI-FI
-wifi_setup()
-
-# Setup Global Sockets and Server
-socket_pool = socketpool.SocketPool(wifi.radio)
-http_requests = adafruit_requests.Session(socket_pool, ssl.create_default_context())
-web_server = adafruit_httpserver.Server(socket_pool, "/static", debug=False)
-
-# Display Setup
+# Display Setup first in case any error messages
+# Need to be displayed
 displayio.release_displays()
 DISPLAY_WIDTH = 64
 DISPLAY_HEIGHT = 32
@@ -117,6 +99,75 @@ matrix = rgbmatrix.RGBMatrix(
     serpentine=False,
     doublebuffer=True)
 
+# Associate the RGB matrix with a Display so we can use displayio
+display_hardware = framebufferio.FramebufferDisplay(
+    matrix, auto_refresh=AUTO_REFRESH, rotation=DISPLAY_ROTATION)
+display_hardware.refresh(minimum_frames_per_second=0)
+
+# Load settings from JSON file
+current_park = ThemePark()
+settings = SettingsManager("settings.json")
+current_park.load_settings(settings)
+
+# Params for the next vacation, if set
+vacation_date = Vacation()
+vacation_date.load_settings(settings)
+
+
+#
+# Scroll the user instructions on how to configure the wifi
+# when it fails to connect.  This could be the first time,
+# or if they change their wifi password, or move the box
+# to a new location.
+#
+def run_setup_message():
+    print("Starting Wifi Configure message")
+    setup_text = f"Connect your phone to {wifimgr.AP_SSID}, password \"{wifimgr.AP_PASSWORD}\"."
+    setup_text += "  Then load page http://192.168.4.1"
+    local_portal = MatrixPortal(status_neopixel=board.NEOPIXEL, debug=True)
+    local_display = MatrixPortalDisplay(local_portal, settings)
+    try:
+        local_display.sync_show_scroll_message(setup_text)
+        time.sleep(1)
+        now = datetime.now()
+        print(f"The current time:  {now.hour}:{now.minute}")
+
+    except RuntimeError:
+        traceback.print_exc()
+
+
+# Setup WI-FI Password
+try:
+    ssid, password = load_credentials()
+    if ssid != "" and password != "":
+        wifi.radio.connect(ssid, password)
+    while wifi.radio.connected is not True:
+        # asyncio.run(asyncio.gather(run_setup_message(), get_wifi_configuration()))
+        run_setup_message()
+        wifimgr.get_connection()
+
+except RuntimeError:
+    print("Something went seriously wrong connecting to Wifi")
+
+print(f"Connected to Wifi: {ssid} at {wifi.radio.ipv4_address}")
+
+# The messages class contains a list of function calls
+# to the local Display class, which in turn uses the displayio Display
+display = AsyncScrollingDisplay(display_hardware, settings)
+display.set_colors(settings)
+SCROLL_DELAY = 4
+messages = MessageQueue(display, SCROLL_DELAY, regen_flag=True)
+
+# Setup Global Sockets and Server
+socket_pool = socketpool.SocketPool(wifi.radio)
+http_requests = adafruit_requests.Session(socket_pool, ssl.create_default_context())
+web_server = adafruit_httpserver.Server(socket_pool, "/static", debug=False)
+
+# Configure DNS so that users can configure at http://themeparkwaits.local
+mdns_server = mdns.Server(wifi.radio)
+mdns_server.hostname = "themeparkwaits"
+mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=80)
+
 
 # Get a list of rides to populate the currently selected ride
 async def populate_ride_list(parks, park_id):
@@ -139,29 +190,9 @@ async def update_live_wait_time():
     current_park.update(json_response)
 
 
-# Associate the RGB matrix with a Display so we can use displayio
-display_hardware = framebufferio.FramebufferDisplay(
-    matrix, auto_refresh=AUTO_REFRESH, rotation=DISPLAY_ROTATION)
-
 # The current selected park, empty at first
 # A list of all ~150 supported parks
 park_list = populate_park_list(http_requests)
-current_park = ThemePark()
-
-# Load settings from JSON file
-settings = SettingsManager("settings.json")
-current_park.load_settings(settings)
-
-# Params for the next vacation, if set
-vacation_date = Vacation()
-vacation_date.load_settings(settings)
-
-# The messages class contains a list of function calls
-# to the local Display class, which in turn uses the displayio Display
-display = AsyncScrollingDisplay(display_hardware, settings)
-display.set_colors(settings)
-SCROLL_DELAY = 4
-messages = MessageQueue(display, SCROLL_DELAY, regen_flag=True)
 
 
 def generate_header():
@@ -177,6 +208,7 @@ def generate_header():
     page += "</div>"
     page += "</div>"
     return page
+
 
 def generate_main_page():
     page = generate_header()
@@ -269,16 +301,15 @@ def base(request: Request):
     return adafruit_httpserver.Response(request, data, content_type="text/html")
 
 
-@web_server.route("/settings.html", [GET,POST])
+@web_server.route("/settings.html", [GET, POST])
 def base(request: Request):
-
     # Parse new settings
     if request.method == POST:
         for name, value in request.form_data.items():
             settings.settings[name] = value
         display.set_colors(settings)
         try:
-        # Save the settings to disk
+            # Save the settings to disk
             settings.save_settings()
         except OSError:
             print("Unable to save settings, drive is read only.")
@@ -316,6 +347,7 @@ def base(request: Request):
 
     return adafruit_httpserver.Response(request, page, content_type="text/html")
 
+
 # @web_server.route("/settings.html", [POST])
 # def base(request: Request):
 #     return adafruit_httpserver.Response(request, page, content_type="text/html")
@@ -341,7 +373,8 @@ def base(request: Request):
 
         request.query_params = ({})
         head = Headers({"Location": "/"})
-        response = Response(request, "", headers=head,status=Status(302, "Moved temporarily"), content_type="text/html")
+        response = Response(request, "", headers=head, status=Status(302, "Moved temporarily"),
+                            content_type="text/html")
         return response
 
     return adafruit_httpserver.Response(request, generate_main_page(), content_type="text/html")
@@ -381,7 +414,6 @@ async def run_web_server():
 async def run_display():
     while True:
         try:
-            display_hardware.refresh(minimum_frames_per_second=0)
             print(f"Messages regen_flag is {messages.regenerate_flag}")
             print(f"Park valid flag is {current_park.is_valid()}")
             if messages.regenerate_flag is True and current_park.is_valid() is True:
@@ -397,6 +429,7 @@ async def run_display():
 
         except RuntimeError:
             traceback.print_exc()
+
 
 async def update_ride_times():
     """
@@ -416,6 +449,7 @@ async def update_ride_times():
 
         except RuntimeError:
             traceback.print_exc()
+
 
 # Set device time from the internet
 set_system_clock(http_requests)

@@ -164,7 +164,7 @@ class ThemeParkRide:
         :return:
         """
         return self.open_flag is True and self.wait_time > 0
-
+        # return self.open_flag
 
 class ThemePark:
     def __init__(self, json_data=(), name="", id=0, latitude=0.0, longitude=0.0):
@@ -173,6 +173,7 @@ class ThemePark:
         :param json_data: Python JSON objects from a single park
         :return:
         """
+        self.is_open = False
         self.counter = 0
         self.name = name
         self.id = id
@@ -181,7 +182,6 @@ class ThemePark:
         self.rides = self.get_rides_from_json(json_data)
         self.skip_meet = False
         self.skip_closed = False
-        self.is_open = False
 
     @staticmethod
     def remove_non_ascii(orig_str):
@@ -208,10 +208,27 @@ class ThemePark:
         if len(json_data) <= 0:
             return ride_list
 
+        # Some parks consist of Lands, and some don't.  We'll
+        # try to parse both.
         lands_list = json_data["lands"]
         for land in lands_list:
             rides = land["rides"]
             for ride in rides:
+                name = ride["name"]
+                # print(f"Ride = {name}")
+                ride_id = ride["id"]
+                wait_time = ride["wait_time"]
+                open_flag = ride["is_open"]
+                this_ride_object = ThemeParkRide(name, ride_id, wait_time, open_flag)
+                if this_ride_object.is_open() is True:
+                    self.is_open = True
+                ride_list.append(this_ride_object)
+
+        # Some parks dont' have lands, but we also want to avoid
+        # double-counting
+        if len(lands_list) == 0:
+            rides_list = json_data["rides"]
+            for ride in rides_list:
                 name = ride["name"]
                 # print(f"Ride = {name}")
                 ride_id = ride["id"]
@@ -276,8 +293,8 @@ class ThemePark:
     def parse(self, str_params, park_list):
         params = str_params.split("&")
         print(f"Params = {params}")
-        self.skip_meet = "False"
-        self.skip_closed = "False"
+        self.skip_meet = False
+        self.skip_closed = False
         for param in params:
             name_value = param.split("=")
             # print(f"param = {param}")
@@ -294,10 +311,10 @@ class ThemePark:
                 print(f"New park longitude = {self.longitude}")
             if name_value[0] == "skip_closed":
                 print("Skip closed is True")
-                self.skip_closed = "True"
+                self.skip_closed = True
             if name_value[0] == "skip_meet":
                 print("Skip meet is True")
-                self.skip_meet = "True"
+                self.skip_meet = True
     def store_settings(self, sm):
         sm.settings["current_park_name"] = self.name
         sm.settings["current_park_id"] = self.id
@@ -351,7 +368,7 @@ class Vacation:
         for param in params:
             name_value = param.split("=")
             if name_value[0] == "Name":
-                self.name = str(name_value[1])
+                self.name = str(name_value[1]).replace("+", " ")
             if name_value[0] == "Year":
                 self.year = int(name_value[1])
             if name_value[0] == "Month":
@@ -390,8 +407,8 @@ class Vacation:
 
 
 class Display:
-    def __init__(self, scrolldelay=0.03):
-        self.scroll_delay = scrolldelay
+    def __init__(self, sm):
+        self.settings_manager = sm
         self.RED_COLOR = 0xCC3333
         self.BLUE_COLOR = 0x0000AA
         self.BLACK_COLOR = 0x000000
@@ -414,8 +431,8 @@ class Display:
 
 
 class AsyncScrollingDisplay(Display):
-    def __init__(self, display_hardware, scrolldelay=0.04):
-        super().__init__(scrolldelay)
+    def __init__(self, display_hardware, sm):
+        super().__init__(sm)
         self.font = terminalio.FONT
         self.hardware = display_hardware
 
@@ -495,7 +512,7 @@ class AsyncScrollingDisplay(Display):
         self.wait_time_name.text = ride_name
         self.wait_time_name_group.hidden = False
         while self.scroll(self.wait_time_name) is True:
-            await asyncio.sleep(self.scroll_delay)
+            await asyncio.sleep(self.settings_manager.get_scroll_speed())
         await asyncio.sleep(1)
         self.wait_time.text = ""
         self.wait_time_name.text = ""
@@ -510,7 +527,7 @@ class AsyncScrollingDisplay(Display):
         self.scrolling_label.text = message
         self.scrolling_group.hidden = False
         while self.scroll(self.scrolling_label) is True:
-            await asyncio.sleep(self.scroll_delay)
+            await asyncio.sleep(self.settings_manager.get_scroll_speed())
         self.scrolling_group.hidden = True
 
     def scroll(self, line):
@@ -598,7 +615,7 @@ class MatrixPortalDisplay(Display):
         self.matrix_portal.scroll_text(self.scroll_delay)
 
 
-REQUIRED_MESSAGE = "Data provided by http://queue-times.com"
+REQUIRED_MESSAGE = "http://queue-times.com"
 CONFIGURATION_MESSAGE = "Configure at http://themeparkwaits.local"
 
 
@@ -611,25 +628,23 @@ class MessageQueue:
         self.func_queue = []
         self.param_queue = []
         self.delay_queue = []
-        self.func_queue.append(d.show_scroll_message)
-        self.param_queue.append(REQUIRED_MESSAGE)
-        self.delay_queue.append(self.delay)
-        self.func_queue.append(d.show_scroll_message)
-        self.param_queue.append(CONFIGURATION_MESSAGE)
-        self.delay_queue.append(self.delay)
+        #self.func_queue.append(d.show_scroll_message)
+        #self.param_queue.append(REQUIRED_MESSAGE)
+        #self.delay_queue.append(self.delay)
+        #self.func_queue.append(d.show_scroll_message)
+        #self.param_queue.append(CONFIGURATION_MESSAGE)
+        #self.delay_queue.append(self.delay)
         self.index = 0
 
     async def add_rides(self, park, vac):
-        print(f"MessageQueue.add_rides() called for: {park.name} with id: {park.id}")
+        print(f"MessageQueue.add_rides() called for: {park.name}")
         self.func_queue = []
         self.param_queue = []
         self.delay_queue = []
         self.index = 0
         self.func_queue.append(self.display.show_scroll_message)
-        self.param_queue.append(REQUIRED_MESSAGE)
-        self.delay_queue.append(self.delay)
-        self.func_queue.append(self.display.show_scroll_message)
-        self.param_queue.append(park.name + ":")
+        required_message = f"Wait times for {park.name} provided by {REQUIRED_MESSAGE}"
+        self.param_queue.append(required_message)
         self.delay_queue.append(self.delay)
 
         if vac.is_set() is True:
@@ -641,12 +656,17 @@ class MessageQueue:
                 self.param_queue.insert(0, vac_message)
                 self.delay_queue.insert(0, 0)
 
+        if park.is_open is False:
+            self.func_queue.append(self.display.show_scroll_message)
+            self.delay_queue.append(self.delay)
+            self.param_queue.append(park.name + " is closed")
+            return
+
         for ride in park.rides:
-            print(f"Trying to add ride {ride.name} closed={ride.open_flag}")
-            if "Meet" in ride.name and park.skip_meet == "True":
+            if "Meet" in ride.name and park.skip_meet == True:
                 continue
 
-            if ride.is_closed() is True and park.skip_closed == "True":
+            if ride.is_open() is False and park.skip_closed == True:
                 continue
 
             if ride.open_flag is True:
@@ -727,6 +747,8 @@ class SettingsManager:
     def __init__(self, filename):
         self.filename = filename
         self.settings = self.load_settings()
+        self.scroll_speed = {"Slow": 0.06, "Medium": 0.04, "Fast": 0.03}
+
         if self.settings.get("skip_closed") is None:
             self.settings["skip_closed"] = False
         if self.settings.get("skip_meet") is None:
@@ -737,11 +759,17 @@ class SettingsManager:
             self.settings["ride_name_color"] = ColorUtils.colors["Blue"]
         if self.settings.get("ride_wait_time_color") is None:
             self.settings["ride_wait_time_color"] = ColorUtils.colors["White"]
+        if self.settings.get("scroll_speed") is None:
+            self.settings["scroll_speed"] = "Medium"
+
         # Features not implemented yet
         #if self.settings.get("park_name_color") is None:
         #    self.settings["park_name_color"] = ColorUtils.colors["Blue"]
         #if self.settings.get("vacation_color") is None:
         #    self.settings["vacation_color"] = ColorUtils.colors["Red"]
+
+    def get_scroll_speed(self):
+        return self.scroll_speed[self.settings["scroll_speed"]]
 
     @staticmethod
     def get_pretty_name(settings_name):

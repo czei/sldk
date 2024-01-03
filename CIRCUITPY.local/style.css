@@ -59,6 +59,19 @@ input { display: table-cell;
    background-color: red;
 }
 
+.gear-icon {
+  position: fixed;
+  top: 0;
+  right: 0;
+  z-index: 100; /* Put the icon on top of other elements */
+}
+
+.gear-icon img {
+  width: 24px; /* Adjust size as needed */
+  height: 24px;
+  margin: 10px; /* Adjust spacing as needed */
+}
+
 .dropdown-content {
    display: none;
    position: absolute;
@@ -83,4 +96,12 @@ input { display: table-cell;
 
 .dropdown:hover .dropdown-content {
    display: block;
+}
+
+.myCheckbox {
+   vertical-align: middle;
+}
+
+.settings {
+   float: right;
 }

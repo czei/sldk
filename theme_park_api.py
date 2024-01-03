@@ -4,6 +4,7 @@ import displayio
 from adafruit_datetime import datetime
 from adafruit_display_text.label import Label
 import json
+import os
 
 try:
     import rtc
@@ -15,6 +16,7 @@ except ModuleNotFoundError:
         class RTC:
             def __init__(self):
                 self.datetime = datetime()
+
 
 def set_system_clock(http_requests):
     # Set device time from the internet
@@ -94,7 +96,6 @@ def get_theme_parks_from_json(json):
     return park_list
 
 
-
 def get_park_url_from_name(park_list, park_name):
     """
     Takes the output from get_theme_parks_from_json and assembles
@@ -166,6 +167,7 @@ class ThemeParkRide:
         return self.open_flag is True and self.wait_time > 0
         # return self.open_flag
 
+
 class ThemePark:
     def __init__(self, json_data=(), name="", id=0, latitude=0.0, longitude=0.0):
         """
@@ -195,7 +197,7 @@ class ThemePark:
                 new_str += c
         return new_str
 
-    def get_rides_from_json(self,json_data):
+    def get_rides_from_json(self, json_data):
         """
         Returns a list of the names of rides at a particular park contained in the JSON
         :param json_data: A JSON file containing data for a particular park
@@ -315,6 +317,7 @@ class ThemePark:
             if name_value[0] == "skip_meet":
                 print("Skip meet is True")
                 self.skip_meet = True
+
     def store_settings(self, sm):
         sm.settings["current_park_name"] = self.name
         sm.settings["current_park_id"] = self.id
@@ -480,7 +483,6 @@ class AsyncScrollingDisplay(Display):
 
     def set_colors(self, settings):
         new_color = int(settings.settings["ride_wait_time_color"])
-        print(f"The new color is {new_color}")
         self.wait_time_name.color = int(settings.settings["ride_name_color"])
         self.wait_time.color = int(settings.settings["ride_wait_time_color"])
         self.closed.color = int(settings.settings["ride_wait_time_color"])
@@ -544,10 +546,12 @@ class AsyncScrollingDisplay(Display):
 
 
 class MatrixPortalDisplay(Display):
-    def __init__(self, mp, scrolldelay=0.03):
-        super().__init__(scrolldelay)
+    def __init__(self, mp, setting_manager, scrolldelay=0.03):
+        super().__init__(setting_manager)
+        # super().__init__(scrolldelay)
 
         self.matrix_portal = mp
+        self.scroll_delay = scrolldelay
 
         self.WAIT_TIME = 0
         self.matrix_portal.add_text(
@@ -614,6 +618,13 @@ class MatrixPortalDisplay(Display):
         self.matrix_portal.set_text(message, self.RIDE_NAME)
         self.matrix_portal.scroll_text(self.scroll_delay)
 
+    def sync_show_scroll_message(self, message):
+        print(f"Scrolling message: {message}")
+        self.matrix_portal.set_text("", self.STANDBY)
+        self.matrix_portal.set_text("", self.WAIT_TIME)
+        self.matrix_portal.set_text(message, self.RIDE_NAME)
+        self.matrix_portal.scroll_text(self.scroll_delay)
+
 
 REQUIRED_MESSAGE = "http://queue-times.com"
 CONFIGURATION_MESSAGE = "Configure at http://themeparkwaits.local"
@@ -628,13 +639,12 @@ class MessageQueue:
         self.func_queue = []
         self.param_queue = []
         self.delay_queue = []
-        #self.func_queue.append(d.show_scroll_message)
-        #self.param_queue.append(REQUIRED_MESSAGE)
-        #self.delay_queue.append(self.delay)
-        #self.func_queue.append(d.show_scroll_message)
-        #self.param_queue.append(CONFIGURATION_MESSAGE)
-        #self.delay_queue.append(self.delay)
         self.index = 0
+
+    def add_scroll_message(self, the_message, delay=2):
+        self.func_queue.insert(0, self.display.show_scroll_message)
+        self.param_queue.insert(0, the_message)
+        self.delay_queue.insert(0, delay)
 
     async def add_rides(self, park, vac):
         print(f"MessageQueue.add_rides() called for: {park.name}")
@@ -652,9 +662,10 @@ class MessageQueue:
             if days_until >= 0:
                 vac_message = f"Vacation to {vac.name} in: {days_until} days"
                 print(f"Adding vacation message: {vac_message}")
-                self.func_queue.insert(0, self.display.show_scroll_message)
-                self.param_queue.insert(0, vac_message)
-                self.delay_queue.insert(0, 0)
+                self.add_scroll_message(vac_message, 0)
+                # self.func_queue.insert(0, self.display.show_scroll_message)
+                # self.param_queue.insert(0, vac_message)
+                # self.delay_queue.insert(0, 0)
 
         if park.is_open is False:
             self.func_queue.append(self.display.show_scroll_message)
@@ -763,9 +774,9 @@ class SettingsManager:
             self.settings["scroll_speed"] = "Medium"
 
         # Features not implemented yet
-        #if self.settings.get("park_name_color") is None:
+        # if self.settings.get("park_name_color") is None:
         #    self.settings["park_name_color"] = ColorUtils.colors["Blue"]
-        #if self.settings.get("vacation_color") is None:
+        # if self.settings.get("vacation_color") is None:
         #    self.settings["vacation_color"] = ColorUtils.colors["Red"]
 
     def get_scroll_speed(self):
@@ -787,3 +798,28 @@ class SettingsManager:
     def save_settings(self):
         with open(self.filename, 'w') as f:
             json.dump(self.settings, f)
+
+
+def load_credentials():
+    try:
+        if os.stat("wifi.dat") is False:
+            return "", ""
+        # Open the file in read mode
+        with open('wifi.dat', 'r') as file:
+            # Read all lines from the file
+            lines = file.readlines()
+
+        # Process each line
+        for line in lines:
+            # Strip leading/trailing white space and split into components
+            ssid, password = line.strip().split(';')
+
+            # Output (or use) the ssid and password
+            print(f'SSID: {ssid}, Password: {password}')
+
+            return ssid, password
+
+    except OSError:
+        print("Unable to load wifi credentials from file")
+        return "", ""
+
