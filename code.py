@@ -122,7 +122,7 @@ vacation_date.load_settings(settings)
 #
 def run_setup_message():
     print("Starting Wifi Configure message")
-    setup_text = f"Connect your phone to {wifimgr.AP_SSID}, password \"{wifimgr.AP_PASSWORD}\"."
+    setup_text = f"Connect your phone to Wifi channel {wifimgr.AP_SSID}, password \"{wifimgr.AP_PASSWORD}\"."
     setup_text += "  Then load page http://192.168.4.1"
     local_portal = MatrixPortal(status_neopixel=board.NEOPIXEL, debug=True)
     local_display = MatrixPortalDisplay(local_portal, settings)
@@ -137,17 +137,27 @@ def run_setup_message():
 
 
 # Setup WI-FI Password
+ssid, password = load_credentials()
 try:
-    ssid, password = load_credentials()
-    if ssid != "" and password != "":
-        wifi.radio.connect(ssid, password)
+    wifi.radio.connect(ssid, password)
+except (RuntimeError, ConnectionError, ValueError):
+    run_setup_message()
     while wifi.radio.connected is not True:
-        # asyncio.run(asyncio.gather(run_setup_message(), get_wifi_configuration()))
-        run_setup_message()
-        wifimgr.get_connection()
+        try:
+            ssid = ""
+            password = ""
+            if wifimgr.get_connection() is not None:
+                wifi.radio.connect(ssid, password)
+                print("Resetting Wifi after setup")
+                import microcontroller
+                microcontroller.on_next_reset(microcontroller.RunMode.NORMAL)
+                microcontroller.reset()
 
-except RuntimeError:
-    print("Something went seriously wrong connecting to Wifi")
+        except (RuntimeError, ConnectionError, ValueError):
+            print("Something went seriously wrong connecting to Wifi")
+            import microcontroller
+            microcontroller.on_next_reset(microcontroller.RunMode.NORMAL)
+            microcontroller.reset()
 
 print(f"Connected to Wifi: {ssid} at {wifi.radio.ipv4_address}")
 
@@ -348,10 +358,6 @@ def base(request: Request):
     return adafruit_httpserver.Response(request, page, content_type="text/html")
 
 
-# @web_server.route("/settings.html", [POST])
-# def base(request: Request):
-#     return adafruit_httpserver.Response(request, page, content_type="text/html")
-
 @web_server.route("/", [GET])
 def base(request: Request):
     if len(request.query_params) > 0:
@@ -384,7 +390,7 @@ def start_web_server(wserver):
     print("starting server..")
     # startup the server
     try:
-        wserver.start(str(wifi.radio.ipv4_address))
+        wserver.start(str(wifi.radio.ipv4_address), 80)
         print("Listening on http://%s:80" % wifi.radio.ipv4_address)
     except OSError:
         time.sleep(5)

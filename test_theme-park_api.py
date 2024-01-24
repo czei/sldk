@@ -11,6 +11,7 @@ import datetime
 from adafruit_datetime import datetime, time
 from theme_park_api import SettingsManager
 from theme_park_api import load_credentials
+from theme_park_api import url_decode
 
 try:
     import rtc
@@ -225,12 +226,12 @@ class Test(TestCase):
         self.assertTrue(location[1] == "-81.581212")
 
     def test_vacation(self):
-        params = "Name=Orlando+Vacation&Year=2024&Month=1&Day=2"
+        params = "Name=Orlando+Vacation&Year=2044&Month=1&Day=2"
         vac = Vacation()
         self.assertTrue(vac.is_set() is False)
         vac.parse(params)
         self.assertTrue(vac.name == "Orlando Vacation")
-        self.assertTrue(vac.year == 2024)
+        self.assertTrue(vac.year == 2044)
         self.assertTrue(vac.month == 1)
         self.assertTrue(vac.day == 2)
         self.assertTrue(vac.is_set() is True)
@@ -369,3 +370,7 @@ class Test(TestCase):
         ssid, password = load_credentials()
         self.assertTrue(ssid == "Scooby")
         self.assertTrue(password == "Myst3ryv@n")
+
+    def test_url_decode(self):
+        self.assertTrue(url_decode("112%20Bob") == "112 Bob")
+

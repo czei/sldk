@@ -823,3 +823,18 @@ def load_credentials():
         print("Unable to load wifi credentials from file")
         return "", ""
 
+
+def url_decode(input_string):
+    hex_chars = "0123456789abcdef"
+    result = ""
+    i = 0
+    while i < len(input_string):
+        if input_string[i] == "%" and i < len(input_string) - 2:
+            hex_value = input_string[i+1:i+3].lower()
+            if all(c in hex_chars for c in hex_value):
+                result += chr(int(hex_value, 16))
+                i += 3
+                continue
+        result += input_string[i]
+        i += 1
+    return result

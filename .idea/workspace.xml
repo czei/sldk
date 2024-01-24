@@ -8,63 +8,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Fixed bug where closed rides were being shown despite the &quot;skip closed rides&quot; option being set.">
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/boot.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/images/gear.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/images/gear.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/__init__.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/bmp/__init__.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/bmp/indexed.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/bmp/negative_height_check.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/bmp/truecolor.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/displayio_types.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/gif.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/png.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/__init__.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/pbm_ascii.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/pbm_binary.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/pgm/__init__.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/pgm/ascii.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/pgm/binary.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/ppm_ascii.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/ppm_binary.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/tilegrid_inflator.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/lib/wifimgr.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CIRCUITPY.local/settings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/wifi-swannanoa.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/wifi.dat" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/wifimgr.py" afterDir="false" />
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added code to configure Wifi connection if unable to connect.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/boot_out.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/boot_out.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/code.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/images/adafruit_star.bmp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/images/background.bmp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/images/logo.bmp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/images/maskedblinka.bmp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/images/maskedstar.bmp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/bmp/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/bmp/indexed.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/bmp/negative_height_check.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/bmp/truecolor.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/displayio_types.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/gif.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/png.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/pbm_ascii.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/pbm_binary.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/pgm/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/pgm/ascii.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/pgm/binary.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/ppm_ascii.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/pnm/ppm_binary.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/lib/adafruit_imageload/tilegrid_inflator.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/secrets.py" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/secrets.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/theme_park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/code.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_theme-park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_theme-park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/theme_park_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/wifimgr.py" beforeDir="false" afterPath="$PROJECT_DIR$/wifimgr.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -121,7 +70,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.32068965&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
@@ -291,7 +240,14 @@
       <workItem from="1703973738722" duration="614000" />
       <workItem from="1703974470402" duration="6380000" />
       <workItem from="1704033041680" duration="2997000" />
-      <workItem from="1704286550487" duration="6845000" />
+      <workItem from="1704286550487" duration="8117000" />
+      <workItem from="1704317449004" duration="722000" />
+      <workItem from="1704327324974" duration="7902000" />
+      <workItem from="1705346905376" duration="743000" />
+      <workItem from="1705634080316" duration="4521000" />
+      <workItem from="1705955782659" duration="1637000" />
+      <workItem from="1705957432020" duration="380000" />
+      <workItem from="1706057411694" duration="3620000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <option name="closed" value="true" />
@@ -469,7 +425,15 @@
       <option name="project" value="LOCAL" />
       <updated>1703771889247</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Added code to configure Wifi connection if unable to connect.">
+      <option name="closed" value="true" />
+      <created>1704316207525</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1704316207525</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -480,7 +444,19 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="HEAD" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
@@ -513,7 +489,8 @@
     <MESSAGE value="Fixed checkboxes for skipping stuff." />
     <MESSAGE value="Fixed checkbox state being saved in settings JSON file." />
     <MESSAGE value="Fixed bug where closed rides were being shown despite the &quot;skip closed rides&quot; option being set." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed bug where closed rides were being shown despite the &quot;skip closed rides&quot; option being set." />
+    <MESSAGE value="Added code to configure Wifi connection if unable to connect." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added code to configure Wifi connection if unable to connect." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -543,6 +520,6 @@
     <SUITE FILE_PATH="coverage/ThemeParkAPI$webgui.coverage" NAME="webgui Coverage Results" MODIFIED="1700400556244" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$theme_park_api.coverage" NAME="theme_park_api Coverage Results" MODIFIED="1703709861622" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$code.coverage" NAME="code Coverage Results" MODIFIED="1703862608085" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1703981727904" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1705957787237" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

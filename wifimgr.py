@@ -18,6 +18,23 @@ FILE_NETWORK_PROFILES = 'wifi.dat'
 ap_enabled = False
 server_socket = None
 
+# Fixed a bug where SSIDs and passwords couldn't have spaces or non alpha
+# characters.
+def url_decode(input_string):
+    hex_chars = "0123456789abcdef"
+    result = ""
+    i = 0
+    while i < len(input_string):
+        if input_string[i] == "%" and i < len(input_string) - 2:
+            hex_value = input_string[i+1:i+3].lower()
+            if all(c in hex_chars for c in hex_value):
+                result += chr(int(hex_value, 16))
+                i += 3
+                continue
+        result += input_string[i]
+        i += 1
+    return result
+
 def do_connect(ssid, password):
     wifi.radio.enabled = True
     if wifi.radio.ap_info is not None:
@@ -64,7 +81,8 @@ def get_connection():
             return wifi.radio
 
         # read known network profiles from file
-        profiles = read_profiles()
+        # profiles = read_profiles()
+        profiles = ""
 
         # search networks in range
         wifi.radio.enabled = True
@@ -134,8 +152,14 @@ def handle_configure(client, request):
         send_response(client, "Parameters not found", status_code=400)
         print('Handle configure aborted, missing parameters')
         return False
-    ssid = match.group(1).replace("%3F", "?").replace("%21", "!")
-    password = match.group(2).replace("%3F", "?").replace("%21", "!")
+
+    # Fixed a bug where SSIDs and passwords couldn't have spaces or non alpha
+    # characters.
+
+    #ssid = match.group(1).replace("%3F", "?").replace("%21", "!")
+    ssid = url_decode(match.group(1))
+    #password = match.group(2).replace("%3F", "?").replace("%21", "!")
+    password = url_decode(match.group(2))
 
     if len(ssid) == 0:
         send_response(client, "SSID must be provided", status_code=400)
@@ -489,6 +513,11 @@ def start_ap(port=80):
 
         finally:
             client.close()
+
+    # Make sure other people can run a web server on the same
+    # machine.
+    server_socket.close()
+    client.close()
 
 def write_profiles(profiles):
     print('Write profiles start')
