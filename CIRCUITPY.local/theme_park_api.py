@@ -747,7 +747,7 @@ class SettingsManager:
     def __init__(self, filename):
         self.filename = filename
         self.settings = self.load_settings()
-        self.scroll_speed = {"Slow": 0.06, "Medium": 0.04, "Fast": 0.03}
+        self.scroll_speed = {"Slow": 0.06, "Medium": 0.04, "Fast": 0.02}
 
         if self.settings.get("skip_closed") is None:
             self.settings["skip_closed"] = False

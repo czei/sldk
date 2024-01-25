@@ -2,6 +2,9 @@
 # View information about ride wait times at any theme park
 # Copyright 2024 3DUPFitters LLC
 #
+import digitalio
+import board
+
 import asyncio
 import mdns
 import time
@@ -114,6 +117,13 @@ vacation_date = Vacation()
 vacation_date.load_settings(settings)
 
 
+import digitalio
+import board
+
+button = digitalio.DigitalInOut(board.BUTTON_UP)
+print(f"The UP button value is {button.value}")
+
+
 #
 # Scroll the user instructions on how to configure the wifi
 # when it fails to connect.  This could be the first time,
@@ -150,12 +160,14 @@ except (RuntimeError, ConnectionError, ValueError):
                 wifi.radio.connect(ssid, password)
                 print("Resetting Wifi after setup")
                 import microcontroller
+
                 microcontroller.on_next_reset(microcontroller.RunMode.NORMAL)
                 microcontroller.reset()
 
         except (RuntimeError, ConnectionError, ValueError):
             print("Something went seriously wrong connecting to Wifi")
             import microcontroller
+
             microcontroller.on_next_reset(microcontroller.RunMode.NORMAL)
             microcontroller.reset()
 

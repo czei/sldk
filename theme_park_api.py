@@ -675,6 +675,7 @@ class MessageQueue:
 
         for ride in park.rides:
             if "Meet" in ride.name and park.skip_meet == True:
+                print(f"Skipping character meet: {ride.name}")
                 continue
 
             if ride.is_open() is False and park.skip_closed == True:
@@ -758,7 +759,7 @@ class SettingsManager:
     def __init__(self, filename):
         self.filename = filename
         self.settings = self.load_settings()
-        self.scroll_speed = {"Slow": 0.06, "Medium": 0.04, "Fast": 0.03}
+        self.scroll_speed = {"Slow": 0.06, "Medium": 0.04, "Fast": 0.02}
 
         if self.settings.get("skip_closed") is None:
             self.settings["skip_closed"] = False
@@ -825,6 +826,7 @@ def load_credentials():
 
 
 def url_decode(input_string):
+    input_string = input_string.replace('+', ' ')
     hex_chars = "0123456789abcdef"
     result = ""
     i = 0

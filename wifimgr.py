@@ -21,6 +21,7 @@ server_socket = None
 # Fixed a bug where SSIDs and passwords couldn't have spaces or non alpha
 # characters.
 def url_decode(input_string):
+    input_string = input_string.replace('+', ' ')
     hex_chars = "0123456789abcdef"
     result = ""
     i = 0

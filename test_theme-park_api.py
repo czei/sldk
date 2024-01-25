@@ -372,5 +372,6 @@ class Test(TestCase):
         self.assertTrue(password == "Myst3ryv@n")
 
     def test_url_decode(self):
-        self.assertTrue(url_decode("112%20Bob") == "112 Bob")
+        self.assertTrue(url_decode("FBI%20Surveillance%20Van%20112") == "FBI Surveillance Van 112")
+        self.assertTrue(url_decode("FBI+Surveillance+Van+112") == "FBI Surveillance Van 112")
 

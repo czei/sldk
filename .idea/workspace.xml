@@ -8,8 +8,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added code to configure Wifi connection if unable to connect.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Fixed bug where you couldn't change SSID or password if either had changed.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/theme_park_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/boot.py" beforeDir="false" afterPath="$PROJECT_DIR$/boot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/code.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test_theme-park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_theme-park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/theme_park_api.py" afterDir="false" />
@@ -70,7 +72,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Project&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.32068965&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
@@ -247,7 +249,8 @@
       <workItem from="1705634080316" duration="4521000" />
       <workItem from="1705955782659" duration="1637000" />
       <workItem from="1705957432020" duration="380000" />
-      <workItem from="1706057411694" duration="3620000" />
+      <workItem from="1706057411694" duration="8927000" />
+      <workItem from="1706119993382" duration="4285000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <option name="closed" value="true" />
@@ -433,7 +436,15 @@
       <option name="project" value="LOCAL" />
       <updated>1704316207525</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Fixed bug where you couldn't change SSID or password if either had changed.">
+      <option name="closed" value="true" />
+      <created>1706061568508</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1706061568508</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -490,7 +501,8 @@
     <MESSAGE value="Fixed checkbox state being saved in settings JSON file." />
     <MESSAGE value="Fixed bug where closed rides were being shown despite the &quot;skip closed rides&quot; option being set." />
     <MESSAGE value="Added code to configure Wifi connection if unable to connect." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added code to configure Wifi connection if unable to connect." />
+    <MESSAGE value="Fixed bug where you couldn't change SSID or password if either had changed." />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed bug where you couldn't change SSID or password if either had changed." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -520,6 +532,6 @@
     <SUITE FILE_PATH="coverage/ThemeParkAPI$webgui.coverage" NAME="webgui Coverage Results" MODIFIED="1700400556244" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$theme_park_api.coverage" NAME="theme_park_api Coverage Results" MODIFIED="1703709861622" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$code.coverage" NAME="code Coverage Results" MODIFIED="1703862608085" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1705957787237" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1706114279122" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

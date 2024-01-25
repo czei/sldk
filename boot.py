@@ -2,10 +2,11 @@
 
 import board
 import digitalio
-import time
 import storage
+import os
 
-# Define the button pin
+# See if we need to mount the drive read-only on the Matrix S3
+# side so the computer side can edit files.
 button_pin = board.BUTTON_DOWN  # Change this to the actual pin connected to your button
 
 # Create a digital input object for the button
@@ -18,3 +19,13 @@ drive_state = not button.value
 # storage.remount("/", False)
 # print(f"Drive mount logic is: {drive_state}")
 storage.remount("/", drive_state)
+
+# See if the user wants to reset the Wifi info
+# in case the software retry fails.
+button = digitalio.DigitalInOut(board.BUTTON_UP)
+print(f"The UP button value is {button.value}")
+if button.value is False:
+    try:
+        os.remove("wifi.dat")
+    except OSError:
+        print('File wifi.dat does not exist')
