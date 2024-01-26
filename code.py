@@ -10,7 +10,6 @@ import mdns
 import time
 import traceback
 import wifi
-import microcontroller
 import ssl
 import socketpool
 import displayio
@@ -116,13 +115,8 @@ current_park.load_settings(settings)
 vacation_date = Vacation()
 vacation_date.load_settings(settings)
 
-
 import digitalio
 import board
-
-button = digitalio.DigitalInOut(board.BUTTON_UP)
-print(f"The UP button value is {button.value}")
-
 
 #
 # Scroll the user instructions on how to configure the wifi
@@ -130,48 +124,54 @@ print(f"The UP button value is {button.value}")
 # or if they change their wifi password, or move the box
 # to a new location.
 #
-def run_setup_message():
-    print("Starting Wifi Configure message")
-    setup_text = f"Connect your phone to Wifi channel {wifimgr.AP_SSID}, password \"{wifimgr.AP_PASSWORD}\"."
-    setup_text += "  Then load page http://192.168.4.1"
+def run_setup_message(setup_text, repeat_count):
+    # print("Starting Wifi Configure message")
+
     local_portal = MatrixPortal(status_neopixel=board.NEOPIXEL, debug=True)
     local_display = MatrixPortalDisplay(local_portal, settings)
-    try:
-        local_display.sync_show_scroll_message(setup_text)
-        time.sleep(1)
-        now = datetime.now()
-        print(f"The current time:  {now.hour}:{now.minute}")
 
-    except RuntimeError:
-        traceback.print_exc()
+    for i in range(repeat_count):
+        try:
+            local_display.sync_show_scroll_message(setup_text)
+            time.sleep(1)
+            now = datetime.now()
+            # print(f"The current time:  {now.hour}:{now.minute}")
+
+        except RuntimeError:
+            traceback.print_exc()
 
 
 # Setup WI-FI Password
 ssid, password = load_credentials()
-try:
-    wifi.radio.connect(ssid, password)
-except (RuntimeError, ConnectionError, ValueError):
-    run_setup_message()
-    while wifi.radio.connected is not True:
-        try:
-            ssid = ""
-            password = ""
-            if wifimgr.get_connection() is not None:
-                wifi.radio.connect(ssid, password)
-                print("Resetting Wifi after setup")
-                import microcontroller
 
-                microcontroller.on_next_reset(microcontroller.RunMode.NORMAL)
-                microcontroller.reset()
+#
+# True when first starting device or the Wifi has been reset
+#
+if ssid == "" and password == "":
+    setup_text = f"Connect your phone to Wifi channel {wifimgr.AP_SSID}, password \"{wifimgr.AP_PASSWORD}\"."
+    setup_text += "  Then load page http://192.168.4.1 to configure Wifi"
+    run_setup_message(setup_text, 1)
 
-        except (RuntimeError, ConnectionError, ValueError):
-            print("Something went seriously wrong connecting to Wifi")
-            import microcontroller
+    try:
+        if wifimgr.get_connection() is not None:
+            wifi.radio.connect(ssid, password)
 
-            microcontroller.on_next_reset(microcontroller.RunMode.NORMAL)
-            microcontroller.reset()
+    except (RuntimeError, ConnectionError, ValueError):
+        traceback.print_exc()
+    finally:
+        supervisor.reload()
+#
+# The Wifi credentials already existed
+#
+else:
+    try:
+        wifi.radio.connect(ssid, password)
+    except (RuntimeError, ConnectionError, ValueError):
+        while wifi.radio.connected is not True:
+            setup_message = "Press the Reboot Button and then hold down Reset Wifi Button until the LED lights up"
+            run_setup_message(setup_message, 10)
 
-print(f"Connected to Wifi: {ssid} at {wifi.radio.ipv4_address}")
+# print(f"Connected to Wifi: {ssid} at {wifi.radio.ipv4_address}")
 
 # The messages class contains a list of function calls
 # to the local Display class, which in turn uses the displayio Display
@@ -194,7 +194,7 @@ mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=80)
 # Get a list of rides to populate the currently selected ride
 async def populate_ride_list(parks, park_id):
     url = get_park_url_from_id(parks, park_id)
-    print(f"Configuring park {park_id} from {url}")
+    # print(f"Configuring park {park_id} from {url}")
     response = http_requests.get(url)
     await asyncio.sleep(0)
     current_park.name = get_park_name_from_id(parks, park_id)
@@ -206,7 +206,7 @@ async def update_live_wait_time():
     if current_park.id <= 0:
         return
     url = get_park_url_from_id(park_list, current_park.id)
-    print(f"Updating Park from URL: {url}")
+    # print(f"Updating Park from URL: {url}")
     response = http_requests.get(url)
     json_response = response.json()
     current_park.update(json_response)
@@ -407,7 +407,7 @@ def start_web_server(wserver):
     except OSError:
         time.sleep(5)
         print("restarting device..")
-        microcontroller.reset()
+        supervisor.reload()
 
 
 start_web_server(web_server)
@@ -426,6 +426,7 @@ async def run_web_server():
         # If you want you can stop the server by calling server.stop() anywhere in your code
         except OSError as error:
             print(error)
+            traceback.print_exc()
             continue
 
 

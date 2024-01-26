@@ -8,12 +8,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Fixed bug where you couldn't change SSID or password if either had changed.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added option of using the UP button to delete the WIFI settings.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CIRCUITPY.local/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/CIRCUITPY.local/theme_park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/boot.py" beforeDir="false" afterPath="$PROJECT_DIR$/boot.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/code.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_theme-park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_theme-park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/theme_park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/wifimgr.py" beforeDir="false" afterPath="$PROJECT_DIR$/wifimgr.py" afterDir="false" />
     </list>
@@ -251,6 +249,9 @@
       <workItem from="1705957432020" duration="380000" />
       <workItem from="1706057411694" duration="8927000" />
       <workItem from="1706119993382" duration="4285000" />
+      <workItem from="1706147456645" duration="3095000" />
+      <workItem from="1706191664795" duration="4968000" />
+      <workItem from="1706231238843" duration="1763000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <option name="closed" value="true" />
@@ -444,7 +445,15 @@
       <option name="project" value="LOCAL" />
       <updated>1706061568508</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Added option of using the UP button to delete the WIFI settings.">
+      <option name="closed" value="true" />
+      <created>1706147511729</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1706147511729</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -502,7 +511,8 @@
     <MESSAGE value="Fixed bug where closed rides were being shown despite the &quot;skip closed rides&quot; option being set." />
     <MESSAGE value="Added code to configure Wifi connection if unable to connect." />
     <MESSAGE value="Fixed bug where you couldn't change SSID or password if either had changed." />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed bug where you couldn't change SSID or password if either had changed." />
+    <MESSAGE value="Added option of using the UP button to delete the WIFI settings." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added option of using the UP button to delete the WIFI settings." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

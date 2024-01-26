@@ -40,7 +40,7 @@ def do_connect(ssid, password):
     wifi.radio.enabled = True
     if wifi.radio.ap_info is not None:
         return None
-    print('Trying to connect to "%s"...' % ssid)
+    # print('Trying to connect to "%s"...' % ssid)
     try:
         wifi.radio.connect(ssid, password)
     except Exception as e:
@@ -50,18 +50,18 @@ def do_connect(ssid, password):
         if connected:
             break
         time.sleep(0.1)
-        print('.', end='')
+        # print('.', end='')
     if connected:
         t = []
         t.append(str(wifi.radio.ipv4_address))
         t.append(str(wifi.radio.ipv4_subnet))
         t.append(str(wifi.radio.ipv4_gateway))
         t.append(str(wifi.radio.ipv4_dns))
-        print('\nConnected. Network config: IP: ', end='')
-        print('%s, subnet: %s, gateway: %s, DNS: %s' % tuple(t))
+        # print('\nConnected. Network config: IP: ', end='')
+        # print('%s, subnet: %s, gateway: %s, DNS: %s' % tuple(t))
 
-    else:
-        print('\nFailed. Not Connected to: ' + ssid)
+    # else:
+        # print('\nFailed. Not Connected to: ' + ssid)
     return connected
 
 
@@ -71,14 +71,14 @@ def get_connection():
     while wifi.radio.ap_info is None:
         # first check if there already is any connection:
         if wifi.radio.ap_info is not None:
-            print('WiFi connection detected')
+            # print('WiFi connection detected')
             return wifi.radio
 
         connected = False
         # connecting takes time, wait and retry
         time.sleep(3)
         if wifi.radio.ap_info is not None:
-            print('WiFi connection detected')
+            # print('WiFi connection detected')
             return wifi.radio
 
         # read known network profiles from file
@@ -123,17 +123,17 @@ def get_connection():
                         authmodes_text.append('ENTERPRISE')
                         encrypted = 1
                 authmodes_text = ', '.join(authmodes_text)
-                print("Found \"%s\", #%d, %d dB, %s" % (ssid, channel, rssi, authmodes_text), end='')
+                # print("Found \"%s\", #%d, %d dB, %s" % (ssid, channel, rssi, authmodes_text), end='')
                 if ssid in profiles:
-                    print(", known")
+                    # print(", known")
                     if encrypted:
                         password = profiles[ssid]
                         connected = do_connect(ssid, password)
                     else:  # open
-                        print(", open")
+                        # print(", open")
                         connected = do_connect(ssid, None)
-                else:
-                    print(", unknown")
+                # else:
+                    # print(", unknown")
                 if connected:
                     break
         # no networks configured
@@ -145,13 +145,13 @@ def get_connection():
 
 def handle_configure(client, request):
     global ap_enabled
-    print('Handle configure start')
-    print("Request:", request.strip())
+    # print('Handle configure start')
+    # print("Request:", request.strip())
     match = re.search("ssid=([^&]*)&password=(.*)", request)
 
     if match is None:
         send_response(client, "Parameters not found", status_code=400)
-        print('Handle configure aborted, missing parameters')
+        # print('Handle configure aborted, missing parameters')
         return False
 
     # Fixed a bug where SSIDs and passwords couldn't have spaces or non alpha
@@ -164,7 +164,7 @@ def handle_configure(client, request):
 
     if len(ssid) == 0:
         send_response(client, "SSID must be provided", status_code=400)
-        print('Handling configure aborted, no SSID provided')
+        # print('Handling configure aborted, no SSID provided')
         return False
 
     if do_connect(ssid, password):
@@ -182,7 +182,7 @@ def handle_configure(client, request):
         """ % dict(ssid=ssid)
 
         if write_result is False:
-            print('Failed to write changes')
+            # print('Failed to write changes')
             response = response + """\
     <br><br>
     Failed to save changes.
@@ -197,9 +197,9 @@ def handle_configure(client, request):
             if ap_enabled:
                 wifi.radio.stop_ap()
                 ap_enabled = False
-                print('Access point stopped')
+                # print('Access point stopped')
             time.sleep(5)
-            print('Handle configure end, connected')
+            # print('Handle configure end, connected')
         # to require write success:
         # else:
         #   wifi.radio.stop_station()
@@ -218,13 +218,13 @@ def handle_configure(client, request):
         """ % dict(ssid=ssid)
         response = response + get_html_footer()
         send_response(client, response)
-        print('Handle configure ended, no connection')
+        # print('Handle configure ended, no connection')
         return False
 
 def handle_not_found(client, url):
-    print('Handle not found start')
+    # print('Handle not found start')
     send_response(client, "Path not found: {}".format(url), status_code=404)
-    print('Handle not found end')
+    # print('Handle not found end')
 
 def get_html_footer():
     return """\
@@ -339,7 +339,7 @@ def sendall(client, data):
         # split data in chunks to avoid EAGAIN exception
         part = data[0:512]
         data = data[len(part):len(data)]
-        print('Sending: ' + str(len(part)) + 'b')
+        # print('Sending: ' + str(len(part)) + 'b')
         # EAGAIN too much data exception catcher
         while True:
             try:
@@ -351,12 +351,12 @@ def sendall(client, data):
             break
 
 def handle_root(client):
-    print('Handle / start')
+    # print('Handle / start')
     wifi.radio.enabled = True
 
     networks = []
     for n in wifi.radio.start_scanning_networks():
-        print("Found \"%s\", #%s" % (n.ssid, n.channel))
+        # print("Found \"%s\", #%s" % (n.ssid, n.channel))
         networks.append([n.ssid, n.channel])
     wifi.radio.stop_scanning_networks()
     send_header(client)
@@ -392,7 +392,7 @@ def handle_root(client):
         """ % dict(filename=FILE_NETWORK_PROFILES))
     sendall(client, get_html_footer())
     client.close()
-    print('Handle / end')
+    # print('Handle / end')
 
 def read_profiles():
     profiles = {}
@@ -446,21 +446,21 @@ def start_ap(port=80):
         print('File system is read only')
     else:
         print('File system is writeable')
-    print('Access point started, connect to WiFi "' + AP_SSID + '"', end='')
-    if (AP_AUTHMODES[0] != wifi.AuthMode.OPEN):
-        print(', the password is "' + AP_PASSWORD + '"')
-    else:
-        print('')
+    # print('Access point started, connect to WiFi "' + AP_SSID + '"', end='')
+    # if (AP_AUTHMODES[0] != wifi.AuthMode.OPEN):
+        # print(', the password is "' + AP_PASSWORD + '"')
+    # else:
+        # print('')
     print('Visit http://' + str(wifi.radio.ipv4_address_ap) + '/ in your web browser')
     # print('Listening on:', addr)
 
     while True:
         if wifi.radio.ap_info is not None:
-            print('WiFi connection detected')
+            # print('WiFi connection detected')
             if ap_enabled:
                 wifi.radio.stop_ap()
                 ap_enabled = False
-                print('Access point stopped')
+                # print('Access point stopped')
             return True
 
         # EAGAIN exception catcher
@@ -483,7 +483,7 @@ def start_ap(port=80):
                     buffer = bytearray(512)
                     client.recv_into(buffer, 512)
                     request += buffer
-                    print('Received data')
+                    # print('Received data')
             except OSError:
                 pass
 
@@ -492,18 +492,18 @@ def start_ap(port=80):
                 buffer = bytearray(1024)
                 client.recv_into(buffer, 1024)
                 request += buffer
-                print("Received form data after \\r\\n\\r\\n(i.e. from Safari on macOS or iOS)")
+                # print("Received form data after \\r\\n\\r\\n(i.e. from Safari on macOS or iOS)")
             except OSError:
                 pass
 
             request = request.decode().strip("\x00").replace('%23', '#')
 
-            print("Request is: {}".format(request))
+            # print("Request is: {}".format(request))
             if "HTTP" not in request:  # skip invalid requests
                 continue
 
             url = re.search("(?:GET|POST) (.*?)(?:\\?.*?)? HTTP", request).group(1)
-            print("URL is {}".format(url))
+            # print("URL is {}".format(url))
 
             if url == "/":
                 handle_root(client)
@@ -521,17 +521,17 @@ def start_ap(port=80):
     client.close()
 
 def write_profiles(profiles):
-    print('Write profiles start')
+    # print('Write profiles start')
     lines = []
     for ssid, password in profiles.items():
-        print('Preparing line for "' + ssid + '"')
+        # print('Preparing line for "' + ssid + '"')
         lines.append("%s;%s\n" % (ssid, password))
     try:
-        print('Writing ' + FILE_NETWORK_PROFILES)
+        # print('Writing ' + FILE_NETWORK_PROFILES)
         with open(FILE_NETWORK_PROFILES, "w") as f:
             f.write(''.join(lines))
         return True
     except OSError as e:
         print("Exception", str(e))
         return False
-    print('Write profiles end')
+    # print('Write profiles end')

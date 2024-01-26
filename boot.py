@@ -23,7 +23,6 @@ storage.remount("/", drive_state)
 # See if the user wants to reset the Wifi info
 # in case the software retry fails.
 button = digitalio.DigitalInOut(board.BUTTON_UP)
-print(f"The UP button value is {button.value}")
 if button.value is False:
     try:
         os.remove("wifi.dat")

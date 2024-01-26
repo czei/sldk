@@ -334,7 +334,6 @@ class ThemePark:
             self.skip_meet = sm.settings["skip_meet"]
         if "skip_closed" in keys:
             self.skip_closed = sm.settings["skip_closed"]
-        print(f"Loaded park {self.name} at ID: {self.id}")
 
 
 class ThemeParkIterator:
@@ -816,7 +815,7 @@ def load_credentials():
             ssid, password = line.strip().split(';')
 
             # Output (or use) the ssid and password
-            print(f'SSID: {ssid}, Password: {password}')
+            # print(f'SSID: {ssid}, Password: {password}')
 
             return ssid, password
 
