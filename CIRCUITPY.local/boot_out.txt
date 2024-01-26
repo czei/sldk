@@ -1,5 +1,0 @@
-Adafruit CircuitPython 8.2.9 on 2023-12-06; Adafruit MatrixPortal S3 with ESP32S3
-Board ID:adafruit_matrixportal_s3
-UID:4358812B84C6
-boot.py output:
-Drive mount logic is: False
