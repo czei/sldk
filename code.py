@@ -2,9 +2,7 @@
 # View information about ride wait times at any theme park
 # Copyright 2024 3DUPFitters LLC
 #
-import digitalio
 import board
-
 import asyncio
 import mdns
 import time
@@ -30,6 +28,7 @@ from adafruit_httpserver import (
 )
 from adafruit_matrixportal.matrixportal import MatrixPortal
 
+import theme_park_api
 from theme_park_api import set_system_clock, ColorUtils, MatrixPortalDisplay
 from theme_park_api import get_park_name_from_id
 from theme_park_api import ThemePark
@@ -115,8 +114,6 @@ current_park.load_settings(settings)
 vacation_date = Vacation()
 vacation_date.load_settings(settings)
 
-import digitalio
-import board
 
 #
 # Scroll the user instructions on how to configure the wifi
@@ -211,10 +208,6 @@ async def update_live_wait_time():
     json_response = response.json()
     current_park.update(json_response)
 
-
-# The current selected park, empty at first
-# A list of all ~150 supported parks
-park_list = populate_park_list(http_requests)
 
 
 def generate_header():
@@ -433,11 +426,16 @@ async def run_web_server():
 async def run_display():
     while True:
         try:
-            print(f"Messages regen_flag is {messages.regenerate_flag}")
-            print(f"Park valid flag is {current_park.is_valid()}")
-            if messages.regenerate_flag is True and current_park.is_valid() is True:
+            # print(f"Messages regen_flag is {messages.regenerate_flag}")
+            # print(f"Park valid flag is {current_park.is_valid()}")
+            if current_park.is_valid() is False:
+                messages.init()
+                messages.add_scroll_message(theme_park_api.CONFIGURATION_MESSAGE)
+                # await display.show_configuration_message()
+            elif messages.regenerate_flag is True and current_park.is_valid() is True:
                 await update_live_wait_time()
-                await messages.add_rides(current_park, vacation_date)
+                await messages.add_vacation(vacation_date)
+                await messages.add_rides(current_park)
                 messages.regenerate_flag = False
 
             await messages.show()
@@ -464,14 +462,32 @@ async def update_ride_times():
 
             if len(current_park.rides) > 0:
                 await update_live_wait_time()
-                await messages.add_rides(current_park, vacation_date)
+                messages.init()
+                await messages.add_vacation(vacation_date)
+                await messages.add_rides(current_park)
 
+        except OSError as e:
+            print("Caught exception OSError:", e)
+            messages.init()
+            messages.add_scroll_message("Unable to contact wait time server.  Will try again in 5 minutes.")
         except RuntimeError:
             traceback.print_exc()
 
+try:
+    # The current selected park, empty at first
+    # A list of all ~150 supported parks
+    park_list = populate_park_list(http_requests)
+except OSError as e:
+    print("Caught exception OSError:", e)
+    messages.init()
+    messages.add_scroll_message("Unable to contact wait time server.  Will try again in 5 minutes.")
 
 # Set device time from the internet
-set_system_clock(http_requests)
+try:
+    set_system_clock(http_requests)
+except OSError as e:
+    print("Caught exception OSError:", e)
+    messages.add_scroll_message("Unable to contact time server.")
 
 asyncio.run(asyncio.gather(
     run_display(),

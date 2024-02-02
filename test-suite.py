@@ -332,7 +332,7 @@ class Test(TestCase):
         self.assertTrue(scroll_speed == 0.04)
         manager.settings["scroll_speed"] = "Fast"
         scroll_speed = manager.get_scroll_speed()
-        self.assertTrue(scroll_speed == 0.03)
+        self.assertTrue(scroll_speed == 0.02)
         manager.settings["scroll_speed"] = "Slow"
         scroll_speed = manager.get_scroll_speed()
         self.assertTrue(scroll_speed == 0.06)
@@ -342,8 +342,7 @@ class Test(TestCase):
         data = json.load(f)
         f.close()
 
-        tokyo_disneyland = ThemePark(data, "Tokyo Disneyland", 274)
-        self.assertTrue(tokyo_disneyland.is_open is False)
+        tokyo_disneyland = ThemePark(data, "Tokyo Disneyland", 274) self.assertTrue(tokyo_disneyland.is_open is False)
         self.assertTrue(len(tokyo_disneyland.rides) > 10)
 
         f = open('magic-kingdom.json')
@@ -374,4 +373,6 @@ class Test(TestCase):
     def test_url_decode(self):
         self.assertTrue(url_decode("FBI%20Surveillance%20Van%20112") == "FBI Surveillance Van 112")
         self.assertTrue(url_decode("FBI+Surveillance+Van+112") == "FBI Surveillance Van 112")
+
+    def test_ota_updater(self);
 

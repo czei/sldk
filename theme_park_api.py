@@ -55,8 +55,6 @@ def populate_park_list(requests):
     :return:
     """
     url = "https://queue-times.com/parks.json"
-    # pool = socketpool.SocketPool(wifi.radio)
-    # requests = adafruit_requests.Session(pool, ssl.create_default_context())
     response = requests.get(url)
     json_response = response.json()
     return sorted(get_theme_parks_from_json(json_response))
@@ -244,7 +242,7 @@ class ThemePark:
         return ride_list
 
     def is_valid(self):
-        return self.id >= 0
+        return self.id > 0
 
     def set_rides(self, ride_json):
         self.rides = self.get_rides_from_json(ride_json)
@@ -635,36 +633,35 @@ class MessageQueue:
         self.display = d
         self.delay = delay_param
         self.regenerate_flag = regen_flag
-        self.func_queue = []
-        self.param_queue = []
-        self.delay_queue = []
-        self.index = 0
+        self.init()
 
     def add_scroll_message(self, the_message, delay=2):
         self.func_queue.insert(0, self.display.show_scroll_message)
         self.param_queue.insert(0, the_message)
         self.delay_queue.insert(0, delay)
 
-    async def add_rides(self, park, vac):
-        print(f"MessageQueue.add_rides() called for: {park.name}")
+    def init(self):
         self.func_queue = []
         self.param_queue = []
         self.delay_queue = []
         self.index = 0
+
+    async def add_vacation(self, vac):
+        if vac.is_set() is True:
+            days_until = vac.get_days_until()
+            if days_until == 1:
+                vac_message = f"Vacation to {vac.name} in: {days_until} days"
+                self.add_scroll_message(vac_message, 0)
+            elif days_until >= 1:
+                vac_message = f"Your vacation to {vac.name} is tomorrow!!!"
+                self.add_scroll_message(vac_message, 0)
+
+    async def add_rides(self, park):
+        print(f"MessageQueue.add_rides() called for: {park.name}:{park.id}")
         self.func_queue.append(self.display.show_scroll_message)
         required_message = f"Wait times for {park.name} provided by {REQUIRED_MESSAGE}"
         self.param_queue.append(required_message)
         self.delay_queue.append(self.delay)
-
-        if vac.is_set() is True:
-            days_until = vac.get_days_until()
-            if days_until >= 0:
-                vac_message = f"Vacation to {vac.name} in: {days_until} days"
-                print(f"Adding vacation message: {vac_message}")
-                self.add_scroll_message(vac_message, 0)
-                # self.func_queue.insert(0, self.display.show_scroll_message)
-                # self.param_queue.insert(0, vac_message)
-                # self.delay_queue.insert(0, 0)
 
         if park.is_open is False:
             self.func_queue.append(self.display.show_scroll_message)
