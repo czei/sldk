@@ -14,7 +14,7 @@ AP_PASSWORD = "password"
 # AP_AUTHMODES = [wifi.AuthMode.OPEN]
 AP_AUTHMODES = [wifi.AuthMode.WPA2, wifi.AuthMode.PSK]
 
-FILE_NETWORK_PROFILES = 'wifi.dat'
+FILE_NETWORK_PROFILES = "secrets.py"
 ap_enabled = False
 server_socket = None
 
@@ -145,13 +145,13 @@ def get_connection():
 
 def handle_configure(client, request):
     global ap_enabled
-    # print('Handle configure start')
-    # print("Request:", request.strip())
+    print('Handle configure start')
+    print("Request:", request.strip())
     match = re.search("ssid=([^&]*)&password=(.*)", request)
 
     if match is None:
         send_response(client, "Parameters not found", status_code=400)
-        # print('Handle configure aborted, missing parameters')
+        print('Handle configure aborted, missing parameters')
         return False
 
     # Fixed a bug where SSIDs and passwords couldn't have spaces or non alpha
@@ -162,18 +162,23 @@ def handle_configure(client, request):
     #password = match.group(2).replace("%3F", "?").replace("%21", "!")
     password = url_decode(match.group(2))
 
+    print(f'Handling configure {ssid} : {password}')
+
     if len(ssid) == 0:
         send_response(client, "SSID must be provided", status_code=400)
-        # print('Handling configure aborted, no SSID provided')
+        print('Handling configure aborted, no SSID provided')
         return False
+
+    write_result = write_profiles(ssid, password)
+    if write_result is False:
+        print('Failed to write changes')
 
     if do_connect(ssid, password):
         try:
             profiles = read_profiles()
         except OSError:
             profiles = {}
-        profiles[ssid] = password
-        write_result = write_profiles(profiles)
+        write_result = write_profiles(ssid, password)
         response = get_html_head() + """\
   <p>
         """
@@ -182,7 +187,7 @@ def handle_configure(client, request):
         """ % dict(ssid=ssid)
 
         if write_result is False:
-            # print('Failed to write changes')
+            print('Failed to write changes')
             response = response + """\
     <br><br>
     Failed to save changes.
@@ -396,12 +401,11 @@ def handle_root(client):
 
 def read_profiles():
     profiles = {}
+    import secrets
+    print(secrets.secrets['password'])
     try:
-        with open(FILE_NETWORK_PROFILES) as f:
-            lines = f.readlines()
-        for line in lines:
-            ssid, password = line.strip("\n").split(";")
-            profiles[ssid] = password
+        profiles [secrets.secrets['ssid']] = secrets.secrets['password']
+        #profiles[ssid] = password
     except OSError:
         profiles = {}
     return profiles
@@ -520,18 +524,19 @@ def start_ap(port=80):
     server_socket.close()
     client.close()
 
-def write_profiles(profiles):
-    # print('Write profiles start')
+def write_profiles(ssid, password):
+    print('Write profiles start')
+    print('Preparing line for "' + ssid + '"')
     lines = []
-    for ssid, password in profiles.items():
-        # print('Preparing line for "' + ssid + '"')
-        lines.append("%s;%s\n" % (ssid, password))
+    lines.append("secrets = {\n")
+    lines.append(f"\'ssid' : \'{ssid}\',\n")
+    lines.append(f"\'password' : \'{password}\',\n")
+    lines.append("}\n")
     try:
-        # print('Writing ' + FILE_NETWORK_PROFILES)
+        print('Writing ' + FILE_NETWORK_PROFILES)
         with open(FILE_NETWORK_PROFILES, "w") as f:
             f.write(''.join(lines))
         return True
     except OSError as e:
-        print("Exception", str(e))
+        print("Exception writing file", str(e))
         return False
-    # print('Write profiles end')

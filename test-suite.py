@@ -342,7 +342,8 @@ class Test(TestCase):
         data = json.load(f)
         f.close()
 
-        tokyo_disneyland = ThemePark(data, "Tokyo Disneyland", 274) self.assertTrue(tokyo_disneyland.is_open is False)
+        tokyo_disneyland = ThemePark(data, "Tokyo Disneyland", 274)
+        self.assertTrue(tokyo_disneyland.is_open is False)
         self.assertTrue(len(tokyo_disneyland.rides) > 10)
 
         f = open('magic-kingdom.json')
@@ -367,12 +368,11 @@ class Test(TestCase):
 
     def test_credentials(self):
         ssid, password = load_credentials()
-        self.assertTrue(ssid == "Scooby")
-        self.assertTrue(password == "Myst3ryv@n")
+        self.assertTrue(ssid == "FBI Surveillance Van 112")
+        self.assertTrue(password == "9196190607")
 
     def test_url_decode(self):
         self.assertTrue(url_decode("FBI%20Surveillance%20Van%20112") == "FBI Surveillance Van 112")
         self.assertTrue(url_decode("FBI+Surveillance+Van+112") == "FBI Surveillance Van 112")
-
-    def test_ota_updater(self);
+        self.assertTrue(url_decode("FBI+Surveillance+Van+112") == "FBI Surveillance Van 112")
 

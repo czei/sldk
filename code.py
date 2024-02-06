@@ -433,6 +433,7 @@ async def run_display():
                 messages.add_scroll_message(theme_park_api.CONFIGURATION_MESSAGE)
                 # await display.show_configuration_message()
             elif messages.regenerate_flag is True and current_park.is_valid() is True:
+                messages.init()
                 await update_live_wait_time()
                 await messages.add_vacation(vacation_date)
                 await messages.add_rides(current_park)

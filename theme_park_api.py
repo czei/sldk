@@ -623,7 +623,7 @@ class MatrixPortalDisplay(Display):
         self.matrix_portal.scroll_text(self.scroll_delay)
 
 
-REQUIRED_MESSAGE = "http://queue-times.com"
+REQUIRED_MESSAGE = "queue-times.com"
 CONFIGURATION_MESSAGE = "Configure at http://themeparkwaits.local"
 
 
@@ -649,10 +649,10 @@ class MessageQueue:
     async def add_vacation(self, vac):
         if vac.is_set() is True:
             days_until = vac.get_days_until()
-            if days_until == 1:
+            if days_until >= 1:
                 vac_message = f"Vacation to {vac.name} in: {days_until} days"
                 self.add_scroll_message(vac_message, 0)
-            elif days_until >= 1:
+            elif days_until == 1:
                 vac_message = f"Your vacation to {vac.name} is tomorrow!!!"
                 self.add_scroll_message(vac_message, 0)
 
@@ -799,25 +799,9 @@ class SettingsManager:
 
 def load_credentials():
     try:
-        if os.stat("wifi.dat") is False:
-            return "", ""
-        # Open the file in read mode
-        with open('wifi.dat', 'r') as file:
-            # Read all lines from the file
-            lines = file.readlines()
-
-        # Process each line
-        for line in lines:
-            # Strip leading/trailing white space and split into components
-            ssid, password = line.strip().split(';')
-
-            # Output (or use) the ssid and password
-            # print(f'SSID: {ssid}, Password: {password}')
-
-            return ssid, password
-
-    except OSError:
-        print("Unable to load wifi credentials from file")
+        from secrets import secrets
+        return secrets['ssid'], secrets['password']
+    except ImportError:
         return "", ""
 
 
