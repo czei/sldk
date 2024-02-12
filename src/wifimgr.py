@@ -14,7 +14,7 @@ AP_PASSWORD = "password"
 # AP_AUTHMODES = [wifi.AuthMode.OPEN]
 AP_AUTHMODES = [wifi.AuthMode.WPA2, wifi.AuthMode.PSK]
 
-FILE_NETWORK_PROFILES = "secrets.py"
+FILE_NETWORK_PROFILES = "../secrets.py"
 ap_enabled = False
 server_socket = None
 

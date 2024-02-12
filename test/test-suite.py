@@ -1,17 +1,17 @@
 from unittest import TestCase
 from urllib.request import urlopen, Request
 
-from theme_park_api import get_park_url_from_name
-from theme_park_api import ThemePark
-from theme_park_api import get_theme_parks_from_json
-from theme_park_api import Vacation
-from theme_park_api import get_park_location_from_id
+import socketpool
+
+from src.theme_park_api import ThemePark
+from src.theme_park_api import ThemeParkList
+from src.theme_park_api import Vacation
 import json
 import datetime
-from adafruit_datetime import datetime, time
-from theme_park_api import SettingsManager
-from theme_park_api import load_credentials
-from theme_park_api import url_decode
+from adafruit_datetime import datetime
+from src.theme_park_api import SettingsManager
+from src.theme_park_api import load_credentials
+from src.theme_park_api import url_decode
 
 try:
     import rtc
@@ -35,7 +35,7 @@ imported), and immediately before each test function is evaluated (so changes
 to state remain isolated between tests).
 """
 import sys
-from unittest.mock import MagicMock, Mock
+from unittest.mock import MagicMock
 
 # Add fully qualified namespace paths to things that are imported, but which
 # should be mocked away. For instance, modules which are available in
@@ -83,18 +83,19 @@ class Test(TestCase):
         f = open('theme-park-list.json')
         data = json.load(f)
         f.close()
-        park_list = get_theme_parks_from_json(data)
-        self.assertTrue(len(park_list) > 0)
+
+        park_list = ThemeParkList(data)
+        self.assertTrue(len(park_list.park_list) > 0)
 
         found_magic_kingdom = False
-        for park_json in park_list:
-            if park_json[0] == "Disney Magic Kingdom":
+        for park in park_list.park_list:
+            if park.name == "Disney Magic Kingdom":
                 found_magic_kingdom = True
         self.assertTrue(found_magic_kingdom is True)
 
         found_universal = False
-        for park_json in park_list:
-            if park_json[0] == "Universal Studios At Universal Orlando":
+        for park in park_list.park_list:
+            if park.name == "Universal Studios At Universal Orlando":
                 found_universal = True
         self.assertTrue(found_universal is True)
 
@@ -106,14 +107,14 @@ class Test(TestCase):
         response = urlopen(req).read()
         data = json.loads(response)
 
-        park_list = get_theme_parks_from_json(data)
-        self.assertTrue(len(park_list) > 0)
-
+        park_list = ThemeParkList(data)
+        self.assertTrue(len(park_list.park_list) > 0)
         found_magic_kingdom = False
-        for park in park_list:
-            if park[0] == "Disney Magic Kingdom":
+        for park in park_list.park_list:
+            if park.name == "Disney Magic Kingdom":
                 found_magic_kingdom = True
         self.assertTrue(found_magic_kingdom is True)
+
 
     def test_get_rides_from_json(self):
         f = open('magic-kingdom.json')
@@ -157,8 +158,8 @@ class Test(TestCase):
         f = open('theme-park-list.json')
         data = json.load(f)
         f.close()
-        park_list = get_theme_parks_from_json(data)
-        url = get_park_url_from_name(park_list, 'Disney Magic Kingdom')
+        park_list = ThemeParkList(data)
+        url = park_list.get_park_url_from_name('Disney Magic Kingdom')
         self.assertTrue(url == "https://queue-times.com/parks/6/queue_times.json")
 
     def test_get_wait_time(self):
@@ -217,11 +218,11 @@ class Test(TestCase):
         req = Request(url=url1, headers=headers)
         response = urlopen(req).read()
         data = json.loads(response)
-        park_list = get_theme_parks_from_json(data)
+        park_list = ThemeParkList(data)
 
-        location = get_park_location_from_id(park_list, 6)
+        location = park_list.get_park_location_from_id(6)
         print(f"Location of park id 6 is {location}: {location[0]}, {location[1]}")
-        self.assertTrue(len(park_list) > 0)
+        self.assertTrue(len(park_list.park_list) > 0)
         self.assertTrue(location[0] == "28.417663")
         self.assertTrue(location[1] == "-81.581212")
 
@@ -243,18 +244,17 @@ class Test(TestCase):
 
     def test_park_param_parsing(self):
         str_params = "park-id=7&Name=WDW&Year=2027&Month=1&Day=4&skip_closed=on"
-        park = ThemePark()
 
         f = open('theme-park-list.json')
         data = json.load(f)
         f.close()
-        park_list = get_theme_parks_from_json(data)
-        self.assertTrue(len(park_list) > 0)
+        park_list = ThemeParkList(data)
+        self.assertTrue(len(park_list.park_list) > 0)
 
-        park.parse(str_params, park_list)
-        self.assertTrue(park.id == 7)
-        self.assertTrue(park.name == "Disney Hollywood Studios")
-        self.assertTrue(park.skip_closed is True)
+        park_list.parse(str_params)
+        self.assertTrue(park_list.current_park.id == 7)
+        self.assertTrue(park_list.current_park.name == "Disney Hollywood Studios")
+        self.assertTrue(park_list.current_park.skip_closed is True)
 
     def test_set_system_clock(self):
         # Only works running on actual board
@@ -291,7 +291,7 @@ class Test(TestCase):
         self.assertTrue(datetime_object.month == 12)
 
     def test_settings_manager(self):
-        manager = SettingsManager("settings.json")
+        manager = SettingsManager("../settings.json")
         manager.load_settings()
 
         self.assertTrue(manager.settings["skip_closed"] is True)
@@ -306,7 +306,7 @@ class Test(TestCase):
         self.assertTrue(manager.settings["new_param"] == 12)
 
         manager.save_settings()
-        manager1 = SettingsManager("settings.json")
+        manager1 = SettingsManager("../settings.json")
         self.assertTrue(manager1.settings["skip_closed"] is False)
         self.assertTrue(manager1.settings["new_param"] == 12)
         manager.settings["skip_closed"] = False
@@ -338,7 +338,7 @@ class Test(TestCase):
         self.assertTrue(scroll_speed == 0.06)
 
     def test_closed_park(self):
-        f = open('closed-park.json')
+        f = open('../closed-park.json')
         data = json.load(f)
         f.close()
 

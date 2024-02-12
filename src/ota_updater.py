@@ -1,5 +1,10 @@
 import os, gc
-from .httpclient import HttpClient
+import adafruit_requests
+import socketpool
+import wifi
+
+
+#from .httpclient import HttpClient
 
 class OTAUpdater:
     """
@@ -8,7 +13,8 @@ class OTAUpdater:
     """
 
     def __init__(self, github_repo, github_src_dir='', module='', main_dir='main', new_version_dir='next', secrets_file=None, headers={}):
-        self.http_client = HttpClient(headers=headers)
+        self.http_client = adafruit_requests.Session(socketpool.SocketPool(wifi.radio))
+        # self.http_client = HttpClient(headers=headers)
         self.github_repo = github_repo.rstrip('/').replace('https://github.com/', '')
         self.github_src_dir = '' if len(github_src_dir) < 1 else github_src_dir.rstrip('/') + '/'
         self.module = module.rstrip('/')
@@ -89,15 +95,13 @@ class OTAUpdater:
 
     @staticmethod
     def _using_network(ssid, password):
-        import network
-        sta_if = network.WLAN(network.STA_IF)
-        if not sta_if.isconnected():
+        import wifi
+        if not wifi.radio.connected:
             print('connecting to network...')
-            sta_if.active(True)
-            sta_if.connect(ssid, password)
-            while not sta_if.isconnected():
+            wifi.radio.connect(ssid, password)
+            while not wifi.radio.connected:
                 pass
-        print('network config:', sta_if.ifconfig())
+        print('network config:', wifi.radio.ap_info)
 
     def _check_for_new_version(self):
         current_version = self.get_version(self.modulepath(self.main_dir))
