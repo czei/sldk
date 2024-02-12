@@ -338,7 +338,7 @@ class Test(TestCase):
         self.assertTrue(scroll_speed == 0.06)
 
     def test_closed_park(self):
-        f = open('../closed-park.json')
+        f = open('closed-park.json')
         data = json.load(f)
         f.close()
 
