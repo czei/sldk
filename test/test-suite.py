@@ -291,10 +291,10 @@ class Test(TestCase):
         self.assertTrue(datetime_object.month == 12)
 
     def test_settings_manager(self):
-        manager = SettingsManager("../settings.json")
+        manager = SettingsManager("settings.json")
         manager.load_settings()
 
-        self.assertTrue(manager.settings["skip_closed"] is True)
+        self.assertTrue(manager.settings["skip_closed"] is False )
         self.assertTrue(manager.settings["skip_meet"] is False)
         self.assertTrue(manager.settings["current_park_id"] == 6)
         self.assertTrue(manager.settings["current_park_name"] == "Disney Magic Kingdom")
@@ -306,7 +306,7 @@ class Test(TestCase):
         self.assertTrue(manager.settings["new_param"] == 12)
 
         manager.save_settings()
-        manager1 = SettingsManager("../settings.json")
+        manager1 = SettingsManager("settings.json")
         self.assertTrue(manager1.settings["skip_closed"] is False)
         self.assertTrue(manager1.settings["new_param"] == 12)
         manager.settings["skip_closed"] = False
@@ -314,15 +314,24 @@ class Test(TestCase):
         manager.save_settings()
 
         park = ThemePark()
-        self.assertTrue(park.id == 0)
+        self.assertTrue(park.id == -1)
         self.assertTrue(park.name != "Disney Magic Kingdom")
         self.assertTrue(park.skip_closed is False)
         self.assertTrue(park.skip_meet is False)
-        park.load_settings(manager)
-        self.assertTrue(park.id == 6)
-        self.assertTrue(park.name == "Disney Magic Kingdom")
-        self.assertTrue(park.skip_closed is False)
-        self.assertTrue(park.skip_meet is False)
+
+        f = open('theme-park-list.json')
+        data = json.load(f)
+        f.close()
+
+        park_list = ThemeParkList(data)
+        self.assertTrue(len(park_list.park_list) > 0)
+        park_list.current_park = park
+        park_list.load_settings(manager)
+
+        self.assertTrue(park_list.current_park.id == 6)
+        self.assertTrue(park_list.current_park.name == "Disney Magic Kingdom")
+        self.assertTrue(park_list.current_park.skip_closed is False)
+        self.assertTrue(park_list.current_park.skip_meet is False)
 
         manager.settings["skip_closed"] = True
         manager.settings["skip_Meet"] = False
