@@ -1,1 +1,0 @@
-from ota_update.main.ota_updater import OTAUpdater
