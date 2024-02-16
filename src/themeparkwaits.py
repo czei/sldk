@@ -28,7 +28,6 @@ from adafruit_httpserver import (
 )
 from adafruit_matrixportal.matrixportal import MatrixPortal
 
-import src.theme_park_api
 from src import theme_park_api, wifimgr
 from src.theme_park_api import set_system_clock, ColorUtils, MatrixPortalDisplay
 from src.theme_park_api import ThemeParkList
@@ -190,10 +189,12 @@ mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=80)
 async def update_live_wait_time():
     if park_list.current_park.id <= 0:
         return
-    url = park_list.current_park.get_url()
+    print(f"Updating Park {park_list.current_park.name}:{park_list.current_park.id}")
+    local_url = park_list.current_park.get_url()
+    print(f"From URL: {url}")
     # print(f"Updating Park from URL: {url}")
-    response = http_requests.get(url)
-    json_response = response.json()
+    local_response = http_requests.get(local_url)
+    json_response = local_response.json()
     park_list.current_park.update(json_response)
 
 def generate_main_page():
@@ -203,12 +204,12 @@ def generate_main_page():
     page += "<div>"
     page += "<form action=\"/\" method=\"GET\">"
     page += "<p><select name=\"park-id\" id=\"park-id\">\n"
-    for park in park_list:
-        park_name = ThemePark.remove_non_ascii(park[0])
-        if park[1] == park_list.current_park.id:
-            page += f"<option value=\"{park[1]}\" selected>{park_name}</option>\n"
+    for park in park_list.park_list:
+        park_name = ThemePark.remove_non_ascii(park.name)
+        if park.id == park_list.current_park.id:
+            page += f"<option value=\"{park.id}\" selected>{park_name}</option>\n"
         else:
-            page += f"<option value=\"{park[1]}\">{park_name}</option>\n"
+            page += f"<option value=\"{park.id}\">{park_name}</option>\n"
     page += "</select></p>"
 
     page += "<p><label for=\"Name\"></label></p>"
@@ -314,7 +315,7 @@ def base(request: Request):
             page += "</p>"
 
     page += """<p>
-            <label for=\"Name\">Scroll Speed</label>"
+            <label for=\"Name\">Scroll Speed</label>
             <select name=\"scroll_speed\" id=\"scroll_speed\">"""
     for speed in ["Slow", "Medium", "Fast"]:
         if speed == settings.settings.get("scroll_speed"):
@@ -329,11 +330,18 @@ def base(request: Request):
         <input type=\"submit\">
         </p>
         </form>"""
-    #token='YOUR_GITHUB_TOKEN'
-    #updater = OTAUpdater('https://github.com/czei/themeparkwaits.release', headers={'Authorization': 'token {}'.format(token)})
-    #updater.
-    page += "</div><body>"
 
+    try:
+        release = ota_updater.get_version("src")
+        latest = ota_updater.get_latest_version()
+        if latest == release:
+            page += "<p>The current installed version {release} is up to date.</p>"
+        else:
+            page += f"<p>The latest release \'{latest}\' is newer than the currently installed release \'{release}\'</p>"
+    except ValueError as e:
+        page += "<p>Unable to find latest software release on git code server.</p>"
+
+    page += "</div><body>"
     return adafruit_httpserver.Response(request, page, content_type="text/html")
 
 
@@ -341,8 +349,8 @@ def base(request: Request):
 def base(request: Request):
     if len(request.query_params) > 0:
         vacation_date.parse(str(request.query_params))
-        park_list.current_park.parse(str(request.query_params), park_list)
-        park_list.current_park.store_settings(settings)
+        park_list.parse(str(request.query_params))
+        park_list.store_settings(settings)
 
         if vacation_date.is_set() is True:
             vacation_date.store_settings(settings)
@@ -379,9 +387,11 @@ def start_web_server(wserver):
 
 start_web_server(web_server)
 
-token='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'
-updater = OTAUpdater('https://github.com/Czeiszperger/themeparkwaits.release', main_dir="src", headers={'Authorization': 'token {}'.format(token)})
-print (f"Release version is {updater.get_version("src")}")
+TOKEN='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'
+#TOKEN='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'
+GITHUBREPO='https://github.com/Czeiszperger/themeparkwaits.release'
+ota_updater = OTAUpdater(http_requests, GITHUBREPO, main_dir="src", headers={'Authorization': 'TOKEN {}'.format(TOKEN)})
+print (f"Release version is {ota_updater.get_version("src")}")
 
 async def run_web_server():
     while True:
@@ -452,12 +462,12 @@ async def update_ride_times():
             traceback.print_exc()
 
 try:
-    # A list of all ~150 supported parks
+    # A list of all ~80 supported parks
     url = "https://queue-times.com/parks.json"
     response = http_requests.get(url)
     json_response = response.json()
-    park_list = ThemeParkList(http_requests)
-    park_list.current_park.load_settings(settings)
+    park_list = ThemeParkList(json_response)
+    park_list.load_settings(settings)
 except OSError as e:
     print("Caught exception OSError:", e)
     messages.init()

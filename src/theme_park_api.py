@@ -246,6 +246,13 @@ class ThemeParkList:
                 self.skip_meet = True
 
 
+    def store_settings(self, sm):
+        sm.settings["current_park_name"] = self.current_park.name
+        sm.settings["current_park_id"] = self.current_park.id
+        sm.settings["skip_meet"] = self.current_park.skip_meet
+        sm.settings["skip_closed"] = self.current_park.skip_closed
+
+
 class ThemeParkRide:
     def __init__(self, name, new_id, wait_time, open_flag):
         self.name = name
@@ -293,7 +300,6 @@ class ThemePark:
                 new_str += c
         return new_str
 
-    @staticmethod
     def get_url(self):
         url1 = "https://queue-times.com/parks/"
         url2 = "/queue_times.json"
@@ -396,11 +402,6 @@ class ThemePark:
 
 
 
-    def store_settings(self, sm):
-        sm.settings["current_park_name"] = self.name
-        sm.settings["current_park_id"] = self.id
-        sm.settings["skip_meet"] = self.skip_meet
-        sm.settings["skip_closed"] = self.skip_closed
 
 
 
@@ -719,11 +720,11 @@ class MessageQueue:
     async def add_vacation(self, vac):
         if vac.is_set() is True:
             days_until = vac.get_days_until()
-            if days_until >= 1:
+            if days_until > 1:
                 vac_message = f"Vacation to {vac.name} in: {days_until} days"
                 self.add_scroll_message(vac_message, 0)
             elif days_until == 1:
-                vac_message = f"Your vacation to {vac.name} is tomorrow!!!"
+                vac_message = f"Your vacation to {vac.name} is tomorrow!!!!!!!!!!!!!"
                 self.add_scroll_message(vac_message, 0)
 
     async def add_rides(self, park):

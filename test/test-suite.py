@@ -294,7 +294,7 @@ class Test(TestCase):
         manager = SettingsManager("settings.json")
         manager.load_settings()
 
-        self.assertTrue(manager.settings["skip_closed"] is False )
+        self.assertTrue(manager.settings["skip_closed"] is True )
         self.assertTrue(manager.settings["skip_meet"] is False)
         self.assertTrue(manager.settings["current_park_id"] == 6)
         self.assertTrue(manager.settings["current_park_name"] == "Disney Magic Kingdom")

@@ -2,9 +2,7 @@ import os, gc
 import adafruit_requests
 import socketpool
 import wifi
-
-
-#from .httpclient import HttpClient
+import ssl
 
 class OTAUpdater:
     """
@@ -12,9 +10,11 @@ class OTAUpdater:
     optimized for low power usage.
     """
 
-    def __init__(self, github_repo, github_src_dir='', module='', main_dir='main', new_version_dir='next', secrets_file=None, headers={}):
-        self.http_client = adafruit_requests.Session(socketpool.SocketPool(wifi.radio))
+    def __init__(self, http_client_param, github_repo, github_src_dir='', module='', main_dir='main', new_version_dir='next', secrets_file=None, headers={}):
+        # self.http_client = adafruit_requests.Session(socketpool.SocketPool(wifi.radio), ssl.create_default_context())
         # self.http_client = HttpClient(headers=headers)
+        self.headers = headers
+        self.http_client = http_client_param
         self.github_repo = github_repo.rstrip('/').replace('https://github.com/', '')
         self.github_src_dir = '' if len(github_src_dir) < 1 else github_src_dir.rstrip('/') + '/'
         self.module = module.rstrip('/')
@@ -126,8 +126,11 @@ class OTAUpdater:
         return '0.0'
 
     def get_latest_version(self):
-        latest_release = self.http_client.get('https://api.github.com/repos/{}/releases/latest'.format(self.github_repo))
+        url = "https://api.github.com/repos/{}/releases/latest".format(self.github_repo)
+        print(f"Checking git release number at: {url}")
+        latest_release = self.http_client.get('https://api.github.com/repos/{}/releases/latest'.format(self.github_repo), headers=self.headers)
         gh_json = latest_release.json()
+        print(f"Raw Github data: {gh_json}")
         try:
             version = gh_json['tag_name']
         except KeyError as e:
