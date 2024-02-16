@@ -254,7 +254,7 @@ class Test(TestCase):
         park_list.parse(str_params)
         self.assertTrue(park_list.current_park.id == 7)
         self.assertTrue(park_list.current_park.name == "Disney Hollywood Studios")
-        self.assertTrue(park_list.current_park.skip_closed is True)
+        self.assertTrue(park_list.skip_closed is True)
 
     def test_set_system_clock(self):
         # Only works running on actual board
@@ -313,25 +313,18 @@ class Test(TestCase):
         manager.settings["skip_Meet"] = False
         manager.save_settings()
 
-        park = ThemePark()
-        self.assertTrue(park.id == -1)
-        self.assertTrue(park.name != "Disney Magic Kingdom")
-        self.assertTrue(park.skip_closed is False)
-        self.assertTrue(park.skip_meet is False)
-
         f = open('theme-park-list.json')
         data = json.load(f)
         f.close()
 
         park_list = ThemeParkList(data)
         self.assertTrue(len(park_list.park_list) > 0)
-        park_list.current_park = park
         park_list.load_settings(manager)
 
         self.assertTrue(park_list.current_park.id == 6)
         self.assertTrue(park_list.current_park.name == "Disney Magic Kingdom")
-        self.assertTrue(park_list.current_park.skip_closed is False)
-        self.assertTrue(park_list.current_park.skip_meet is False)
+        self.assertTrue(park_list.skip_closed is False)
+        self.assertTrue(park_list.skip_meet is False)
 
         manager.settings["skip_closed"] = True
         manager.settings["skip_Meet"] = False

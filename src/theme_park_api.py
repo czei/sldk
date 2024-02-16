@@ -133,6 +133,8 @@ class ThemeParkList:
     def __init__(self, json_response):
         self.park_list = []
         self.current_park = ThemePark()
+        self.skip_meet = False
+        self.skip_closed = False
 
         for company in json_response:
             for parks in company:
@@ -173,12 +175,10 @@ class ThemeParkList:
             id = sm.settings["current_park_id"]
             park = self.get_park_by_id(id)
             self.current_park = park
-        #if "current_park_name" in keys:
-        #    self.name = sm.settings["current_park_name"]
         if "skip_meet" in keys:
-            self.current_park.skip_meet = sm.settings["skip_meet"]
+            self.skip_meet = sm.settings["skip_meet"]
         if "skip_closed" in keys:
-            self.current_park.skip_closed = sm.settings["skip_closed"]
+            self.skip_closed = sm.settings["skip_closed"]
 
     def get_park_url_from_name(self, park_name):
         """
@@ -224,23 +224,19 @@ class ThemeParkList:
     def parse(self, str_params):
         params = str_params.split("&")
         print(f"Params = {params}")
-        skip_meet = False
-        skip_closed = False
+        self.skip_meet = False
+        self.skip_closed = False
         for param in params:
             name_value = param.split("=")
-            # print(f"param = {param}")
-            # print(f"Name_value = {name_value}")
             if name_value[0] == "park-id":
-                id = int(name_value[1])
-                chosen_park = self.get_park_by_id(id)
-                self.current_park = chosen_park
-                print(f"New park name = {chosen_park.name}")
-                print(f"New park id = {chosen_park.id}")
-                print(f"New park latitude = {chosen_park.latitude}")
-                print(f"New park longitude = {chosen_park.longitude}")
+                self.current_park = self.get_park_by_id(int(name_value[1]))
+                print(f"New park name = {self.current_park.name}")
+                print(f"New park id = {self.current_park.id}")
+                print(f"New park latitude = {self.current_park.latitude}")
+                print(f"New park longitude = {self.current_park.longitude}")
             if name_value[0] == "skip_closed":
                 print("Skip closed is True")
-                chosen_park.skip_closed = True
+                self.skip_closed = True
             if name_value[0] == "skip_meet":
                 print("Skip meet is True")
                 self.skip_meet = True
@@ -249,8 +245,8 @@ class ThemeParkList:
     def store_settings(self, sm):
         sm.settings["current_park_name"] = self.current_park.name
         sm.settings["current_park_id"] = self.current_park.id
-        sm.settings["skip_meet"] = self.current_park.skip_meet
-        sm.settings["skip_closed"] = self.current_park.skip_closed
+        sm.settings["skip_meet"] = self.skip_meet
+        sm.settings["skip_closed"] = self.skip_closed
 
 
 class ThemeParkRide:
@@ -285,8 +281,8 @@ class ThemePark:
         self.latitude = latitude
         self.longitude = longitude
         self.rides = self.get_rides_from_json(json_data)
-        self.skip_meet = False
-        self.skip_closed = False
+        #self.skip_meet = False
+        #self.skip_closed = False
 
     @staticmethod
     def remove_non_ascii(orig_str):
@@ -727,7 +723,8 @@ class MessageQueue:
                 vac_message = f"Your vacation to {vac.name} is tomorrow!!!!!!!!!!!!!"
                 self.add_scroll_message(vac_message, 0)
 
-    async def add_rides(self, park):
+    async def add_rides(self, park_list):
+        park = park_list.current_park
         print(f"MessageQueue.add_rides() called for: {park.name}:{park.id}")
         self.func_queue.append(self.display.show_scroll_message)
         required_message = f"Wait times for {park.name} provided by {REQUIRED_MESSAGE}"
@@ -741,11 +738,11 @@ class MessageQueue:
             return
 
         for ride in park.rides:
-            if "Meet" in ride.name and park.skip_meet == True:
+            if "Meet" in ride.name and park_list.skip_meet == True:
                 print(f"Skipping character meet: {ride.name}")
                 continue
 
-            if ride.is_open() is False and park.skip_closed == True:
+            if ride.is_open() is False and park_list.skip_closed == True:
                 continue
 
             if ride.open_flag is True:
@@ -864,6 +861,7 @@ class SettingsManager:
             return {}
 
     def save_settings(self):
+        print(f"Saving settings {self.settings}")
         with open(self.filename, 'w') as f:
             json.dump(self.settings, f)
 

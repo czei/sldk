@@ -423,7 +423,7 @@ async def run_display():
                 messages.init()
                 await update_live_wait_time()
                 await messages.add_vacation(vacation_date)
-                await messages.add_rides(park_list.current_park)
+                await messages.add_rides(park_list)
                 messages.regenerate_flag = False
 
             await messages.show()
@@ -452,7 +452,7 @@ async def update_ride_times():
                 await update_live_wait_time()
                 messages.init()
                 await messages.add_vacation(vacation_date)
-                await messages.add_rides(park_list.current_park)
+                await messages.add_rides(park_list)
 
         except OSError as e:
             print("Caught exception OSError:", e)
