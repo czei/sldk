@@ -1,3 +1,4 @@
+#
 # Theme Park Waits
 # View information about ride wait times at any theme park
 # Copyright 2024 3DUPFitters LLC
@@ -282,11 +283,20 @@ def generate_main_page():
 
 @web_server.route("/style.css")
 def base(request: Request):
-    f = open("../style.css")
+    f = open("src/style.css")
     data = f.read()
     f.close()
     return adafruit_httpserver.Response(request, data, content_type="text/html")
 
+
+@web_server.route("/upgrade.html", [POST])
+def base(request: Request):
+    ss, pp = load_credentials()
+    #   #ota_updater.install_update_if_available_after_boot(ss,pp)
+    ota_updater.check_for_update_to_install_during_next_reboot()
+
+    #Reboot device
+    supervisor.reload()
 
 @web_server.route("/settings.html", [GET, POST])
 def base(request: Request):
@@ -335,9 +345,26 @@ def base(request: Request):
         release = ota_updater.get_version("src")
         latest = ota_updater.get_latest_version()
         if latest == release:
-            page += "<p>The current installed version {release} is up to date.</p>"
+            page += f"<p>The current installed version {release} is up to date.</p>"
         else:
             page += f"<p>The latest release \'{latest}\' is newer than the currently installed release \'{release}\'</p>"
+            page += """<p><ol>
+            <li>Click on the upgrade button below to download the latest release and install it.</br></li>  
+            <br>
+            <li>The LED will be unresponsive for 3-10 minutes. The screen will flash several times with random characters, do not be alarmed.</li>
+            <br>
+            <li><b>Do not turn the device off during the upgrade process.</b></li>
+            <br>
+            </p>
+            <li>
+            <form action=\"/upgrade.html\" method=\"POST\">
+            <p><button type="submit">Upgrade</button></p>
+            </form>
+            </li>
+            </ol>
+            """
+
+    
     except ValueError as e:
         page += "<p>Unable to find latest software release on git code server.</p>"
 
@@ -392,6 +419,13 @@ TOKEN='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'
 GITHUBREPO='https://github.com/Czeiszperger/themeparkwaits.release'
 ota_updater = OTAUpdater(http_requests, GITHUBREPO, main_dir="src", headers={'Authorization': 'TOKEN {}'.format(TOKEN)})
 print (f"Release version is {ota_updater.get_version("src")}")
+
+def download_and_install_update_if_available():
+    print (f"Checking upgrade from {ota_updater.get_version("src")}")
+    run_setup_message("About to install update. Do not unplug! 10  9  8  7  6  5  4  3  2  1", 1)
+    ss, pp = src.theme_park_api.load_credentials()
+    ota_updater.install_update_if_available_after_boot(ss,pp)
+    supervisor.reload()
 
 async def run_web_server():
     while True:
@@ -479,6 +513,10 @@ try:
 except OSError as e:
     print("Caught exception OSError:", e)
     messages.add_scroll_message("Unable to contact time server.")
+
+# Should only work if the user had previously called
+# ota_updater.check_for_update_to_install_during_next_reboot()
+download_and_install_update_if_available()
 
 asyncio.run(asyncio.gather(
     run_display(),

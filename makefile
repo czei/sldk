@@ -2,10 +2,12 @@
 DESTDIR := ../themeparkwaits.release/
 
 # Find all python files in the current directory
-SRC := $(wildcard *.py)
+BASE := $(wildcard *.py)
+SRC_DIR := src
 
 all: copy
 
 copy: $(SRC)
 #   mkdir -p $(DESTDIR)
-	cp -f $(SRC) $(DESTDIR)
+	cp -f $(BASE) $(DESTDIR)
+	cp -rf $(SRC_DIR) $(DESTDIR)
