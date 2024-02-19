@@ -44,6 +44,8 @@ class OTAUpdater:
             print('New version available, will download and install on next reboot')
             self._create_new_version_file(latest_version)
             return True
+        else:
+            print(f'New version not available: {current_version}:{latest_version}')
 
         return False
 
@@ -86,7 +88,6 @@ class OTAUpdater:
 
         (current_version, latest_version) = self.check_for_new_version()
         if latest_version > current_version:
-            print('Updating to version {}...'.format(latest_version))
             self._create_new_version_file(latest_version)
             self._download_new_version(latest_version)
             self._copy_secrets_file()
@@ -174,7 +175,11 @@ class OTAUpdater:
         file_list.close()
 
     def _download_file(self, version, gitPath, path):
-        self.http_client.get('https://raw.githubusercontent.com/{}/{}/{}'.format(self.github_repo, version, gitPath), headers=self.headers)
+        response = self.http_client.get('https://raw.githubusercontent.com/{}/{}/{}'.format(self.github_repo, version, gitPath), headers=self.headers)
+        file = open(path, "wb")
+        file.write(response.content)
+        file.close()
+        print("File downloaded successfully.")
 
     def _copy_secrets_file(self):
         if self.secrets_file:
@@ -192,8 +197,10 @@ class OTAUpdater:
     def _install_new_version(self):
         print('Installing new version at {} ...'.format(self.modulepath(self.main_dir)))
         if self._os_supports_rename():
+            print(f"Renaming {self.new_version_dir} to {self.modulepath(self.main_dir)}")
             os.rename(self.modulepath(self.new_version_dir), self.modulepath(self.main_dir))
         else:
+            print(f"Copying individual files from {self.new_version_dir} to {self.modulepath(self.main_dir)}")
             self._copy_directory(self.modulepath(self.new_version_dir), self.modulepath(self.main_dir))
             self._rmtree(self.modulepath(self.new_version_dir))
         print('Update installed, please reboot now')
@@ -210,23 +217,29 @@ class OTAUpdater:
         os.rmdir(directory)
 
     def _os_supports_rename(self) -> bool:
-        self._mk_dirs('otaUpdater/osRenameTest')
-        os.rename('otaUpdater', 'otaUpdated')
-        result = len(os.listdir('otaUpdated')) > 0
-        self._rmtree('otaUpdated')
-        return result
+        return False
+        # self._mk_dirs('otaUpdater/osRenameTest')
+        # os.rename('otaUpdater', 'otaUpdated')
+        # result = len(os.listdir('otaUpdated')) > 0
+        # self._rmtree('otaUpdated')
+        # return result
 
+    #
+    # Now only works on simple directories with no sub-directories
+    #
     def _copy_directory(self, fromPath, toPath):
         if not self._exists_dir(toPath):
             self._mk_dirs(toPath)
 
         for entry in os.listdir(fromPath):
-            stat = os.stat(fromPath+ '/' + entry)
-            is_dir = (stat[0] & 0o170000) == 0o040000
-            if is_dir:
-                self._copy_directory(fromPath + '/' + entry, toPath + '/' + entry)
-            else:
-                self._copy_file(fromPath + '/' + entry, toPath + '/' + entry)
+            #stat = os.stat(fromPath+ '/' + entry)
+            #is_dir = (stat[0] & 0o170000) == 0o040000
+            #is_dir = (stat[0] & 0x4000) != 0
+            #if is_dir:
+            #    self._copy_directory(fromPath + '/' + entry, toPath + '/' + entry)
+            #else:
+            print(f"Copying {fromPath}/{entry} to {toPath}/{entry}" )
+            self._copy_file(fromPath + '/' + entry, toPath + '/' + entry)
 
     def _copy_file(self, fromPath, toPath):
         with open(fromPath) as fromFile:

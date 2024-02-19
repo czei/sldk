@@ -357,13 +357,11 @@ def base(request: Request):
             <br>
             <li><b>Do not turn the device off during the upgrade process.</b></li>
             <br>
-            </p>
-            <li>
+            </ol>
+            <br>
             <form action=\"/upgrade.html\" method=\"POST\">
             <p><button type="submit">Upgrade</button></p>
             </form>
-            </li>
-            </ol>
             """
 
 
@@ -414,7 +412,7 @@ def start_web_server(wserver):
         supervisor.reload()
 
 
-start_web_server(web_server)
+
 
 TOKEN = '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'
 # TOKEN='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'
@@ -424,12 +422,11 @@ print(f"Release version is {ota_updater.get_version("src")}")
 
 
 def download_and_install_update_if_available():
-    release, latest = ota_updater.check_for_new_version()
-    print(f"Current version is {release}, latest version is: {latest}")
     if ota_updater.update_available_at_boot() is True:
-        run_setup_message(f"Installing version {latest}. Do not unplug! 10  9  8  7  6  5  4  3  2  1", 1)
+        # run_setup_message(f"Updating software. Do not unplug! 10  9  8  7  6  5  4  3  2  1", 1)
         ss, pp = src.theme_park_api.load_credentials()
         if ota_updater.install_update_if_available_after_boot(ss, pp) is True:
+            print("Updated software, rebooting now...")
             supervisor.reload()
 
 
@@ -468,9 +465,6 @@ async def run_display():
 
             await messages.show()
             await asyncio.sleep(0)  # let other tasks run
-
-            now = datetime.now()
-            print(f"The current time:  {now.hour}:{now.minute}")
 
         except RuntimeError:
             traceback.print_exc()
@@ -524,6 +518,9 @@ except OSError as e:
 # Should only work if the user had previously called
 # ota_updater.check_for_update_to_install_during_next_reboot()
 download_and_install_update_if_available()
+
+# Start the web server GUI
+start_web_server(web_server)
 
 asyncio.run(asyncio.gather(
     run_display(),
