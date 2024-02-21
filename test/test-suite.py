@@ -3,7 +3,7 @@ from urllib.request import urlopen, Request
 
 import socketpool
 
-from src.theme_park_api import ThemePark
+from src.theme_park_api import ThemePark, ColorUtils
 from src.theme_park_api import ThemeParkList
 from src.theme_park_api import Vacation
 import json
@@ -378,3 +378,13 @@ class Test(TestCase):
         self.assertTrue(url_decode("FBI+Surveillance+Van+112") == "FBI Surveillance Van 112")
         self.assertTrue(url_decode("FBI+Surveillance+Van+112") == "FBI Surveillance Van 112")
 
+
+    def test_brightness_scale(self):
+        orig_color = "0xfdf5e6"
+        #scale by .75
+        new_color = ColorUtils.scale_color(orig_color, .50)
+        print(f"New color is {new_color}")
+        self.assertTrue(new_color == "0x7e7a73")
+        new_color = ColorUtils.scale_color("0x000000", .50)
+        print(f"New color is {new_color}")
+        self.assertTrue(new_color == "0x000000")
