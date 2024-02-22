@@ -1,6 +1,6 @@
 # Destination directory
 RELEASE_DESTDIR := ../themeparkwaits.release/
-TEST_DIR := /Volumes/CIRCUITPY/src
+TEST_DIR := /Volumes/CIRCUITPY
 
 # Find all python files in the current directory
 BASE := $(wildcard *.py)
@@ -16,6 +16,6 @@ release: $(RELEASE_DESTDIR)
 
 # Copy files to the connected MatrixPortal S3
 test: $(TEST_DIR)
-	cp -f boot.py $(RELEASE_DESTDIR)
-	cp -f code.py $(RELEASE_DESTDIR)
+	cp -f boot.py $(TEST_DIR)
+	cp -f code.py $(TEST_DIR)
 	cp -rf $(SRC_DIR) $(TEST_DIR)
