@@ -639,7 +639,7 @@ class AsyncScrollingDisplay(Display):
     def set_colors(self, settings):
         scale = float(settings.settings["brightness_scale"])
         print(f"New brightness scale is: {scale}")
-        self.wait_time.color = int(ColorUtils.scale_color(settings.settings["ride_name_color"], scale))
+        self.wait_time_name.color = int(ColorUtils.scale_color(settings.settings["ride_name_color"], scale))
         self.wait_time.color = int(ColorUtils.scale_color(settings.settings["ride_wait_time_color"], scale))
         self.closed.color = int(ColorUtils.scale_color(settings.settings["ride_wait_time_color"], scale))
         self.scrolling_label.color = int(ColorUtils.scale_color(settings.settings["default_color"], scale))
@@ -872,7 +872,7 @@ class SettingsManager:
         self.scroll_speed = {"Slow": 0.06, "Medium": 0.04, "Fast": 0.02}
 
         if self.settings.get("brightness_scale") is None:
-            self.settings["brightness_scale"] = "1.0"
+            self.settings["brightness_scale"] = "0.5"
         if self.settings.get("skip_closed") is None:
             self.settings["skip_closed"] = False
         if self.settings.get("skip_meet") is None:

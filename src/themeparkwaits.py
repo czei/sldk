@@ -342,7 +342,8 @@ def base(request: Request):
             <label for=\"Name\">Brightness</label>
             <select name=\"brightness_scale\" id=\"brightness_scale\">"""
     for scale in ["1.0", "0.9", "0.8", "0.7", "0.6", "0.5", "0.4","0.3", "0.2"]:
-        scale_display = int(float(scale) * 10.0)
+        print(f"Scale value is {float(scale) * 10}")
+        scale_display = round(float(scale) * 10)
         if scale == settings.settings.get("brightness_scale"):
             page += f"<option value=\"{scale}\" selected>{scale_display}</option>\n"
         else:
