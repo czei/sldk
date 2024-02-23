@@ -29,7 +29,7 @@ class ColorUtils:
               'Cyan': '0x00ffff',
               'Blue': '0x0000aa',
               'Purple': '0xb400ff',
-              'Magenta': '0xff0016',
+              'Magenta': '0xff00ff',
               'Black': '0x000000',
               'Gold': '0xffde1e',
               'Pink': '0xf25aff',
