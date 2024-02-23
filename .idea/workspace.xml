@@ -8,17 +8,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added option of using the UP button to delete the WIFI settings.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added feature to set server name.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/boot.py" beforeDir="false" afterPath="$PROJECT_DIR$/boot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/code.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/theme_park_api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wifimgr.py" beforeDir="false" afterPath="$PROJECT_DIR$/wifimgr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+    </option>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -38,8 +40,14 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file:///Volumes/CIRCUITPY/src/.version" root0="SKIP_INSPECTION" />
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
@@ -55,7 +63,12 @@
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
     &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Makefile Target.all.executor&quot;: &quot;Run&quot;,
+    &quot;Makefile Target.copy.executor&quot;: &quot;Run&quot;,
+    &quot;Makefile Target.test.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test-suite.py.executor&quot;: &quot;Run&quot;,
     &quot;Python tests.Python tests in test_theme-park_api.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.code-ota-test.executor&quot;: &quot;Run&quot;,
     &quot;Python.code.executor&quot;: &quot;Run&quot;,
     &quot;Python.theme_park_api.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
@@ -63,6 +76,7 @@
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_directory_selection&quot;: &quot;/Users/czei/Library/Mobile Documents/com~apple~CloudDocs/Projects/Disney/ThemeParkAPI&quot;,
     &quot;last_opened_file_path&quot;: &quot;/Users/czei/Library/Mobile Documents/com~apple~CloudDocs/Projects/Disney/ThemeParkAPI&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
@@ -70,12 +84,17 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Modules&quot;,
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.32068965&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;Python&quot;
+    ]
   }
 }</component>
   <component name="PyConsoleOptionsProvider">
@@ -91,10 +110,31 @@
       <recent name="/Volumes/CIRCUITPY" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src" />
+      <recent name="$PROJECT_DIR$/test" />
+      <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/CIRCUITPY" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Makefile Target.all">
+    <configuration name="all" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/makefile" target="all" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
+    </configuration>
+    <configuration name="copy" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/makefile" target="copy" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
+      <makefile filename="$PROJECT_DIR$/makefile" target="test" workingDirectory="" arguments="">
+        <envs />
+      </makefile>
+      <method v="2" />
+    </configuration>
     <configuration name="Run ThemeParkAPI" type="MicroPythonConfigurationType" factoryName="MicroPython" path="$PROJECT_DIR$" runReplOnSuccess="no">
       <module name="ThemeParkAPI" />
       <method v="2">
@@ -102,6 +142,14 @@
         <option name="MicroPython.StopREPL.Before.Run" enabled="true" />
       </method>
     </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Makefile Target.test" />
+        <item itemvalue="Makefile Target.test" />
+        <item itemvalue="Makefile Target.copy" />
+        <item itemvalue="Makefile Target.all" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
@@ -252,6 +300,72 @@
       <workItem from="1706147456645" duration="3095000" />
       <workItem from="1706191664795" duration="4968000" />
       <workItem from="1706231238843" duration="1763000" />
+      <workItem from="1706235678167" duration="4002000" />
+      <workItem from="1706280623110" duration="76000" />
+      <workItem from="1706280857827" duration="30000" />
+      <workItem from="1706282149305" duration="1809000" />
+      <workItem from="1706286559721" duration="666000" />
+      <workItem from="1706487041490" duration="613000" />
+      <workItem from="1706488382045" duration="743000" />
+      <workItem from="1706541470772" duration="503000" />
+      <workItem from="1706554453909" duration="1266000" />
+      <workItem from="1706620696890" duration="21000" />
+      <workItem from="1706620724389" duration="2666000" />
+      <workItem from="1706667487088" duration="2311000" />
+      <workItem from="1706762078560" duration="1239000" />
+      <workItem from="1706907767238" duration="1888000" />
+      <workItem from="1706920632656" duration="10698000" />
+      <workItem from="1707010511491" duration="614000" />
+      <workItem from="1707066737913" duration="601000" />
+      <workItem from="1707177507775" duration="806000" />
+      <workItem from="1707178321335" duration="200000" />
+      <workItem from="1707178529438" duration="3173000" />
+      <workItem from="1707190148594" duration="3962000" />
+      <workItem from="1707269611574" duration="3000" />
+      <workItem from="1707269790595" duration="5067000" />
+      <workItem from="1707275296549" duration="68000" />
+      <workItem from="1707275429002" duration="239000" />
+      <workItem from="1707275776509" duration="800000" />
+      <workItem from="1707276603646" duration="2424000" />
+      <workItem from="1707422732743" duration="3242000" />
+      <workItem from="1707430339759" duration="1665000" />
+      <workItem from="1707437659751" duration="265000" />
+      <workItem from="1707437934505" duration="2166000" />
+      <workItem from="1707687650055" duration="587000" />
+      <workItem from="1707699089188" duration="2245000" />
+      <workItem from="1707701510997" duration="1604000" />
+      <workItem from="1707703411114" duration="4942000" />
+      <workItem from="1707709143726" duration="2644000" />
+      <workItem from="1707784230242" duration="179000" />
+      <workItem from="1707784421502" duration="2246000" />
+      <workItem from="1707874053163" duration="11998000" />
+      <workItem from="1707946356584" duration="582000" />
+      <workItem from="1707961334216" duration="34000" />
+      <workItem from="1708043450348" duration="2964000" />
+      <workItem from="1708090046734" duration="1862000" />
+      <workItem from="1708135607642" duration="594000" />
+      <workItem from="1708188428786" duration="3749000" />
+      <workItem from="1708192193803" duration="5539000" />
+      <workItem from="1708199191320" duration="2347000" />
+      <workItem from="1708201570190" duration="968000" />
+      <workItem from="1708207174942" duration="1845000" />
+      <workItem from="1708275204217" duration="5179000" />
+      <workItem from="1708312624732" duration="10334000" />
+      <workItem from="1708375886426" duration="1077000" />
+      <workItem from="1708449173015" duration="5245000" />
+      <workItem from="1708454496005" duration="799000" />
+      <workItem from="1708459960408" duration="158000" />
+      <workItem from="1708474990943" duration="8071000" />
+      <workItem from="1708520695791" duration="225000" />
+      <workItem from="1708520954483" duration="2426000" />
+      <workItem from="1708552656965" duration="950000" />
+      <workItem from="1708626377774" duration="1514000" />
+      <workItem from="1708628405043" duration="881000" />
+      <workItem from="1708629296818" duration="801000" />
+      <workItem from="1708630739051" duration="618000" />
+      <workItem from="1708649304694" duration="455000" />
+      <workItem from="1708650191844" duration="4025000" />
+      <workItem from="1708705901432" duration="19000" />
     </task>
     <task id="LOCAL-00001" summary="First commit">
       <option name="closed" value="true" />
@@ -453,7 +567,183 @@
       <option name="project" value="LOCAL" />
       <updated>1706147511729</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="Rewrote use case where the SSID or password has changed.  Now requires pressing button to reset wifi.">
+      <option name="closed" value="true" />
+      <created>1706235715562</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1706235715562</updated>
+    </task>
+    <task id="LOCAL-00027" summary="Deleted CIRCUITPY.local to prepare for github updating OTA functionality.">
+      <option name="closed" value="true" />
+      <created>1706235880215</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1706235880215</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Fixed cold startup by adding URL for GUI.">
+      <option name="closed" value="true" />
+      <created>1706912456877</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1706912456877</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Fixed cold startup by adding URL for GUI.">
+      <option name="closed" value="true" />
+      <created>1707178303263</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1707178303263</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Refactored into subdirectories for OTA updating.">
+      <option name="closed" value="true" />
+      <created>1707701855636</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1707701855636</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Refactored into subdirectories for OTA updating.">
+      <option name="closed" value="true" />
+      <created>1707702615897</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1707702615897</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Refactored into subdirectories for OTA updating.">
+      <option name="closed" value="true" />
+      <created>1707702751111</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1707702751111</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Refactored into subdirectories for OTA updating.">
+      <option name="closed" value="true" />
+      <created>1707702803213</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1707702803213</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Deleted on CircuitPython release.">
+      <option name="closed" value="true" />
+      <created>1707704797126</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1707704797126</updated>
+    </task>
+    <task id="LOCAL-00035" summary="Updated test suite for new ThemeParkList refactoring.">
+      <option name="closed" value="true" />
+      <created>1707706695921</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1707706695921</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Fixed bugs from refactoring ThemeParkList class.">
+      <option name="closed" value="true" />
+      <created>1708044309519</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1708044309519</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Fixed skip settings bugs from ThemeParkList refactor.">
+      <option name="closed" value="true" />
+      <created>1708046410577</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1708046410577</updated>
+    </task>
+    <task id="LOCAL-00038" summary="ALmost have updater working ota.">
+      <option name="closed" value="true" />
+      <created>1708201519146</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1708201519146</updated>
+    </task>
+    <task id="LOCAL-00039" summary="ALmost have updater working ota.">
+      <option name="closed" value="true" />
+      <created>1708288534757</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1708288534757</updated>
+    </task>
+    <task id="LOCAL-00040" summary="Over the air updating worked!">
+      <option name="closed" value="true" />
+      <created>1708365627848</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1708365627848</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Changed init button to also delete settings.">
+      <option name="closed" value="true" />
+      <created>1708365652943</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1708365652943</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Park list is now sorted.">
+      <option name="closed" value="true" />
+      <created>1708372705829</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1708372705829</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Added lib back to git.">
+      <option name="closed" value="true" />
+      <created>1708375921801</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1708375921801</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Added brightness control.">
+      <option name="closed" value="true" />
+      <created>1708520854417</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1708520854417</updated>
+    </task>
+    <task id="LOCAL-00045" summary="Fixed bug in brightness control where the display levels in the drop-down duplicated 5 and was missing 9.">
+      <option name="closed" value="true" />
+      <created>1708627793809</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1708627793809</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Fixed the bug where red was pink,&#10;and got the test Makefile target working.">
+      <option name="closed" value="true" />
+      <created>1708630074849</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1708630074850</updated>
+    </task>
+    <task id="LOCAL-00047" summary="Added feature to set server name.">
+      <option name="closed" value="true" />
+      <created>1708654277501</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1708654277501</updated>
+    </task>
+    <option name="localTasksCounter" value="48" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -470,7 +760,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="HEAD" />
+                        <option value="origin/master" />
                       </list>
                     </value>
                   </entry>
@@ -489,21 +779,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="First commit" />
-    <MESSAGE value="Added code.py from CIRCUITPY" />
-    <MESSAGE value="Demo is running reliably with hand-wired Haunted Mansion choice, alternating ride name and standby wait." />
-    <MESSAGE value="Rotating through rides at WDW, one page for ride name, a blue page for wait time." />
-    <MESSAGE value="Nice working demo that scrolls the name and then displays the wait time." />
-    <MESSAGE value="Converted ThemePark class to use Ride objects instead of arrays." />
-    <MESSAGE value="Basic park selector GUI working." />
-    <MESSAGE value="Refactored display code into Display class." />
-    <MESSAGE value="Refactored into message queue." />
-    <MESSAGE value="Display is fully async." />
-    <MESSAGE value="Runs with all 3 processes, but goes into safe mode after 30-90 minutes from watchdog reset." />
-    <MESSAGE value="Works without crashing with mDNS and updating in the background. boot.py is hosed and will lock drive in read-only mode." />
-    <MESSAGE value="Backup before adding settings GUI." />
-    <MESSAGE value="Color settings page basically working." />
-    <MESSAGE value="Added support for parks that don't have lands, and delaying reads for an hour when a park is closed." />
     <MESSAGE value="Fixed checkbox alignment, added scroll scpeed option." />
     <MESSAGE value="Moved gear link to settings back on the right side of the nav header." />
     <MESSAGE value="Fixed checkboxes for skipping stuff." />
@@ -512,16 +787,27 @@
     <MESSAGE value="Added code to configure Wifi connection if unable to connect." />
     <MESSAGE value="Fixed bug where you couldn't change SSID or password if either had changed." />
     <MESSAGE value="Added option of using the UP button to delete the WIFI settings." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added option of using the UP button to delete the WIFI settings." />
+    <MESSAGE value="Rewrote use case where the SSID or password has changed.  Now requires pressing button to reset wifi." />
+    <MESSAGE value="Deleted CIRCUITPY.local to prepare for github updating OTA functionality." />
+    <MESSAGE value="Fixed cold startup by adding URL for GUI." />
+    <MESSAGE value="Refactored into subdirectories for OTA updating." />
+    <MESSAGE value="Deleted on CircuitPython release." />
+    <MESSAGE value="Updated test suite for new ThemeParkList refactoring." />
+    <MESSAGE value="Fixed bugs from refactoring ThemeParkList class." />
+    <MESSAGE value="Fixed skip settings bugs from ThemeParkList refactor." />
+    <MESSAGE value="ALmost have updater working ota." />
+    <MESSAGE value="Over the air updating worked!" />
+    <MESSAGE value="Changed init button to also delete settings." />
+    <MESSAGE value="Park list is now sorted." />
+    <MESSAGE value="Added lib back to git." />
+    <MESSAGE value="Added brightness control." />
+    <MESSAGE value="Fixed bug in brightness control where the display levels in the drop-down duplicated 5 and was missing 9." />
+    <MESSAGE value="Fixed the bug where red was pink,&#10;and got the test Makefile target working." />
+    <MESSAGE value="Added feature to set server name." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added feature to set server name." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/webgui.py</url>
-          <option name="timeStamp" value="6" />
-        </line-breakpoint>
-      </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
           <properties notifyOnTerminate="true" exception="BaseException">
@@ -539,9 +825,10 @@
     <SUITE FILE_PATH="coverage/ThemeParkAPI$test_webgui.coverage" NAME="test-webgui Coverage Results" MODIFIED="1700433660538" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$main.coverage" NAME="main Coverage Results" MODIFIED="1697480086211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$Doctests_in___init__.coverage" NAME="Doctests in __init__ Coverage Results" MODIFIED="1697475842243" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="/Library/Frameworks/Python.framework/Versions/3.10/lib/python3.10/json" />
+    <SUITE FILE_PATH="coverage/ThemeParkAPI$code_ota_test.coverage" NAME="code-ota-test Coverage Results" MODIFIED="1707784478271" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$webgui.coverage" NAME="webgui Coverage Results" MODIFIED="1700400556244" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$theme_park_api.coverage" NAME="theme_park_api Coverage Results" MODIFIED="1703709861622" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$code.coverage" NAME="code Coverage Results" MODIFIED="1703862608085" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1706114279122" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1708626590238" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
   </component>
 </project>
