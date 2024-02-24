@@ -1,11 +1,15 @@
-#
 import terminalio
 import asyncio
 import displayio
 from adafruit_datetime import datetime
 from adafruit_display_text.label import Label
 import json
-import os
+
+import adafruit_logging as logging
+logger = logging.getLogger('Test')
+logger.setLevel(logging.DEBUG)
+#formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger.addHandler(logging.FileHandler("error_log"))
 
 try:
     import rtc
@@ -89,7 +93,6 @@ class ColorUtils:
             b_hex = b_hex[2:]
 
         new_hex_str = "0x" + r_hex + g_hex + b_hex
-        print(f"hex string {hex_string} scaled by {scale} to {new_hex_str}")
         return new_hex_str
 
     @staticmethod
@@ -132,87 +135,10 @@ def set_system_clock(http_requests):
         -1
     )
 
-    print(f"Setting the time to {datetime_object}")
+    logger.info(f"Setting the time to {datetime_object}")
     rtc.RTC().datetime = datetime_object
     return datetime_object
 
-
-# def populate_park_list(requests):
-#     """
-#     Returns an iterable list of theme parks and their ids from Queue Times.
-#     ONLY WORKS ON CircuitPython hardware.
-#     :return:
-#     """
-#     url = "https://queue-times.com/parks.json"
-#     response = requests.get(url)
-#     json_response = response.json()
-#     return get_theme_parks_from_json(json_response))
-
-
-# def get_theme_parks_from_json(json):
-#     """
-#     Return a list of theme parks and their ids
-#     :return: a tuple of park name and id
-#     """
-#     park_list = []
-#     for company in json:
-#         # print(f"company = {company}")
-#         for parks in company:
-#             if parks == "parks":
-#                 # print(f"park list = {parks}")
-#                 park = company[parks]
-#                 name = ""
-#                 park_id = 0
-#                 latitude = 0
-#                 longitude = 0
-#                 for item in park:
-#                     # print(f"park = {item}")
-#                     for element in item:
-#                         if element == "name":
-#                             name = item[element]
-#                         if element == "id":
-#                             park_id = item[element]
-#                         if element == "latitude":
-#                             latitude = item[element]
-#                         if element == "longitude":
-#                             longitude = item[element]
-#                     name_id = tuple([name, park_id, latitude, longitude])
-#                     # print(f"Adding tuple {name_id}")
-#                     park_list.append(name_id)
-#
-#     return park_list
-
-
-# def get_park_url_from_name(park_list, park_name):
-#     """
-#     Takes the output from get_theme_parks_from_json and assembles
-#     the URL to get individual ride data.
-#     :param park_list: A list of tuples of park names and ids
-#     :param park_name: The string describing the Theme Park
-#     :return: JSON url for a particular theme park
-#     """
-#     # Magic Kingdom URL example: https://queue-times.com/parks/6/queue_times.json
-#     url1 = "https://queue-times.com/parks/"
-#     url2 = "/queue_times.json"
-#     for park in park_list:
-#         if park[0] == park_name:
-#             park_id = park[1]
-#             url = url1 + str(park_id) + url2
-#             return url
-#
-
-# def get_park_url_from_id(park_list, park_id):
-#     """
-#     Takes the output from get_theme_parks_from_json and assembles
-#     the URL to get individual ride data.
-#     :param park_list: A list of tuples of park names and ids
-#     :param park_id: The id from QueueTimes.com
-#     :return: JSON url for a particular theme park
-#     """
-#     # Magic Kingdom URL example: https://queue-times.com/parks/6/queue_times.json
-#     url1 = "https://queue-times.com/parks/"
-#     url2 = "/queue_times.json"
-#     return url1 + str(park_id) + url2
 
 class ThemeParkList:
     '''
@@ -228,14 +154,13 @@ class ThemeParkList:
         for company in json_response:
             for parks in company:
                 if parks == "parks":
-                    # print(f"park list = {parks}")
                     park = company[parks]
                     name = ""
                     park_id = 0
                     latitude = 0
                     longitude = 0
                     for item in park:
-                        # print(f"park = {item}")
+                        logger.debug(f"park = {item}")
                         for element in item:
                             if element == "name":
                                 name = item[element]
@@ -245,9 +170,7 @@ class ThemeParkList:
                                 latitude = item[element]
                             if element == "longitude":
                                 longitude = item[element]
-                        #name_id = tuple([name, park_id, latitude, longitude])
                         park = ThemePark("", ThemePark.remove_non_ascii(name), park_id, latitude, longitude)
-                        # print(f"Adding tuple {name_id}")
                         self.park_list.append(park)
 
         sorted_park_list = sorted(self.park_list, key=lambda park: park.name)
@@ -315,22 +238,22 @@ class ThemeParkList:
 
     def parse(self, str_params):
         params = str_params.split("&")
-        print(f"Params = {params}")
+        logger.debug(f"Params = {params}")
         self.skip_meet = False
         self.skip_closed = False
         for param in params:
             name_value = param.split("=")
             if name_value[0] == "park-id":
                 self.current_park = self.get_park_by_id(int(name_value[1]))
-                print(f"New park name = {self.current_park.name}")
-                print(f"New park id = {self.current_park.id}")
-                print(f"New park latitude = {self.current_park.latitude}")
-                print(f"New park longitude = {self.current_park.longitude}")
+                logger.debug(f"New park name = {self.current_park.name}")
+                logger.debug(f"New park id = {self.current_park.id}")
+                logger.debug(f"New park latitude = {self.current_park.latitude}")
+                logger.debug(f"New park longitude = {self.current_park.longitude}")
             if name_value[0] == "skip_closed":
-                print("Skip closed is True")
+                logger.debug("Skip closed is True")
                 self.skip_closed = True
             if name_value[0] == "skip_meet":
-                print("Skip meet is True")
+                logger.debug("Skip meet is True")
                 self.skip_meet = True
 
 
@@ -402,7 +325,7 @@ class ThemePark:
         ride_list = []
         self.is_open = False
 
-        # print(f"Json_data is: {json_data}")
+        logger.debug(f"Json_data is: {json_data}")
         if len(json_data) <= 0:
             return ride_list
 
@@ -413,7 +336,7 @@ class ThemePark:
             rides = land["rides"]
             for ride in rides:
                 name = ride["name"]
-                # print(f"Ride = {name}")
+                logger.debug(f"Ride = {name}")
                 ride_id = ride["id"]
                 wait_time = ride["wait_time"]
                 open_flag = ride["is_open"]
@@ -428,7 +351,6 @@ class ThemePark:
             rides_list = json_data["rides"]
             for ride in rides_list:
                 name = ride["name"]
-                # print(f"Ride = {name}")
                 ride_id = ride["id"]
                 wait_time = ride["wait_time"]
                 open_flag = ride["is_open"]
@@ -537,7 +459,7 @@ class Vacation:
 
     def get_days_until(self):
         today = datetime.now()
-        print(f"The current year is {today.year}")
+        logger.info(f"The current year is {today.year}")
         future = datetime(self.year, self.month, self.day)
         diff = future - today
         return diff.days + 1
@@ -570,19 +492,19 @@ class Display:
         self.settings_manager = sm
 
     async def show_ride_closed(self, dummy):
-        print("Ride closed")
+        logger.info("Ride closed")
 
     async def show_ride_wait_time(self, ride_wait_time):
-        print(f"Ride wait time is {ride_wait_time}")
+        logger.info(f"Ride wait time is {ride_wait_time}")
 
     async def show_configuration_message(self):
-        print(f"Showing configuration message")
+        logger.info(f"Showing configuration message")
 
     async def show_ride_name(self, ride_name):
-        print(f"Ride name is {ride_name}")
+        logger.info(f"Ride name is {ride_name}")
 
     async def show_scroll_message(self, message):
-        print(f"Scrolling message: {message}")
+        logger.info(f"Scrolling message: {message}")
 
 
 class AsyncScrollingDisplay(Display):
@@ -635,7 +557,7 @@ class AsyncScrollingDisplay(Display):
 
     def set_colors(self, settings):
         scale = float(settings.settings["brightness_scale"])
-        print(f"New brightness scale is: {scale}")
+        logger.info(f"New brightness scale is: {scale}")
         self.wait_time_name.color = int(ColorUtils.scale_color(settings.settings["ride_name_color"], scale))
         self.wait_time.color = int(ColorUtils.scale_color(settings.settings["ride_wait_time_color"], scale))
         self.closed.color = int(ColorUtils.scale_color(settings.settings["ride_wait_time_color"], scale))
@@ -676,7 +598,7 @@ class AsyncScrollingDisplay(Display):
         self.closed_group.hidden = True
 
     async def show_scroll_message(self, message):
-        print(f"Scrolling message: {message}")
+        logger.debug(f"Scrolling message: {message}")
         self.wait_time_group.hidden = True
         self.wait_time_name_group.hidden = True
         self.scrolling_label.text = message
@@ -765,14 +687,14 @@ class MatrixPortalDisplay(Display):
         self.matrix_portal.scroll_text(self.scroll_delay)
 
     async def show_scroll_message(self, message):
-        print(f"Scrolling message: {message}")
+        logger.debug(f"Scrolling message: {message}")
         self.matrix_portal.set_text("", self.STANDBY)
         self.matrix_portal.set_text("", self.WAIT_TIME)
         self.matrix_portal.set_text(message, self.RIDE_NAME)
         self.matrix_portal.scroll_text(self.scroll_delay)
 
     def sync_show_scroll_message(self, message):
-        print(f"Scrolling message: {message}")
+        logger.debug(f"Scrolling message: {message}")
         self.matrix_portal.set_text("", self.STANDBY)
         self.matrix_portal.set_text("", self.WAIT_TIME)
         self.matrix_portal.set_text(message, self.RIDE_NAME)
@@ -813,7 +735,7 @@ class MessageQueue:
 
     async def add_rides(self, park_list):
         park = park_list.current_park
-        print(f"MessageQueue.add_rides() called for: {park.name}:{park.id}")
+        logger.debug(f"MessageQueue.add_rides() called for: {park.name}:{park.id}")
         self.func_queue.append(self.display.show_scroll_message)
         required_message = f"Wait times for {park.name} provided by {REQUIRED_MESSAGE}"
         self.param_queue.append(required_message)
@@ -827,7 +749,7 @@ class MessageQueue:
 
         for ride in park.rides:
             if "Meet" in ride.name and park_list.skip_meet == True:
-                print(f"Skipping character meet: {ride.name}")
+                logger.info(f"Skipping character meet: {ride.name}")
                 continue
 
             if ride.is_open() is False and park_list.skip_closed == True:
@@ -907,7 +829,7 @@ class SettingsManager:
             return {}
 
     def save_settings(self):
-        print(f"Saving settings {self.settings}")
+        logger.info(f"Saving settings {self.settings}")
         with open(self.filename, 'w') as f:
             json.dump(self.settings, f)
 
