@@ -9,7 +9,11 @@ import adafruit_logging as logging
 logger = logging.getLogger('Test')
 logger.setLevel(logging.DEBUG)
 #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger.addHandler(logging.FileHandler("error_log"))
+
+try:
+    logger.addHandler(logging.FileHandler("error_log"))
+except OSError:
+    print("Read-only file system")
 
 try:
     import rtc
@@ -160,7 +164,7 @@ class ThemeParkList:
                     latitude = 0
                     longitude = 0
                     for item in park:
-                        logger.debug(f"park = {item}")
+                        # logger.debug(f"park = {item}")
                         for element in item:
                             if element == "name":
                                 name = item[element]
@@ -325,7 +329,7 @@ class ThemePark:
         ride_list = []
         self.is_open = False
 
-        logger.debug(f"Json_data is: {json_data}")
+        # logger.debug(f"Json_data is: {json_data}")
         if len(json_data) <= 0:
             return ride_list
 
@@ -544,8 +548,26 @@ class AsyncScrollingDisplay(Display):
         self.closed.scale = (1)
         self.closed.text = "Closed"
         self.closed_group = displayio.Group()
-        self.closed_group.append(self.closed)
         self.closed_group.hidden = True
+        self.closed_group.append(self.closed)
+
+        # Main Splash Screen
+        self.splash_line1 = Label(
+            terminalio.FONT,
+            text="THEME PARK")
+        self.splash_line1.x = self.hardware.width
+        self.splash_line1.x = 3
+        self.splash_line1.y = 5
+        self.splash_line2 = Label(
+            terminalio.FONT,
+            text="WAITS",
+            scale=2)
+        self.splash_line2.x = 3
+        self.splash_line2.y = 20
+        self.splash_group = displayio.Group()
+        self.splash_group.hidden = True
+        self.splash_group.append(self.splash_line1)
+        self.splash_group.append(self.splash_line2)
 
         self.main_group = displayio.Group()
         self.main_group.hidden = False
@@ -553,6 +575,7 @@ class AsyncScrollingDisplay(Display):
         self.main_group.append(self.wait_time_name_group)
         self.main_group.append(self.wait_time_group)
         self.main_group.append(self.closed_group)
+        self.main_group.append(self.splash_group)
         self.hardware.root_group = self.main_group
 
     def set_colors(self, settings):
@@ -562,12 +585,15 @@ class AsyncScrollingDisplay(Display):
         self.wait_time.color = int(ColorUtils.scale_color(settings.settings["ride_wait_time_color"], scale))
         self.closed.color = int(ColorUtils.scale_color(settings.settings["ride_wait_time_color"], scale))
         self.scrolling_label.color = int(ColorUtils.scale_color(settings.settings["default_color"], scale))
+        self.splash_line1.color = int(ColorUtils.scale_color(ColorUtils.colors["Yellow"], scale))
+        self.splash_line2.color = int(ColorUtils.scale_color(ColorUtils.colors["Orange"], scale))
 
     async def off(self):
         self.scrolling_group.hidden = True
         self.wait_time_name_group.hidden = True
         self.wait_time_group.hidden = True
         self.closed_group.hidden = True
+        self.splash_group.hidden = True
 
     async def show_ride_closed(self, dummy):
         await super().show_ride_closed(dummy)
@@ -580,11 +606,18 @@ class AsyncScrollingDisplay(Display):
         self.wait_time_group.hidden = False
 
     async def show_configuration_message(self):
-        self.wait_time_group.hidden = True
-        self.wait_time_name_group.hidden = True
+        await self.off()
+        # self.wait_time_group.hidden = True
+        # self.wait_time_name_group.hidden = True
         await super().show_configuration_message()
 
+    async def show_splash(self, dummy):
+        await self.off()
+        logger.debug("Showing the splash screen")
+        self.splash_group.hidden = False
+
     async def show_ride_name(self, ride_name):
+        # await self.off()
         await super().show_ride_name(ride_name)
         self.wait_time_name.text = ride_name
         self.wait_time_name_group.hidden = False
@@ -599,12 +632,17 @@ class AsyncScrollingDisplay(Display):
 
     async def show_scroll_message(self, message):
         logger.debug(f"Scrolling message: {message}")
+        # await self.off()
+        self.splash_group.hidden = True
         self.wait_time_group.hidden = True
         self.wait_time_name_group.hidden = True
         self.scrolling_label.text = message
         self.scrolling_group.hidden = False
+
         while self.scroll(self.scrolling_label) is True:
             await asyncio.sleep(self.settings_manager.get_scroll_speed())
+            self.hardware.refresh(minimum_frames_per_second=0)
+
         self.scrolling_group.hidden = True
 
     def scroll(self, line):
@@ -717,6 +755,12 @@ class MessageQueue:
         self.param_queue.insert(0, the_message)
         self.delay_queue.insert(0, delay)
 
+    async def add_splash(self, delay):
+        logger.debug("Adding splash message to queue")
+        self.func_queue.insert(0,self.display.show_splash)
+        self.param_queue.insert(0,"")
+        self.delay_queue.insert(0,delay)
+
     def init(self):
         self.func_queue = []
         self.param_queue = []
@@ -733,13 +777,17 @@ class MessageQueue:
                 vac_message = f"Your vacation to {vac.name} is tomorrow!!!!!!!!!!!!!"
                 self.add_scroll_message(vac_message, 0)
 
-    async def add_rides(self, park_list):
-        park = park_list.current_park
-        logger.debug(f"MessageQueue.add_rides() called for: {park.name}:{park.id}")
+    def add_required_message(self, park):
         self.func_queue.append(self.display.show_scroll_message)
         required_message = f"Wait times for {park.name} provided by {REQUIRED_MESSAGE}"
         self.param_queue.append(required_message)
         self.delay_queue.append(self.delay)
+
+    async def add_rides(self, park_list):
+        park = park_list.current_park
+        logger.debug(f"MessageQueue.add_rides() called for: {park.name}:{park.id}")
+        self.add_required_message(park)
+
 
         if park.is_open is False:
             self.func_queue.append(self.display.show_scroll_message)
@@ -771,6 +819,7 @@ class MessageQueue:
             self.regenerate_flag = False
 
     async def show(self):
+        logger.debug(f"Showing queue with {len(self.func_queue)} messages")
         await asyncio.create_task(
             self.func_queue[self.index](self.param_queue[self.index]))
         await asyncio.sleep(self.delay_queue[self.index])

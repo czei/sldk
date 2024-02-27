@@ -8,40 +8,17 @@
 # characters.
 
 import adafruit_display_text.label
+import asyncio
 import board
 import displayio
 import framebufferio
 import rgbmatrix
 import terminalio
 import adafruit_imageload
-from src.pixeldust import PixelDust
-import time
 
 # If there was a display before (protomatter, LCD, or E-paper), release it so
 # we can create ours
 displayio.release_displays()
-
-def convert_3bit_bitmap_to_6bit(bitmap_3_bit, palette):
-    # 3-bit max value is 8 and 6-bit max value is 64
-    scale_factor = 32768 / 64   # 2 to the 18th power = 262,144
-    scale_factor = 1
-
-    # Calculate new width and height
-    width = bitmap_3_bit.width
-    height = bitmap_3_bit.height
-
-    # Create 6-bit bitmap with same dimensions
-    bitmap_6_bit = displayio.Bitmap(width, height, 32768)
-
-    # Copy and scale pixel values from 3-bit to 6-bit bitmap
-    for y in range(height):
-        for x in range(width):
-            old_value = bitmap_3_bit[x, y]
-            new_value = round(old_value * scale_factor)
-            # print(f"Old Value = {old_value} New = {new_value}")
-            bitmap_6_bit[x, y] = new_value
-
-    return bitmap_6_bit
 
 # This next call creates the RGB Matrix object itself. It has the given width
 # and height. bit_depth can range from 1 to 6; higher numbers allow more color
@@ -56,7 +33,7 @@ def convert_3bit_bitmap_to_6bit(bitmap_3_bit, palette):
 DISPLAY_WIDTH = 64
 DISPLAY_HEIGHT = 32
 DISPLAY_ROTATION = 0
-BIT_DEPTH = 6
+BIT_DEPTH = 3
 matrix_board = rgbmatrix.RGBMatrix(
     width=DISPLAY_WIDTH, height=DISPLAY_HEIGHT, bit_depth=BIT_DEPTH,
     rgb_pins=[
@@ -72,8 +49,7 @@ matrix_board = rgbmatrix.RGBMatrix(
     output_enable_pin=board.MTX_OE,
     tile=1,
     serpentine=False,
-    doublebuffer=False)
-
+    doublebuffer=True)
 
 # Associate the RGB matrix with a Display so that we can use displayio features
 display = framebufferio.FramebufferDisplay(matrix_board, auto_refresh=False)
@@ -104,64 +80,36 @@ line2.y = 20
 g = displayio.Group()
 display.root_group = g
 
-orig_image, palette = adafruit_imageload.load(
-    "src/OpeningLEDLogo1.bmp", bitmap=displayio.Bitmap, palette=displayio.Palette)
+image, palette = adafruit_imageload.load(
+    "src/OpeningLEDLogo.bmp", bitmap=displayio.Bitmap, palette=displayio.Palette)
 
-image = convert_3bit_bitmap_to_6bit(orig_image, palette)
+# bitmap = displayio.OnDiskBitmap("src/OpeningLEDLogo.bmp")
+# changing_bitmap = displayio.Bitmap(DISPLAY_WIDTH, DISPLAY_HEIGHT, BIT_DEPTH)
+#for x in range(DISPLAY_WIDTH-1):
+#    for y in range(DISPLAY_WIDTH-1):
+#        changing_bitmap[x, y] = bitmap[x,y]
 
 # Create a TileGrid to render the bitmap on the display
 tile_grid = displayio.TileGrid(image, pixel_shader=palette)
 
 # tile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)
-# g.append(tile_grid)
-g.append(line1)
-g.append(line2)
-display.show(g)
+g.append(tile_grid)
+# display.show(g)
 display.refresh(minimum_frames_per_second=0)
 
-FRAME_COLOR = 25024
-
-for x in range(DISPLAY_WIDTH):
-    image[x, 0] = FRAME_COLOR
-for x in range(DISPLAY_WIDTH):
-    image[x, DISPLAY_HEIGHT-1] = FRAME_COLOR
-for y in range(DISPLAY_HEIGHT):
-    image[0, y] = FRAME_COLOR
-for y in range(DISPLAY_HEIGHT):
-    image[DISPLAY_WIDTH-1, y] = FRAME_COLOR
-
-elasticity = .1
-dust = PixelDust(DISPLAY_WIDTH, DISPLAY_HEIGHT, elasticity)
-
-acceleration = [0.0, 100.0, 0.0]
-dust.init_grains(image)
-print(f"Created {dust.num_grains} grains")
+image[0,0] = 255
 
 
-x = 0
-y = 0
+
 while True:
-
     display.refresh(minimum_frames_per_second=0)
-    display.show(g)
 
-    # dust.iterate(acceleration)
-    # print(f"Image value at {x}:{y} is {image[x, y]}")
-    # image[int(x), int(y)] = 6
-    # image[int(x), int(y)] = FRAME_COLOR
-    x += 1
-    if x > DISPLAY_WIDTH-1:
-        x = 0
-        y += 1
-    if y > DISPLAY_HEIGHT-1:
-        y = 0
+    #    asyncio.run(scroll(line1))
 
-    # time.sleep(.1)
-    # for i in range(dust.num_grains):
-    #    pos_x, pos_y = dust.get_position(i)
-    #    print(f"Grain pos = [{pos_x}, {pos_y}]")
-    # if pos_x < DISPLAY_WIDTH and pos_y < DISPLAY_HEIGHT:
-    # image[int(pos_x), int(pos_y)] = 25024
+    # scroll_count = scroll_count + 1
+    # if scroll_count < 100:
+    # asyncio.run(calling_func())
+
 
 
 

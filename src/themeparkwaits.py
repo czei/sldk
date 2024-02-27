@@ -46,7 +46,10 @@ from src.ota_updater import OTAUpdater
 logger = logging.getLogger('Test')
 logger.setLevel(logging.DEBUG)
 #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-logger.addHandler(adafruit_logging.FileHandler("error_log"))
+try:
+    logger.addHandler(logging.FileHandler("error_log"))
+except OSError:
+    print("Read-only file system")
 
 try:
     import board
@@ -482,14 +485,19 @@ async def run_display():
         try:
             logger.debug(f"Messages regen_flag is {messages.regenerate_flag}")
             if park_list.current_park.is_valid() is False:
+                logger.debug("No Settings file, no valid park")
                 messages.init()
                 messages.add_scroll_message(f"Configure at: http://{settings.settings["domain_name"]}.local")
+                messages.add_splash(3)
+                await messages.show()
+                await messages.show()
             elif messages.regenerate_flag is True and park_list.current_park.is_valid() is True:
                 messages.init()
                 await update_live_wait_time()
                 messages.add_scroll_message(f"Configure at: http://{settings.settings["domain_name"]}.local")
                 await messages.add_rides(park_list)
                 await messages.add_vacation(vacation_date)
+                await messages.add_splash(3)
                 messages.regenerate_flag = False
 
             await messages.show()
@@ -515,8 +523,9 @@ async def update_ride_times():
             if len(park_list.current_park.rides) > 0:
                 await update_live_wait_time()
                 messages.init()
-                await messages.add_vacation(vacation_date)
                 await messages.add_rides(park_list)
+                await messages.add_vacation(vacation_date)
+                await messages.add_splash(3)
 
         except OSError as error:
             messages.init()
