@@ -8,14 +8,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added file logging to see why testbox was blank after running overnight.">
-      <change afterPath="$PROJECT_DIR$/src/OpeningLEDLogo.bmp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/pixeldust.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/sand_test.py" afterDir="false" />
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added splash screen with product name.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/code-display-test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/code-display-test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -375,14 +370,8 @@
       <workItem from="1708725815253" duration="724000" />
       <workItem from="1708806648736" duration="3725000" />
       <workItem from="1708915313721" duration="26182000" />
-    </task>
-    <task id="LOCAL-00003" summary="First commit">
-      <option name="closed" value="true" />
-      <created>1697574753618</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1697574753618</updated>
+      <workItem from="1709068065488" duration="759000" />
+      <workItem from="1709073969145" duration="8000" />
     </task>
     <task id="LOCAL-00004" summary="Added code.py from CIRCUITPY">
       <option name="closed" value="true" />
@@ -768,7 +757,15 @@
       <option name="project" value="LOCAL" />
       <updated>1708811417973</updated>
     </task>
-    <option name="localTasksCounter" value="52" />
+    <task id="LOCAL-00052" summary="Added splash screen with product name.">
+      <option name="closed" value="true" />
+      <created>1709068116331</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1709068116331</updated>
+    </task>
+    <option name="localTasksCounter" value="53" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -804,7 +801,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Fixed checkbox state being saved in settings JSON file." />
     <MESSAGE value="Fixed bug where closed rides were being shown despite the &quot;skip closed rides&quot; option being set." />
     <MESSAGE value="Added code to configure Wifi connection if unable to connect." />
     <MESSAGE value="Fixed bug where you couldn't change SSID or password if either had changed." />
@@ -829,7 +825,8 @@
     <MESSAGE value="Fixed magenta color." />
     <MESSAGE value="Changed dropdown /select color in GUI from red to gray." />
     <MESSAGE value="Added file logging to see why testbox was blank after running overnight." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added file logging to see why testbox was blank after running overnight." />
+    <MESSAGE value="Added splash screen with product name." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added splash screen with product name." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
