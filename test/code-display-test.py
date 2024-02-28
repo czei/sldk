@@ -23,7 +23,7 @@ displayio.release_displays()
 
 def convert_3bit_bitmap_to_6bit(bitmap_3_bit, palette):
     # 3-bit max value is 8 and 6-bit max value is 64
-    scale_factor = 32768 / 64   # 2 to the 18th power = 262,144
+    scale_factor = 262144 / 64   # 2 to the 18th power = 262,144
     scale_factor = 1
 
     # Calculate new width and height
@@ -31,7 +31,7 @@ def convert_3bit_bitmap_to_6bit(bitmap_3_bit, palette):
     height = bitmap_3_bit.height
 
     # Create 6-bit bitmap with same dimensions
-    bitmap_6_bit = displayio.Bitmap(width, height, 32768)
+    bitmap_6_bit = displayio.Bitmap(width, height, 262144)
 
     # Copy and scale pixel values from 3-bit to 6-bit bitmap
     for y in range(height):
@@ -106,6 +106,8 @@ display.root_group = g
 
 orig_image, palette = adafruit_imageload.load(
     "src/OpeningLEDLogo1.bmp", bitmap=displayio.Bitmap, palette=displayio.Palette)
+
+print(f"The size of the pallette is {len(palette)}")
 
 image = convert_3bit_bitmap_to_6bit(orig_image, palette)
 
