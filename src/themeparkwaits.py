@@ -388,7 +388,7 @@ def base(request: Request):
             page += """<p><ol>
             <li>Click on the upgrade button below to download the latest release and install it.</br></li>  
             <br>
-            <li>The LED will be unresponsive for 3-10 minutes. The screen will flash several times with random characters and may go blank for up to 10 minutes.</li>
+            <li>The LED will be unresponsive for 3-10 minutes. The screen will flash several times with random characters and <b>may go blank for up to 10 minutes</b>.</li>
             <br>
             <li><b>Do not turn the device off during the upgrade process.</b></li>
             <br>
