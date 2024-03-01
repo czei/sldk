@@ -8,12 +8,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Moved lib into the src directory so that the live updating will catch new libraries.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added src/lib to the path so that libraries will load.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/boot.py" beforeDir="false" afterPath="$PROJECT_DIR$/boot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/makefile" beforeDir="false" afterPath="$PROJECT_DIR$/makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ota.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ota.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ota_updater.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ota_updater.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -384,15 +380,11 @@
       <workItem from="1709236401048" duration="3715000" />
       <workItem from="1709303342804" duration="995000" />
       <workItem from="1709304349162" duration="1518000" />
-      <workItem from="1709309220558" duration="2397000" />
-    </task>
-    <task id="LOCAL-00012" summary="Display is fully async.">
-      <option name="closed" value="true" />
-      <created>1701100301862</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1701100301862</updated>
+      <workItem from="1709309220558" duration="3086000" />
+      <workItem from="1709319722305" duration="645000" />
+      <workItem from="1709322131464" duration="927000" />
+      <workItem from="1709331783680" duration="645000" />
+      <workItem from="1709335894801" duration="575000" />
     </task>
     <task id="LOCAL-00013" summary="Runs with all 3 processes, but goes into safe mode after 30-90 minutes from watchdog reset.">
       <option name="closed" value="true" />
@@ -778,7 +770,15 @@
       <option name="project" value="LOCAL" />
       <updated>1709308121568</updated>
     </task>
-    <option name="localTasksCounter" value="61" />
+    <task id="LOCAL-00061" summary="Added src/lib to the path so that libraries will load.">
+      <option name="closed" value="true" />
+      <created>1709316147064</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1709316147064</updated>
+    </task>
+    <option name="localTasksCounter" value="62" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -814,7 +814,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Deleted CIRCUITPY.local to prepare for github updating OTA functionality." />
     <MESSAGE value="Fixed cold startup by adding URL for GUI." />
     <MESSAGE value="Refactored into subdirectories for OTA updating." />
     <MESSAGE value="Deleted on CircuitPython release." />
@@ -839,7 +838,8 @@
     <MESSAGE value="Deleted bitmap file." />
     <MESSAGE value="Adding vertical scrolling for splash screen." />
     <MESSAGE value="Moved lib into the src directory so that the live updating will catch new libraries." />
-    <option name="LAST_COMMIT_MESSAGE" value="Moved lib into the src directory so that the live updating will catch new libraries." />
+    <MESSAGE value="Added src/lib to the path so that libraries will load." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added src/lib to the path so that libraries will load." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
