@@ -176,10 +176,14 @@ else:
     try:
         wifi.radio.connect(ssid, password)
     except (RuntimeError, ConnectionError, ValueError) as e:
+        attempts = 1
         while wifi.radio.connected is not True:
             logger.error(f"Wifi error: {str(e)} at {wifi.radio.ipv4_address}")
-            setup_message = "Press the Reboot Button and then hold down Reset Wifi Button until the LED lights up"
-            run_setup_message(setup_message, 100000)
+            #  Give it a couple of attempts to connect before reporting an error
+            if attempts > 4:
+                setup_message = "Press the Reboot Button and then hold down Reset Wifi Button until the LED lights up"
+                run_setup_message(setup_message, 1)
+            attempts = attempts + 1
 
 logger.info(f"Connected to Wifi: {ssid} at {wifi.radio.ipv4_address}")
 

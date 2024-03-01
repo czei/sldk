@@ -8,8 +8,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added src/lib to the path so that libraries will load.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Deleted duplicate wifimgr library.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -384,23 +385,9 @@
       <workItem from="1709319722305" duration="645000" />
       <workItem from="1709322131464" duration="927000" />
       <workItem from="1709331783680" duration="645000" />
-      <workItem from="1709335894801" duration="575000" />
-    </task>
-    <task id="LOCAL-00013" summary="Runs with all 3 processes, but goes into safe mode after 30-90 minutes from watchdog reset.">
-      <option name="closed" value="true" />
-      <created>1701791333942</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1701791333942</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Works without crashing with mDNS and updating in the background. boot.py is hosed and will lock drive in read-only mode.">
-      <option name="closed" value="true" />
-      <created>1702563296603</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1702563296603</updated>
+      <workItem from="1709335894801" duration="614000" />
+      <workItem from="1709336536713" duration="441000" />
+      <workItem from="1709337207358" duration="251000" />
     </task>
     <task id="LOCAL-00015" summary="Backup before adding settings GUI.">
       <option name="closed" value="true" />
@@ -778,7 +765,23 @@
       <option name="project" value="LOCAL" />
       <updated>1709316147064</updated>
     </task>
-    <option name="localTasksCounter" value="62" />
+    <task id="LOCAL-00062" summary="Reduced bit depth to try and figure out cause of crashes.">
+      <option name="closed" value="true" />
+      <created>1709336496896</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1709336496896</updated>
+    </task>
+    <task id="LOCAL-00063" summary="Deleted duplicate wifimgr library.">
+      <option name="closed" value="true" />
+      <created>1709336595656</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1709336595656</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -814,8 +817,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Fixed cold startup by adding URL for GUI." />
-    <MESSAGE value="Refactored into subdirectories for OTA updating." />
     <MESSAGE value="Deleted on CircuitPython release." />
     <MESSAGE value="Updated test suite for new ThemeParkList refactoring." />
     <MESSAGE value="Fixed bugs from refactoring ThemeParkList class." />
@@ -839,7 +840,9 @@
     <MESSAGE value="Adding vertical scrolling for splash screen." />
     <MESSAGE value="Moved lib into the src directory so that the live updating will catch new libraries." />
     <MESSAGE value="Added src/lib to the path so that libraries will load." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added src/lib to the path so that libraries will load." />
+    <MESSAGE value="Reduced bit depth to try and figure out cause of crashes." />
+    <MESSAGE value="Deleted duplicate wifimgr library." />
+    <option name="LAST_COMMIT_MESSAGE" value="Deleted duplicate wifimgr library." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -348,7 +348,7 @@ class ThemePark:
             rides = land["rides"]
             for ride in rides:
                 name = ride["name"]
-                logger.debug(f"Ride = {name}")
+                # logger.debug(f"Ride = {name}")
                 ride_id = ride["id"]
                 wait_time = ride["wait_time"]
                 open_flag = ride["is_open"]
@@ -644,7 +644,6 @@ class AsyncScrollingDisplay(Display):
 
     async def show_scroll_message(self, message):
         logger.debug(f"Scrolling message: {message}")
-        # await self.off()
         self.splash_group.hidden = True
         self.wait_time_group.hidden = True
         self.wait_time_name_group.hidden = True
