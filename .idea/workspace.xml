@@ -9,7 +9,111 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Adding vertical scrolling for splash screen.">
+      <change afterPath="$PROJECT_DIR$/src/lib/adafruit_minimqtt/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/cv2/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/bitmap_test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/writeover_bitmap_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_bitmap_font/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_bitmap_font/bdf.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_bitmap_font/bdf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_bitmap_font/bitmap_font.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_bitmap_font/bitmap_font.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_bitmap_font/glyph_cache.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_bitmap_font/glyph_cache.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_bitmap_font/pcf.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_bitmap_font/pcf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_bitmap_font/ttf.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_bitmap_font/ttf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_bus_device/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_bus_device/i2c_device.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_bus_device/i2c_device.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_bus_device/spi_device.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_bus_device/spi_device.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_datetime.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_datetime.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_display_text/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_display_text/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_display_text/bitmap_label.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_display_text/bitmap_label.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_display_text/label.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_display_text/label.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_display_text/scrolling_label.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_display_text/scrolling_label.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_esp32spi/PWMOut.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_esp32spi/PWMOut.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_esp32spi/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_bitmap_font/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_esp32spi/adafruit_esp32spi.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_esp32spi/adafruit_esp32spi.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_esp32spi/adafruit_esp32spi_socket.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_esp32spi/adafruit_esp32spi_socket.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_esp32spi/adafruit_esp32spi_wifimanager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_esp32spi/adafruit_esp32spi_wifimanager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_esp32spi/digitalio.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_esp32spi/digitalio.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_fakerequests.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_fakerequests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_httpserver/__init__.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_httpserver/__init__.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_httpserver/authentication.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_httpserver/authentication.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_httpserver/exceptions.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_httpserver/exceptions.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_httpserver/headers.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_httpserver/headers.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_httpserver/interfaces.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_httpserver/interfaces.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_httpserver/methods.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_httpserver/methods.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_httpserver/mime_types.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_httpserver/mime_types.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_httpserver/request.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_httpserver/request.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_httpserver/response.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_httpserver/response.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_httpserver/route.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_httpserver/route.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_httpserver/server.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_httpserver/server.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_httpserver/status.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_httpserver/status.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/__init__.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/__init__.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/bmp/__init__.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/bmp/__init__.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/bmp/indexed.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/bmp/indexed.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/bmp/negative_height_check.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/bmp/negative_height_check.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/bmp/truecolor.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/bmp/truecolor.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/displayio_types.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/displayio_types.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/gif.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/gif.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/png.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/png.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/pnm/__init__.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/pnm/__init__.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/pnm/pbm_ascii.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/pnm/pbm_ascii.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/pnm/pbm_binary.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/pnm/pbm_binary.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/pnm/pgm/__init__.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/pnm/pgm/__init__.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/pnm/pgm/ascii.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/pnm/pgm/ascii.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/pnm/pgm/binary.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/pnm/pgm/binary.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/pnm/ppm_ascii.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/pnm/ppm_ascii.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/pnm/ppm_binary.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/pnm/ppm_binary.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_imageload/tilegrid_inflator.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_imageload/tilegrid_inflator.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_io/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_bus_device/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_io/adafruit_io.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_io/adafruit_io.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_io/adafruit_io_errors.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_io/adafruit_io_errors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_logging.mpy" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_logging.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_logging.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_matrixportal/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_esp32spi/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_matrixportal/graphics.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_matrixportal/graphics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_matrixportal/matrix.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_matrixportal/matrix.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_matrixportal/matrixportal.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_matrixportal/matrixportal.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_matrixportal/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_matrixportal/network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_minimqtt/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_io/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_minimqtt/adafruit_minimqtt.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_minimqtt/adafruit_minimqtt.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_minimqtt/matcher.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_minimqtt/matcher.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_miniqr.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_miniqr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_pixelbuf.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_pixelbuf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_portalbase/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_portalbase/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_portalbase/graphics.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_portalbase/graphics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_portalbase/network.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_portalbase/network.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_portalbase/wifi_coprocessor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_portalbase/wifi_coprocessor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_portalbase/wifi_esp32s2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_portalbase/wifi_esp32s2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_requests.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_requests.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/adafruit_ticks.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_ticks.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/asyncio/__init__.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/asyncio/__init__.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/asyncio/core.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/asyncio/core.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/asyncio/event.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/asyncio/event.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/asyncio/funcs.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/asyncio/funcs.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/asyncio/lock.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/asyncio/lock.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/asyncio/manifest.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/asyncio/manifest.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/asyncio/stream.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/asyncio/stream.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/asyncio/task.mpy" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/asyncio/task.mpy" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/biplane.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/cv2/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/adafruit_matrixportal/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/cv2/data/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/cv2/data/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/cv2/version.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/cv2/version.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/messageboard/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/messageboard/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/messageboard/animations/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/messageboard/animations/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/messageboard/animations/loop.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/messageboard/animations/loop.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/messageboard/animations/scroll.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/messageboard/animations/scroll.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/messageboard/animations/split.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/messageboard/animations/split.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/messageboard/animations/static.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/messageboard/animations/static.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/messageboard/doublebuffer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/messageboard/doublebuffer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/messageboard/fontpool.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/messageboard/fontpool.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/messageboard/message.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/messageboard/message.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/neopixel.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/neopixel.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/simpleio.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/simpleio.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/wifimgr.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/lib/wifimgr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/makefile" beforeDir="false" afterPath="$PROJECT_DIR$/makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/code-display-test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/pixel-dust-test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -373,15 +477,12 @@
       <workItem from="1709126091096" duration="602000" />
       <workItem from="1709126713243" duration="9030000" />
       <workItem from="1709172751908" duration="3282000" />
-      <workItem from="1709219017129" duration="1150000" />
-    </task>
-    <task id="LOCAL-00010" summary="Refactored display code into Display class.">
-      <option name="closed" value="true" />
-      <created>1700796492429</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1700796492429</updated>
+      <workItem from="1709219017129" duration="1197000" />
+      <workItem from="1709221473634" duration="39000" />
+      <workItem from="1709222125983" duration="2583000" />
+      <workItem from="1709236401048" duration="3715000" />
+      <workItem from="1709303342804" duration="995000" />
+      <workItem from="1709304349162" duration="785000" />
     </task>
     <task id="LOCAL-00011" summary="Refactored into message queue.">
       <option name="closed" value="true" />
@@ -767,7 +868,15 @@
       <option name="project" value="LOCAL" />
       <updated>1709221305916</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="Adding vertical scrolling for splash screen.">
+      <option name="closed" value="true" />
+      <created>1709221369860</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1709221369860</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

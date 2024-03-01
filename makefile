@@ -15,7 +15,7 @@ release: $(SRC_DIR)
 	cp -rf $(SRC_DIR) $(RELEASE_DESTDIR)
 
 # Copy files to the connected MatrixPortal S3
-test: $(SRC_DIR)
+test:
 	cp -f boot.py $(TEST_DIR)
 	cp -f code.py $(TEST_DIR)
 	cp -rf $(SRC_DIR) $(TEST_DIR)

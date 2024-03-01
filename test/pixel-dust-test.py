@@ -78,47 +78,21 @@ matrix_board = rgbmatrix.RGBMatrix(
 # Associate the RGB matrix with a Display so that we can use displayio features
 display = framebufferio.FramebufferDisplay(matrix_board, auto_refresh=False)
 
-# Create two lines of text to scroll. Besides changing the text, you can also
-# customize the color and font (using Adafruit_CircuitPython_Bitmap_Font).
-# To keep this demo simple, we just used the built-in font.
-# The Y coordinates of the two lines were chosen so that they looked good
-# but if you change the font you might find that other values work better.
-line1 = adafruit_display_text.label.Label(
-    terminalio.FONT,
-    color=0xff0000,
-    text="THEME PARK")
-line1.x = display.width
-line1.x = 3
-line1.y = 5
-
-line2 = adafruit_display_text.label.Label(
-    terminalio.FONT,
-    color=0x0080ff,
-    text="WAITS",
-    scale=2)
-
-line2.x = 3
-line2.y = 20
-
 # Put each line of text into a Group, then show that group.
 g = displayio.Group()
 display.root_group = g
 
-orig_image, palette = adafruit_imageload.load(
-    "src/OpeningLEDLogo1.bmp", bitmap=displayio.Bitmap, palette=displayio.Palette)
+image, palette = adafruit_imageload.load(
+    "src/OpeningLEDLogo.bmp", bitmap=displayio.Bitmap, palette=displayio.Palette)
 
-print(f"The size of the pallette is {len(palette)}")
-
-image = convert_3bit_bitmap_to_6bit(orig_image, palette)
+# image = convert_3bit_bitmap_to_6bit(orig_image, palette)
 
 # Create a TileGrid to render the bitmap on the display
 tile_grid = displayio.TileGrid(image, pixel_shader=palette)
 
 # tile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)
-# g.append(tile_grid)
-g.append(line1)
-g.append(line2)
-display.show(g)
+g.append(tile_grid)
+# display.show(g)  # Removed for 9.0 beta port
 display.refresh(minimum_frames_per_second=0)
 
 FRAME_COLOR = 25024
@@ -132,41 +106,40 @@ for y in range(DISPLAY_HEIGHT):
 for y in range(DISPLAY_HEIGHT):
     image[DISPLAY_WIDTH-1, y] = FRAME_COLOR
 
-elasticity = .1
+elasticity = 1
 dust = PixelDust(DISPLAY_WIDTH, DISPLAY_HEIGHT, elasticity)
 
-acceleration = [0.0, 100.0, 0.0]
+acceleration = [50.0, 200.0, 0.0]
 dust.init_grains(image)
 print(f"Created {dust.num_grains} grains")
 
+time.sleep(4)
 
 x = 0
-y = 0
+y = 2
 while True:
 
-    display.refresh(minimum_frames_per_second=0)
-    display.show(g)
-
-    # dust.iterate(acceleration)
+    dust.iterate(acceleration)
     # print(f"Image value at {x}:{y} is {image[x, y]}")
     # image[int(x), int(y)] = 6
+
+    # time.sleep(0.25)
+    # x += 1
+    # if x > DISPLAY_WIDTH-1:
+    #     x = 0
+    #     y += 1
+    # if y > DISPLAY_HEIGHT-1:
+    #     y = 0
+
     # image[int(x), int(y)] = FRAME_COLOR
-    x += 1
-    if x > DISPLAY_WIDTH-1:
-        x = 0
-        y += 1
-    if y > DISPLAY_HEIGHT-1:
-        y = 0
+    display.refresh(minimum_frames_per_second=0)
 
-    # time.sleep(.1)
-    # for i in range(dust.num_grains):
-    #    pos_x, pos_y = dust.get_position(i)
-    #    print(f"Grain pos = [{pos_x}, {pos_y}]")
-    # if pos_x < DISPLAY_WIDTH and pos_y < DISPLAY_HEIGHT:
-    # image[int(pos_x), int(pos_y)] = 25024
+    for x in range(display.width):
+        for y in range(display.height):
+            image[x, y] = 0
 
-
-
-
-
+    for i in range(dust.num_grains):
+        pos_x, pos_y = dust.get_position(i)
+        if pos_x < DISPLAY_WIDTH and pos_y < DISPLAY_HEIGHT:
+            image[int(pos_x), int(pos_y)] = FRAME_COLOR
 
