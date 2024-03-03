@@ -8,9 +8,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Deleted duplicate wifimgr library.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Changed wifi logic to attempt a connection 4 times before telling the user to reset the wifi.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -387,15 +386,10 @@
       <workItem from="1709331783680" duration="645000" />
       <workItem from="1709335894801" duration="614000" />
       <workItem from="1709336536713" duration="441000" />
-      <workItem from="1709337207358" duration="251000" />
-    </task>
-    <task id="LOCAL-00015" summary="Backup before adding settings GUI.">
-      <option name="closed" value="true" />
-      <created>1703463943983</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1703463943983</updated>
+      <workItem from="1709337207358" duration="330000" />
+      <workItem from="1709390475314" duration="6000" />
+      <workItem from="1709390486625" duration="3516000" />
+      <workItem from="1709429158820" duration="209000" />
     </task>
     <task id="LOCAL-00016" summary="Color settings page basically working.">
       <option name="closed" value="true" />
@@ -781,7 +775,15 @@
       <option name="project" value="LOCAL" />
       <updated>1709336595656</updated>
     </task>
-    <option name="localTasksCounter" value="64" />
+    <task id="LOCAL-00064" summary="Changed wifi logic to attempt a connection 4 times before telling the user to reset the wifi.">
+      <option name="closed" value="true" />
+      <created>1709337493200</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1709337493201</updated>
+    </task>
+    <option name="localTasksCounter" value="65" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -817,7 +819,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Deleted on CircuitPython release." />
     <MESSAGE value="Updated test suite for new ThemeParkList refactoring." />
     <MESSAGE value="Fixed bugs from refactoring ThemeParkList class." />
     <MESSAGE value="Fixed skip settings bugs from ThemeParkList refactor." />
@@ -842,7 +843,8 @@
     <MESSAGE value="Added src/lib to the path so that libraries will load." />
     <MESSAGE value="Reduced bit depth to try and figure out cause of crashes." />
     <MESSAGE value="Deleted duplicate wifimgr library." />
-    <option name="LAST_COMMIT_MESSAGE" value="Deleted duplicate wifimgr library." />
+    <MESSAGE value="Changed wifi logic to attempt a connection 4 times before telling the user to reset the wifi." />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed wifi logic to attempt a connection 4 times before telling the user to reset the wifi." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
