@@ -4,6 +4,8 @@
 # Copyright 2024 3DUPFitters LLC
 #
 import sys
+# import tracemalloc
+# tracemalloc.start()
 
 sys.path.append('/src/lib')
 import adafruit_logging
@@ -44,13 +46,14 @@ from src.theme_park_api import AsyncScrollingDisplay
 from src.theme_park_api import MessageQueue
 from src.theme_park_api import SettingsManager
 from src.theme_park_api import load_credentials
+from src.theme_park_api import url_decode
 from src.webgui import generate_header
 from src.ota_updater import OTAUpdater
 
 logger = logging.getLogger('Test')
-# logger.setLevel(logging.DEBUG)
 logger.setLevel(logging.ERROR)
-# formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# logger.setLevel(logging.ERROR)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 try:
     logger.addHandler(logging.FileHandler("error_log"))
 except OSError:
@@ -328,6 +331,7 @@ def base(request: Request):
     # Parse new settings
     if request.method == POST:
         for name, value in request.form_data.items():
+            logger.debug(f"Name = {name} Value={value}")
             settings.settings[name] = value
         display.set_colors(settings)
         try:
@@ -533,16 +537,21 @@ async def update_ride_times():
 
 
 async def periodically_update_ride_times():
-    gc.collect()
-    # logger.info(f"Memory available: {gc.get_stats()}")
     """
     If the user has selected a park, update the ride values ever so often.
     :return:
     """
     while True:
         try:
+            gc.collect()
+            mem_free = gc.mem_free()
+            logger.debug(f"Memory available: {mem_free}")
+
+            if mem_free < 200000:
+                logger.critical(f"Low memory: {mem_free}")
+
             if park_list.current_park.is_open is True:
-                await asyncio.sleep(300)
+                await asyncio.sleep(600)
             else:
                 await asyncio.sleep(3600)
 

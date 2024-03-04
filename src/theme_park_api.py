@@ -461,7 +461,8 @@ class Vacation:
         for param in params:
             name_value = param.split("=")
             if name_value[0] == "Name":
-                self.name = str(name_value[1]).replace("+", " ")
+                #self.name = str(name_value[1]).replace("+", " ")
+                self.name = url_decode(name_value[1])
             if name_value[0] == "Year":
                 self.year = int(name_value[1])
             if name_value[0] == "Month":
@@ -848,7 +849,6 @@ class MessageQueue:
             self.regenerate_flag = False
 
     async def show(self):
-        logger.debug(f"Showing queue with {len(self.func_queue)} messages")
         await asyncio.create_task(
             self.func_queue[self.index](self.param_queue[self.index]))
         await asyncio.sleep(self.delay_queue[self.index])

@@ -376,7 +376,7 @@ class Test(TestCase):
     def test_url_decode(self):
         self.assertTrue(url_decode("FBI%20Surveillance%20Van%20112") == "FBI Surveillance Van 112")
         self.assertTrue(url_decode("FBI+Surveillance+Van+112") == "FBI Surveillance Van 112")
-        self.assertTrue(url_decode("FBI+Surveillance+Van+112") == "FBI Surveillance Van 112")
+        self.assertTrue(url_decode("Paris%2C+France") == "Paris, France")
 
 
     def test_brightness_scale(self):
