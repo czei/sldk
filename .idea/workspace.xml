@@ -8,11 +8,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added logic to retry connecting to wifi before every network attempt.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added garbage collector call and error logging.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test-suite.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test-suite.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -396,15 +395,8 @@
       <workItem from="1709501755059" duration="4603000" />
       <workItem from="1709516812502" duration="1725000" />
       <workItem from="1709561488082" duration="209000" />
-      <workItem from="1709561705436" duration="71000" />
-    </task>
-    <task id="LOCAL-00017" summary="Added support for parks that don't have lands, and delaying reads for an hour when a park is closed.">
-      <option name="closed" value="true" />
-      <created>1703693993712</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1703693993712</updated>
+      <workItem from="1709561705436" duration="131000" />
+      <workItem from="1709568429652" duration="215000" />
     </task>
     <task id="LOCAL-00018" summary="Fixed checkbox alignment, added scroll scpeed option.">
       <option name="closed" value="true" />
@@ -790,7 +782,15 @@
       <option name="project" value="LOCAL" />
       <updated>1709501597924</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="Added garbage collector call and error logging.">
+      <option name="closed" value="true" />
+      <created>1709561810301</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1709561810301</updated>
+    </task>
+    <option name="localTasksCounter" value="67" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -826,7 +826,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Fixed bugs from refactoring ThemeParkList class." />
     <MESSAGE value="Fixed skip settings bugs from ThemeParkList refactor." />
     <MESSAGE value="ALmost have updater working ota." />
     <MESSAGE value="Over the air updating worked!" />
@@ -851,7 +850,8 @@
     <MESSAGE value="Deleted duplicate wifimgr library." />
     <MESSAGE value="Changed wifi logic to attempt a connection 4 times before telling the user to reset the wifi." />
     <MESSAGE value="Added logic to retry connecting to wifi before every network attempt." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added logic to retry connecting to wifi before every network attempt." />
+    <MESSAGE value="Added garbage collector call and error logging." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added garbage collector call and error logging." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
