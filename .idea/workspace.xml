@@ -8,7 +8,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added garbage collector call and error logging.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Last attempt didn't run because logging formatter was uncommented.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
@@ -396,15 +396,9 @@
       <workItem from="1709516812502" duration="1725000" />
       <workItem from="1709561488082" duration="209000" />
       <workItem from="1709561705436" duration="131000" />
-      <workItem from="1709568429652" duration="215000" />
-    </task>
-    <task id="LOCAL-00018" summary="Fixed checkbox alignment, added scroll scpeed option.">
-      <option name="closed" value="true" />
-      <created>1703701798971</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1703701798971</updated>
+      <workItem from="1709568429652" duration="231000" />
+      <workItem from="1709568892062" duration="599000" />
+      <workItem from="1709570787300" duration="49000" />
     </task>
     <task id="LOCAL-00019" summary="Moved gear link to settings back on the right side of the nav header.">
       <option name="closed" value="true" />
@@ -790,7 +784,15 @@
       <option name="project" value="LOCAL" />
       <updated>1709561810301</updated>
     </task>
-    <option name="localTasksCounter" value="67" />
+    <task id="LOCAL-00067" summary="Last attempt didn't run because logging formatter was uncommented.">
+      <option name="closed" value="true" />
+      <created>1709568650065</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1709568650066</updated>
+    </task>
+    <option name="localTasksCounter" value="68" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -826,7 +828,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Fixed skip settings bugs from ThemeParkList refactor." />
     <MESSAGE value="ALmost have updater working ota." />
     <MESSAGE value="Over the air updating worked!" />
     <MESSAGE value="Changed init button to also delete settings." />
@@ -851,7 +852,8 @@
     <MESSAGE value="Changed wifi logic to attempt a connection 4 times before telling the user to reset the wifi." />
     <MESSAGE value="Added logic to retry connecting to wifi before every network attempt." />
     <MESSAGE value="Added garbage collector call and error logging." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added garbage collector call and error logging." />
+    <MESSAGE value="Last attempt didn't run because logging formatter was uncommented." />
+    <option name="LAST_COMMIT_MESSAGE" value="Last attempt didn't run because logging formatter was uncommented." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
