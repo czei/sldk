@@ -390,3 +390,5 @@ class Test(TestCase):
         self.assertTrue(new_color == "0x000000")
         new_color = ColorUtils.scale_color("0xcc3333", 1)
         self.assertTrue(new_color == "0xcc3333")
+        new_color = ColorUtils.scale_color("0xffa500", 1)
+        self.assertTrue(new_color == "0xffa500")

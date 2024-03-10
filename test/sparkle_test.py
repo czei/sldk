@@ -15,32 +15,109 @@ import rgbmatrix
 import terminalio
 import adafruit_imageload
 import time
+from src.theme_park_api import ColorUtils
+from ulab import numpy as np
+
+
+FRAME_COLOR = 25024
 
 # If there was a display before (protomatter, LCD, or E-paper), release it so
 # we can create ours
 displayio.release_displays()
 
-def convert_3bit_bitmap_to_6bit(bitmap_3_bit, palette):
-    # 3-bit max value is 8 and 6-bit max value is 64
-    scale_factor = 262144 / 64   # 2 to the 18th power = 262,144
-    scale_factor = 1
+def pad_hex(num):
+    hex_val = hex(num)[2:]  # remove '0x'
+    # return hex_val.zfill(6)
+    length = len(hex_val)
+    for i in range(0, 6 - length):
+        hex_val = "0" + hex_val
+    return hex_val
+
+
+def matrix_multiply(matrix, bitmap):
+    # Make sure inputs are numpy arrays
+    np_matrix = np.array(matrix)
+    np_bitmap = np.zeros((bitmap.width, bitmap.height), dtype=np.uint8)
+
+    for y in range(bitmap.height-1):
+        for x in range(bitmap.width-1):
+            np_bitmap[x][y] = bitmap[x, y]
+    # np_imagebuffer = np.array(bitmap)
+    # Perform matrix multiplication, if the sizes are compatible
+    result = np.dot(np_matrix, np_bitmap)
+    return result.tolist()
+
+def init_matrix():
+    matrix = [[0, 0, 0, 0, 0] for _ in range(5)]
+
+    # Now, let's assign individual values one by one
+    matrix[0][0] = 0.25
+    matrix[0][1] = 0.25
+    matrix[0][2] = 0.25
+    matrix[0][3] = 0.25
+    matrix[0][4] = 0.25
+
+    matrix[1][0] = 0.25
+    matrix[1][1] = 0.5
+    matrix[1][2] = 0.5
+    matrix[1][3] = 0.5
+    matrix[1][4] = 0.25
+
+    matrix[2][0] = 0.25
+    matrix[2][1] = 0.5
+    matrix[2][2] = 1.0
+    matrix[2][3] = 0.5
+    matrix[2][4] = 0.25
+
+    matrix[3][0] = 0.25
+    matrix[3][1] = 0.5
+    matrix[3][2] = 0.5
+    matrix[3][3] = 0.5
+    matrix[3][4] = 0.25
+
+    matrix[4][0] = 0.25
+    matrix[4][1] = 0.25
+    matrix[4][2] = 0.25
+    matrix[4][3] = 0.25
+    matrix[4][4] = 0.25
+
+    return matrix
+
+
+def fix_color(bitmap_3_bit):
 
     # Calculate new width and height
     width = bitmap_3_bit.width
     height = bitmap_3_bit.height
 
-    # Create 6-bit bitmap with same dimensions
-    bitmap_6_bit = displayio.Bitmap(width, height, 262144)
+    # Create 4-bit bitmap with same dimensions
+    bitmap_4_bit = displayio.Bitmap(width, height, 65536)
 
     # Copy and scale pixel values from 3-bit to 6-bit bitmap
     for y in range(height):
         for x in range(width):
             old_value = bitmap_3_bit[x, y]
-            new_value = round(old_value * scale_factor)
-            # print(f"Old Value = {old_value} New = {new_value}")
-            bitmap_6_bit[x, y] = new_value
+            # print(f"Old Value = {old_value}")
+            new_value = old_value
+            if old_value > 50000:
+                new_value = FRAME_COLOR
+                if y > 12:
+                    new_value = int(FRAME_COLOR / 2)
+                else:
+                    new_value = FRAME_COLOR
 
-    return bitmap_6_bit
+            if old_value < 50000:
+                new_value = 0
+
+
+            # print(f"Hex = {new_value}")
+            # new_value = ColorUtils.hex_str_to_number(ColorUtils.scale_color(hex_value, scale_factor))
+            # new_value = round(old_value * scale_factor)
+            #print(f"Old Value = {old_value} Scaled = {new_value}")
+            bitmap_4_bit[x, y] = new_value
+
+    return bitmap_4_bit
+
 
 # This next call creates the RGB Matrix object itself. It has the given width
 # and height. bit_depth can range from 1 to 6; higher numbers allow more color
@@ -74,6 +151,7 @@ matrix_board = rgbmatrix.RGBMatrix(
     doublebuffer=False)
 
 
+
 # Associate the RGB matrix with a Display so that we can use displayio features
 display = framebufferio.FramebufferDisplay(matrix_board, auto_refresh=False)
 
@@ -81,64 +159,29 @@ display = framebufferio.FramebufferDisplay(matrix_board, auto_refresh=False)
 g = displayio.Group()
 display.root_group = g
 
-image, palette = adafruit_imageload.load(
-    "src/OpeningLEDLogo.bmp", bitmap=displayio.Bitmap, palette=displayio.Palette)
+orig_image, palette = adafruit_imageload.load(
+    "src/images/OpeningLEDLogo.bmp", bitmap=displayio.Bitmap, palette=displayio.Palette)
 
-# image = convert_3bit_bitmap_to_6bit(orig_image, palette)
+image = fix_color(orig_image)
+
+matrix = init_matrix()
+mod_image = matrix_multiply(matrix, image)
 
 # Create a TileGrid to render the bitmap on the display
-tile_grid = displayio.TileGrid(image, pixel_shader=palette)
+tile_grid = displayio.TileGrid(mod_image, pixel_shader=palette)
 
 # tile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)
 g.append(tile_grid)
 # display.show(g)  # Removed for 9.0 beta port
 display.refresh(minimum_frames_per_second=0)
 
-FRAME_COLOR = 25024
-
-for x in range(DISPLAY_WIDTH):
-    image[x, 0] = FRAME_COLOR
-for x in range(DISPLAY_WIDTH):
-    image[x, DISPLAY_HEIGHT-1] = FRAME_COLOR
-for y in range(DISPLAY_HEIGHT):
-    image[0, y] = FRAME_COLOR
-for y in range(DISPLAY_HEIGHT):
-    image[DISPLAY_WIDTH-1, y] = FRAME_COLOR
-
-elasticity = 1
-dust = PixelDust(DISPLAY_WIDTH, DISPLAY_HEIGHT, elasticity)
-
-acceleration = [50.0, 200.0, 0.0]
-dust.init_grains(image)
-print(f"Created {dust.num_grains} grains")
 
 time.sleep(4)
 
 x = 0
 y = 2
 while True:
-
-    dust.iterate(acceleration)
-    # print(f"Image value at {x}:{y} is {image[x, y]}")
-    # image[int(x), int(y)] = 6
-
-    # time.sleep(0.25)
-    # x += 1
-    # if x > DISPLAY_WIDTH-1:
-    #     x = 0
-    #     y += 1
-    # if y > DISPLAY_HEIGHT-1:
-    #     y = 0
-
-    # image[int(x), int(y)] = FRAME_COLOR
     display.refresh(minimum_frames_per_second=0)
 
-    for x in range(display.width):
-        for y in range(display.height):
-            image[x, y] = 0
 
-    for i in range(dust.num_grains):
-        pos_x, pos_y = dust.get_position(i)
-        if pos_x < DISPLAY_WIDTH and pos_y < DISPLAY_HEIGHT:
-            image[int(pos_x), int(pos_y)] = FRAME_COLOR
 

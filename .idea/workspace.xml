@@ -8,10 +8,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Last attempt didn't run because logging formatter was uncommented.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Updated libraries back for compiled 8.x.">
+      <change afterPath="$PROJECT_DIR$/src/color_utils.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/fonts/tom-thumb.bdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/images/OpeningLEDLogo.bmp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/bitmap_text_test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/sparkle_test.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pixeldust.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/bitmap_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/bitmap_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/pixel-dust-test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/pixel-dust-test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/test-suite.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test-suite.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -398,15 +407,18 @@
       <workItem from="1709561705436" duration="131000" />
       <workItem from="1709568429652" duration="231000" />
       <workItem from="1709568892062" duration="599000" />
-      <workItem from="1709570787300" duration="49000" />
-    </task>
-    <task id="LOCAL-00019" summary="Moved gear link to settings back on the right side of the nav header.">
-      <option name="closed" value="true" />
-      <created>1703702455189</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1703702455189</updated>
+      <workItem from="1709570787300" duration="1828000" />
+      <workItem from="1709649538692" duration="1354000" />
+      <workItem from="1709662177429" duration="94000" />
+      <workItem from="1709663136780" duration="618000" />
+      <workItem from="1709672324600" duration="712000" />
+      <workItem from="1709770501112" duration="8594000" />
+      <workItem from="1709840522862" duration="331000" />
+      <workItem from="1709840862612" duration="28000" />
+      <workItem from="1709840902162" duration="132000" />
+      <workItem from="1709864519728" duration="3255000" />
+      <workItem from="1709925674059" duration="1961000" />
+      <workItem from="1710077411573" duration="828000" />
     </task>
     <task id="LOCAL-00020" summary="Fixed checkboxes for skipping stuff.">
       <option name="closed" value="true" />
@@ -792,7 +804,15 @@
       <option name="project" value="LOCAL" />
       <updated>1709568650066</updated>
     </task>
-    <option name="localTasksCounter" value="68" />
+    <task id="LOCAL-00068" summary="Updated libraries back for compiled 8.x.">
+      <option name="closed" value="true" />
+      <created>1709572458196</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1709572458196</updated>
+    </task>
+    <option name="localTasksCounter" value="69" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -828,7 +848,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="ALmost have updater working ota." />
     <MESSAGE value="Over the air updating worked!" />
     <MESSAGE value="Changed init button to also delete settings." />
     <MESSAGE value="Park list is now sorted." />
@@ -853,7 +872,8 @@
     <MESSAGE value="Added logic to retry connecting to wifi before every network attempt." />
     <MESSAGE value="Added garbage collector call and error logging." />
     <MESSAGE value="Last attempt didn't run because logging formatter was uncommented." />
-    <option name="LAST_COMMIT_MESSAGE" value="Last attempt didn't run because logging formatter was uncommented." />
+    <MESSAGE value="Updated libraries back for compiled 8.x." />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated libraries back for compiled 8.x." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -878,6 +898,6 @@
     <SUITE FILE_PATH="coverage/ThemeParkAPI$webgui.coverage" NAME="webgui Coverage Results" MODIFIED="1700400556244" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$theme_park_api.coverage" NAME="theme_park_api Coverage Results" MODIFIED="1703709861622" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$code.coverage" NAME="code Coverage Results" MODIFIED="1703862608085" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1709517621723" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
+    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1709775039160" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
   </component>
 </project>
