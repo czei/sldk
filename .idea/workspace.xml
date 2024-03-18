@@ -8,19 +8,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Updated libraries back for compiled 8.x.">
-      <change afterPath="$PROJECT_DIR$/src/color_utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/fonts/tom-thumb.bdf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/images/OpeningLEDLogo.bmp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/bitmap_text_test.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/sparkle_test.py" afterDir="false" />
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Switched to CP 9.0,0 rc0 for testing.  Moved ColorUtils to separate file.">
+      <change afterPath="$PROJECT_DIR$/test/cp_bug_trigger.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pixeldust.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/bitmap_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/bitmap_test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pixel-dust-test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/pixel-dust-test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test-suite.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test-suite.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -418,23 +409,17 @@
       <workItem from="1709840902162" duration="132000" />
       <workItem from="1709864519728" duration="3255000" />
       <workItem from="1709925674059" duration="1961000" />
-      <workItem from="1710077411573" duration="828000" />
-    </task>
-    <task id="LOCAL-00020" summary="Fixed checkboxes for skipping stuff.">
-      <option name="closed" value="true" />
-      <created>1703707426921</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1703707426921</updated>
-    </task>
-    <task id="LOCAL-00021" summary="Fixed checkbox state being saved in settings JSON file.">
-      <option name="closed" value="true" />
-      <created>1703710308316</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1703710308316</updated>
+      <workItem from="1710077411573" duration="1710000" />
+      <workItem from="1710165988316" duration="29000" />
+      <workItem from="1710166031325" duration="617000" />
+      <workItem from="1710207939512" duration="3111000" />
+      <workItem from="1710212549741" duration="6245000" />
+      <workItem from="1710448760675" duration="1113000" />
+      <workItem from="1710452839502" duration="31000" />
+      <workItem from="1710452877807" duration="57000" />
+      <workItem from="1710452944547" duration="45000" />
+      <workItem from="1710453014327" duration="466000" />
+      <workItem from="1710771806463" duration="833000" />
     </task>
     <task id="LOCAL-00022" summary="Fixed bug where closed rides were being shown despite the &quot;skip closed rides&quot; option being set.">
       <option name="closed" value="true" />
@@ -812,7 +797,23 @@
       <option name="project" value="LOCAL" />
       <updated>1709572458196</updated>
     </task>
-    <option name="localTasksCounter" value="69" />
+    <task id="LOCAL-00069" summary="Switched to CP 9.0,0 rc0 for testing.  Moved ColorUtils to separate file.">
+      <option name="closed" value="true" />
+      <created>1710078468186</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1710078468186</updated>
+    </task>
+    <task id="LOCAL-00070" summary="Switched to CP 9.0,0 rc0 for testing.  Moved ColorUtils to separate file.">
+      <option name="closed" value="true" />
+      <created>1710078504702</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1710078504702</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -848,7 +849,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Over the air updating worked!" />
     <MESSAGE value="Changed init button to also delete settings." />
     <MESSAGE value="Park list is now sorted." />
     <MESSAGE value="Added lib back to git." />
@@ -873,18 +873,8 @@
     <MESSAGE value="Added garbage collector call and error logging." />
     <MESSAGE value="Last attempt didn't run because logging formatter was uncommented." />
     <MESSAGE value="Updated libraries back for compiled 8.x." />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated libraries back for compiled 8.x." />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <default-breakpoints>
-        <breakpoint type="python-exception">
-          <properties notifyOnTerminate="true" exception="BaseException">
-            <option name="notifyOnTerminate" value="true" />
-          </properties>
-        </breakpoint>
-      </default-breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="Switched to CP 9.0,0 rc0 for testing.  Moved ColorUtils to separate file." />
+    <option name="LAST_COMMIT_MESSAGE" value="Switched to CP 9.0,0 rc0 for testing.  Moved ColorUtils to separate file." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
