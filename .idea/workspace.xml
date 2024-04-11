@@ -8,9 +8,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added timer to log error if queue-times API call or GC takes more than 2 seconds.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added sleeps to wait time processing to try to get rid of hangs.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -152,6 +151,7 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Makefile Target.release" />
         <item itemvalue="Makefile Target.release" />
         <item itemvalue="Makefile Target.test" />
         <item itemvalue="Makefile Target.copy" />
@@ -437,14 +437,10 @@
       <workItem from="1711883708174" duration="1027000" />
       <workItem from="1712587344942" duration="970000" />
       <workItem from="1712590757347" duration="1000" />
-    </task>
-    <task id="LOCAL-00024" summary="Fixed bug where you couldn't change SSID or password if either had changed.">
-      <option name="closed" value="true" />
-      <created>1706061568508</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1706061568508</updated>
+      <workItem from="1712597658849" duration="288000" />
+      <workItem from="1712777994732" duration="5000" />
+      <workItem from="1712778005777" duration="791000" />
+      <workItem from="1712844978683" duration="82000" />
     </task>
     <task id="LOCAL-00025" summary="Added option of using the UP button to delete the WIFI settings.">
       <option name="closed" value="true" />
@@ -830,7 +826,15 @@
       <option name="project" value="LOCAL" />
       <updated>1711884358626</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="Added sleeps to wait time processing to try to get rid of hangs.">
+      <option name="closed" value="true" />
+      <created>1712597705054</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1712597705054</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -866,7 +870,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Added lib back to git." />
     <MESSAGE value="Added brightness control." />
     <MESSAGE value="Fixed bug in brightness control where the display levels in the drop-down duplicated 5 and was missing 9." />
     <MESSAGE value="Fixed the bug where red was pink,&#10;and got the test Makefile target working." />
@@ -891,7 +894,8 @@
     <MESSAGE value="Switched to CP 9.0,0 rc0 for testing.  Moved ColorUtils to separate file." />
     <MESSAGE value="Commented out explicitly running the garbage collector because it hangs the box." />
     <MESSAGE value="Added timer to log error if queue-times API call or GC takes more than 2 seconds." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added timer to log error if queue-times API call or GC takes more than 2 seconds." />
+    <MESSAGE value="Added sleeps to wait time processing to try to get rid of hangs." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added sleeps to wait time processing to try to get rid of hangs." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
