@@ -354,6 +354,8 @@ def base(request: Request):
 
     # If they changed the name of the host, then we'll need to reboot
     if mdns_server.hostname != settings.settings["domain_name"]:
+        web_server.stop()
+        time.sleep(5)
         supervisor.reload()
 
     page = generate_header()
@@ -473,9 +475,9 @@ def start_web_server(wserver):
     try:
         wserver.start(str(wifi.radio.ipv4_address), 80)
         logger.debug("Listening on http://%s:80" % wifi.radio.ipv4_address)
-    except OSError:
+    except OSError as e:
         time.sleep(5)
-        logger.debug("restarting device..")
+        logger.debug(f"Error starting web server: {e.strerror}, restarting device..")
         supervisor.reload()
 
 

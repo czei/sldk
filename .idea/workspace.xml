@@ -8,7 +8,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added sleeps to wait time processing to try to get rid of hangs.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Moved the GC to the display loop.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
     </list>
@@ -440,15 +440,10 @@
       <workItem from="1712597658849" duration="288000" />
       <workItem from="1712777994732" duration="5000" />
       <workItem from="1712778005777" duration="791000" />
-      <workItem from="1712844978683" duration="82000" />
-    </task>
-    <task id="LOCAL-00025" summary="Added option of using the UP button to delete the WIFI settings.">
-      <option name="closed" value="true" />
-      <created>1706147511729</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1706147511729</updated>
+      <workItem from="1712844978683" duration="711000" />
+      <workItem from="1714072088267" duration="1621000" />
+      <workItem from="1714160137336" duration="41000" />
+      <workItem from="1714160339053" duration="3499000" />
     </task>
     <task id="LOCAL-00026" summary="Rewrote use case where the SSID or password has changed.  Now requires pressing button to reset wifi.">
       <option name="closed" value="true" />
@@ -834,7 +829,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712597705054</updated>
     </task>
-    <option name="localTasksCounter" value="74" />
+    <task id="LOCAL-00074" summary="Moved the GC to the display loop.">
+      <option name="closed" value="true" />
+      <created>1712846392654</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1712846392655</updated>
+    </task>
+    <option name="localTasksCounter" value="75" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -870,7 +873,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Added brightness control." />
     <MESSAGE value="Fixed bug in brightness control where the display levels in the drop-down duplicated 5 and was missing 9." />
     <MESSAGE value="Fixed the bug where red was pink,&#10;and got the test Makefile target working." />
     <MESSAGE value="Added feature to set server name." />
@@ -895,7 +897,8 @@
     <MESSAGE value="Commented out explicitly running the garbage collector because it hangs the box." />
     <MESSAGE value="Added timer to log error if queue-times API call or GC takes more than 2 seconds." />
     <MESSAGE value="Added sleeps to wait time processing to try to get rid of hangs." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added sleeps to wait time processing to try to get rid of hangs." />
+    <MESSAGE value="Moved the GC to the display loop." />
+    <option name="LAST_COMMIT_MESSAGE" value="Moved the GC to the display loop." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
