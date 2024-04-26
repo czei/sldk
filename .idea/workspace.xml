@@ -8,7 +8,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Moved the GC to the display loop.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="When changing the domain name added in a wait and web server shutdown to settings update.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
     </list>
@@ -443,15 +443,7 @@
       <workItem from="1712844978683" duration="711000" />
       <workItem from="1714072088267" duration="1621000" />
       <workItem from="1714160137336" duration="41000" />
-      <workItem from="1714160339053" duration="3499000" />
-    </task>
-    <task id="LOCAL-00026" summary="Rewrote use case where the SSID or password has changed.  Now requires pressing button to reset wifi.">
-      <option name="closed" value="true" />
-      <created>1706235715562</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1706235715562</updated>
+      <workItem from="1714160339053" duration="5512000" />
     </task>
     <task id="LOCAL-00027" summary="Deleted CIRCUITPY.local to prepare for github updating OTA functionality.">
       <option name="closed" value="true" />
@@ -837,7 +829,15 @@
       <option name="project" value="LOCAL" />
       <updated>1712846392655</updated>
     </task>
-    <option name="localTasksCounter" value="75" />
+    <task id="LOCAL-00075" summary="When changing the domain name added in a wait and web server shutdown to settings update.">
+      <option name="closed" value="true" />
+      <created>1714168530533</created>
+      <option name="number" value="00075" />
+      <option name="presentableId" value="LOCAL-00075" />
+      <option name="project" value="LOCAL" />
+      <updated>1714168530533</updated>
+    </task>
+    <option name="localTasksCounter" value="76" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -873,7 +873,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Fixed bug in brightness control where the display levels in the drop-down duplicated 5 and was missing 9." />
     <MESSAGE value="Fixed the bug where red was pink,&#10;and got the test Makefile target working." />
     <MESSAGE value="Added feature to set server name." />
     <MESSAGE value="Fixed magenta color." />
@@ -898,7 +897,8 @@
     <MESSAGE value="Added timer to log error if queue-times API call or GC takes more than 2 seconds." />
     <MESSAGE value="Added sleeps to wait time processing to try to get rid of hangs." />
     <MESSAGE value="Moved the GC to the display loop." />
-    <option name="LAST_COMMIT_MESSAGE" value="Moved the GC to the display loop." />
+    <MESSAGE value="When changing the domain name added in a wait and web server shutdown to settings update." />
+    <option name="LAST_COMMIT_MESSAGE" value="When changing the domain name added in a wait and web server shutdown to settings update." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

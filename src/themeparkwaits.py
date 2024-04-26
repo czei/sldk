@@ -355,7 +355,7 @@ def base(request: Request):
     # If they changed the name of the host, then we'll need to reboot
     if mdns_server.hostname != settings.settings["domain_name"]:
         web_server.stop()
-        time.sleep(5)
+        time.sleep(60)
         supervisor.reload()
 
     page = generate_header()
@@ -398,6 +398,7 @@ def base(request: Request):
     page += "<label for=\"Name\">Hostname:</label>"
     page += f"<input type=\"text\" name=\"domain_name\" style=\"text-align: left;\" value=\"{settings.settings["domain_name"]}\">.local"
     page += "</p>"
+    page += "<p>Note: changing the hostname can take up to five minutes to take effect. Please be patient.</p>"
 
     page += """<p>
         <label for=\"Submit\"></label>
@@ -406,7 +407,7 @@ def base(request: Request):
         </form></div>"""
 
     page += """<p>
-            <h2>Settings</h2>
+            <h2>Software</h2>
             </div>"""
     try:
         release = ota_updater.get_version("src")
