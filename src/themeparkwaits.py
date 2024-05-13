@@ -5,9 +5,6 @@
 #
 import sys
 
-# import tracemalloc
-# tracemalloc.start()
-
 sys.path.append('/src/lib')
 import adafruit_logging
 import board
@@ -50,11 +47,12 @@ from src.theme_park_api import SettingsManager
 from src.theme_park_api import load_credentials
 from src.theme_park_api import url_decode
 from src.webgui import generate_header
+from src.theme_park_api import Timer
 from src.ota_updater import OTAUpdater
 
 logger = logging.getLogger('Test')
-logger.setLevel(logging.ERROR)
-# logger.setLevel(logging.DEBUG)
+# logger.setLevel(logging.ERROR)
+logger.setLevel(logging.DEBUG)
 try:
     logger.addHandler(logging.FileHandler("error_log"))
 except OSError:
@@ -102,6 +100,8 @@ DISPLAY_HEIGHT = 32
 DISPLAY_ROTATION = 0
 BIT_DEPTH = 4
 AUTO_REFRESH = True
+TIME_BETWEEN_UPDATES = 10 * 60
+# TIME_BETWEEN_UPDATES = 2 * 60
 
 matrix = rgbmatrix.RGBMatrix(
     width=DISPLAY_WIDTH, height=DISPLAY_HEIGHT, bit_depth=BIT_DEPTH,
@@ -218,7 +218,6 @@ mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=80)
 # https://docs.circuitpython.org/en/latest/shared-bindings/socketpool/index.html
 #
 async def update_live_wait_time():
-
     try_wifi_until_connected()
     if park_list.current_park.id <= 0:
         return
@@ -516,6 +515,7 @@ async def run_web_server():
 
 
 async def run_display():
+    update_wait_time_timer = Timer(TIME_BETWEEN_UPDATES)
     while True:
         try:
             # The first time booting the app force the user to configure
@@ -523,17 +523,20 @@ async def run_display():
             while park_list.current_park.is_valid() is False:
                 logger.debug("Current park is invalid")
                 messages.init()
-                messages.add_scroll_message(f"Configure at: http://{settings.settings["domain_name"]}.local")
-                await messages.add_splash(2)
-                await messages.show()
-                await messages.show()
+                await display.show_scroll_message(f"Configure at: http://{settings.settings["domain_name"]}.local")
+                #messages.add_scroll_message(f"Configure at: http://{settings.settings["domain_name"]}.local")
+                #await messages.add_splash(2)
+                #await messages.show()
+                #await messages.show()
 
             # If the user has updated their settings the regenerate_flag will be true
-            # and we need to redo the message queue
-            if messages.regenerate_flag is True:
+            # and we need to redo the message queue.  The times also need to be updated
+            # if the timer has gone off.
+            if messages.regenerate_flag is True or update_wait_time_timer.finished() is True:
+                update_wait_time_timer.reset()
                 logger.debug(
                     f"regen_flag is {messages.regenerate_flag}, updating ride times for {park_list.current_park.name}")
-                await update_ride_times()
+                await update_ride_times_wrapper()
 
             mem_free = run_garbage_collector()
             if mem_free < 200000:
@@ -548,18 +551,31 @@ async def run_display():
             # traceback.print_exc()
 
 
-async def update_ride_times():
+async def update_ride_times_wrapper():
     start_time = time.monotonic()
-    await update_live_wait_time()
     messages.init()
+    await display.show_splash(True)
+    await display.show_update(True)
+    await asyncio.sleep(4)
+    await display.show_update(False)
+    await display.show_required(True)
+    await asyncio.sleep(4)
+
+    # This could take up to 2 minutes depending on the
+    # network and server load
+    await update_live_wait_time()
+    messages.regenerate_flag = False
+    await asyncio.sleep(0)  # let other tasks run
+
+    messages.add_scroll_message(f"Configure at: http://{settings.settings["domain_name"]}.local")
     await messages.add_rides(park_list)
     await messages.add_vacation(vacation_date)
-    messages.add_scroll_message(f"Configure at: http://{settings.settings["domain_name"]}.local")
     await messages.add_splash(2)
-    messages.regenerate_flag = False
+    await display.show_required(False)
     end_time = time.monotonic()
+    await asyncio.sleep(0)  # let other tasks run
     elapsed_time = end_time - start_time
-    if elapsed_time > 2:
+    if elapsed_time > 20:
         logger.error(f"Updating wait times took {elapsed_time} seconds")
 
 
@@ -588,7 +604,7 @@ async def periodically_update_ride_times():
                 await asyncio.sleep(3600)
 
             if len(park_list.current_park.rides) > 0:
-                await update_ride_times()
+                await update_ride_times_wrapper()
 
         except OSError as error:
             messages.init()
@@ -627,6 +643,11 @@ start_web_server(web_server)
 
 asyncio.run(asyncio.gather(
     run_display(),
-    run_web_server(),
-    periodically_update_ride_times()
+    run_web_server()
 ))
+
+# asyncio.run(asyncio.gather(
+#     run_display(),
+#     run_web_server(),
+#     periodically_update_ride_times()
+# ))

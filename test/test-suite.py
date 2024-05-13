@@ -1,7 +1,7 @@
+import asyncio
 from unittest import TestCase
 from urllib.request import urlopen, Request
-
-import socketpool
+from src.async_http_request import async_read_url
 
 from src.theme_park_api import ThemePark, ColorUtils
 from src.theme_park_api import ThemeParkList
@@ -78,6 +78,10 @@ mock_imported_modules()
 
 
 class Test(TestCase):
+    def __init__(self, methodName: str):
+        super().__init__(methodName)
+        self.header = ""
+        self.body = b""
 
     def test_get_theme_parks_from_json(self):
         f = open('theme-park-list.json')
@@ -114,7 +118,6 @@ class Test(TestCase):
             if park.name == "Disney Magic Kingdom":
                 found_magic_kingdom = True
         self.assertTrue(found_magic_kingdom is True)
-
 
     def test_get_rides_from_json(self):
         f = open('magic-kingdom.json')
@@ -294,7 +297,7 @@ class Test(TestCase):
         manager = SettingsManager("settings.json")
         manager.load_settings()
 
-        self.assertTrue(manager.settings["skip_closed"] is True )
+        self.assertTrue(manager.settings["skip_closed"] is True)
         self.assertTrue(manager.settings["skip_meet"] is False)
         self.assertTrue(manager.settings["current_park_id"] == 6)
         self.assertTrue(manager.settings["current_park_name"] == "Disney Magic Kingdom")
@@ -378,10 +381,9 @@ class Test(TestCase):
         self.assertTrue(url_decode("FBI+Surveillance+Van+112") == "FBI Surveillance Van 112")
         self.assertTrue(url_decode("Paris%2C+France") == "Paris, France")
 
-
     def test_brightness_scale(self):
         orig_color = "0xfdf5e6"
-        #scale by .75
+        # scale by .75
         new_color = ColorUtils.scale_color(orig_color, .50)
         print(f"New color is {new_color}")
         self.assertTrue(new_color == "0x7e7a73")
@@ -392,3 +394,44 @@ class Test(TestCase):
         self.assertTrue(new_color == "0xcc3333")
         new_color = ColorUtils.scale_color("0xffa500", 1)
         self.assertTrue(new_color == "0xffa500")
+
+    def test_async_http(self):
+
+        # Connecting to sockets is different from an actual OS not
+        # running CircuitPython on a chip.
+        path = "/api/quotes.php"
+        domain = "www.adafruit.com"
+        #path = "/parks/6/queue_times.json"
+        #domain = "queue-times.com"
+
+        # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # ssl_sock = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT).wrap_socket(sock, False, True, True, domain)
+
+        # addr_info = ""
+        # try:
+        #     addr_info = socket.getaddrinfo(domain, 443)
+        # except socket.gaierror:
+        #     print(f"Invalid domain {domain}. Can't resolve to an IP address.")
+        #
+        # print(f"Address info: {addr_info}")
+        # addr = addr_info[0][-1]
+        #
+        # ssl_sock.context.check_hostname = False
+        # ssl_sock.context.verify_mode = ssl.CERT_NONE
+        # ssl_sock.setblocking(False)
+        # ssl_sock.connect(addr)
+
+        asyncio.run(test_http_read(self, domain, path))
+        print(f"Header = {self.header}")
+        print(f"Body={self.body}")
+        # self.assertTrue(len(self.header) > 0)
+        # self.assertTrue(self.header.count('\n') == 27)
+        str_json = self.body.decode('utf-8')
+        json_data = json.loads(str_json)
+        self.assertTrue(len(json_data[0]['author']) > 0)
+        self.assertTrue(len(json_data[0]['text']) > 0)
+
+async def test_http_read(test_class, domain, path):
+    head, body = await async_read_url(domain, path)
+    test_class.header = head
+    test_class.body = body
