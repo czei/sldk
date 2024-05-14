@@ -8,9 +8,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Changed update logic to run synchronously with the scroller.  Customers now see an updating message.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Tweaked the updating text.">
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -131,7 +129,7 @@
       <recent name="$PROJECT_DIR$/CIRCUITPY" />
     </key>
   </component>
-  <component name="RunManager" selected="Makefile Target.debug">
+  <component name="RunManager" selected="Makefile Target.release">
     <configuration name="all" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
       <makefile filename="$PROJECT_DIR$/makefile" target="all" workingDirectory="" arguments="">
         <envs />
@@ -211,7 +209,7 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Makefile Target.debug" />
+        <item itemvalue="Makefile Target.release" />
         <item itemvalue="Makefile Target.debug" />
         <item itemvalue="Makefile Target.debug" />
         <item itemvalue="Makefile Target.debug" />
@@ -538,15 +536,7 @@
       <workItem from="1715566181073" duration="13831000" />
       <workItem from="1715693248368" duration="5000" />
       <workItem from="1715693298408" duration="418000" />
-      <workItem from="1715713138335" duration="2700000" />
-    </task>
-    <task id="LOCAL-00029" summary="Fixed cold startup by adding URL for GUI.">
-      <option name="closed" value="true" />
-      <created>1707178303263</created>
-      <option name="number" value="00029" />
-      <option name="presentableId" value="LOCAL-00029" />
-      <option name="project" value="LOCAL" />
-      <updated>1707178303263</updated>
+      <workItem from="1715713138335" duration="3006000" />
     </task>
     <task id="LOCAL-00030" summary="Refactored into subdirectories for OTA updating.">
       <option name="closed" value="true" />
@@ -932,7 +922,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715630422201</updated>
     </task>
-    <option name="localTasksCounter" value="78" />
+    <task id="LOCAL-00078" summary="Tweaked the updating text.">
+      <option name="closed" value="true" />
+      <created>1715715868829</created>
+      <option name="number" value="00078" />
+      <option name="presentableId" value="LOCAL-00078" />
+      <option name="project" value="LOCAL" />
+      <updated>1715715868829</updated>
+    </task>
+    <option name="localTasksCounter" value="79" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -968,7 +966,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Added feature to set server name." />
     <MESSAGE value="Fixed magenta color." />
     <MESSAGE value="Changed dropdown /select color in GUI from red to gray." />
     <MESSAGE value="Added file logging to see why testbox was blank after running overnight." />
@@ -993,7 +990,8 @@
     <MESSAGE value="Moved the GC to the display loop." />
     <MESSAGE value="When changing the domain name added in a wait and web server shutdown to settings update." />
     <MESSAGE value="Changed update logic to run synchronously with the scroller.  Customers now see an updating message." />
-    <option name="LAST_COMMIT_MESSAGE" value="Changed update logic to run synchronously with the scroller.  Customers now see an updating message." />
+    <MESSAGE value="Tweaked the updating text." />
+    <option name="LAST_COMMIT_MESSAGE" value="Tweaked the updating text." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
