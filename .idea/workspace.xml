@@ -8,8 +8,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Set the update time back to 10 minutes.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added small delay after updating now message.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -211,9 +212,9 @@
     <recent_temporary>
       <list>
         <item itemvalue="Makefile Target.release" />
+        <item itemvalue="Makefile Target.debug" />
         <item itemvalue="Makefile Target.release" />
-        <item itemvalue="Makefile Target.debug" />
-        <item itemvalue="Makefile Target.debug" />
+        <item itemvalue="Makefile Target.release" />
         <item itemvalue="Makefile Target.debug" />
       </list>
     </recent_temporary>
@@ -538,15 +539,8 @@
       <workItem from="1715693248368" duration="5000" />
       <workItem from="1715693298408" duration="418000" />
       <workItem from="1715713138335" duration="3633000" />
-      <workItem from="1715809786794" duration="41000" />
-    </task>
-    <task id="LOCAL-00031" summary="Refactored into subdirectories for OTA updating.">
-      <option name="closed" value="true" />
-      <created>1707702615897</created>
-      <option name="number" value="00031" />
-      <option name="presentableId" value="LOCAL-00031" />
-      <option name="project" value="LOCAL" />
-      <updated>1707702615897</updated>
+      <workItem from="1715809786794" duration="951000" />
+      <workItem from="1715884520700" duration="71000" />
     </task>
     <task id="LOCAL-00032" summary="Refactored into subdirectories for OTA updating.">
       <option name="closed" value="true" />
@@ -932,7 +926,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715716166798</updated>
     </task>
-    <option name="localTasksCounter" value="80" />
+    <task id="LOCAL-00080" summary="Added small delay after updating now message.">
+      <option name="closed" value="true" />
+      <created>1715810130025</created>
+      <option name="number" value="00080" />
+      <option name="presentableId" value="LOCAL-00080" />
+      <option name="project" value="LOCAL" />
+      <updated>1715810130025</updated>
+    </task>
+    <option name="localTasksCounter" value="81" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -968,7 +970,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Changed dropdown /select color in GUI from red to gray." />
     <MESSAGE value="Added file logging to see why testbox was blank after running overnight." />
     <MESSAGE value="Added splash screen with product name." />
     <MESSAGE value="Refactored main loop to consolidate message queue setup." />
@@ -993,7 +994,8 @@
     <MESSAGE value="Changed update logic to run synchronously with the scroller.  Customers now see an updating message." />
     <MESSAGE value="Tweaked the updating text." />
     <MESSAGE value="Set the update time back to 10 minutes." />
-    <option name="LAST_COMMIT_MESSAGE" value="Set the update time back to 10 minutes." />
+    <MESSAGE value="Added small delay after updating now message." />
+    <option name="LAST_COMMIT_MESSAGE" value="Added small delay after updating now message." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
