@@ -8,10 +8,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Added small delay after updating now message.">
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Turned off debug mode.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/sand_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/splash-test.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,7 +103,7 @@
     &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
     &quot;project.structure.side.proportion&quot;: &quot;0.13426329&quot;,
     &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.build&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
   &quot;keyToStringList&quot;: {
@@ -131,7 +131,7 @@
       <recent name="$PROJECT_DIR$/CIRCUITPY" />
     </key>
   </component>
-  <component name="RunManager" selected="Makefile Target.release">
+  <component name="RunManager" selected="Python tests.Main Test Suite">
     <configuration name="all" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
       <makefile filename="$PROJECT_DIR$/makefile" target="all" workingDirectory="" arguments="">
         <envs />
@@ -540,15 +540,11 @@
       <workItem from="1715693298408" duration="418000" />
       <workItem from="1715713138335" duration="3633000" />
       <workItem from="1715809786794" duration="951000" />
-      <workItem from="1715884520700" duration="71000" />
-    </task>
-    <task id="LOCAL-00032" summary="Refactored into subdirectories for OTA updating.">
-      <option name="closed" value="true" />
-      <created>1707702751111</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1707702751111</updated>
+      <workItem from="1715884520700" duration="91000" />
+      <workItem from="1715886699025" duration="4756000" />
+      <workItem from="1717188812472" duration="6000" />
+      <workItem from="1717249111614" duration="255000" />
+      <workItem from="1717249373768" duration="643000" />
     </task>
     <task id="LOCAL-00033" summary="Refactored into subdirectories for OTA updating.">
       <option name="closed" value="true" />
@@ -934,7 +930,15 @@
       <option name="project" value="LOCAL" />
       <updated>1715810130025</updated>
     </task>
-    <option name="localTasksCounter" value="81" />
+    <task id="LOCAL-00081" summary="Turned off debug mode.">
+      <option name="closed" value="true" />
+      <created>1715884604632</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1715884604632</updated>
+    </task>
+    <option name="localTasksCounter" value="82" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -970,7 +974,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Added file logging to see why testbox was blank after running overnight." />
     <MESSAGE value="Added splash screen with product name." />
     <MESSAGE value="Refactored main loop to consolidate message queue setup." />
     <MESSAGE value="Changed dependency to always copy all files since it wasn't picking up changed files." />
@@ -995,7 +998,8 @@
     <MESSAGE value="Tweaked the updating text." />
     <MESSAGE value="Set the update time back to 10 minutes." />
     <MESSAGE value="Added small delay after updating now message." />
-    <option name="LAST_COMMIT_MESSAGE" value="Added small delay after updating now message." />
+    <MESSAGE value="Turned off debug mode." />
+    <option name="LAST_COMMIT_MESSAGE" value="Turned off debug mode." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
@@ -1005,7 +1009,7 @@
     <SUITE FILE_PATH="coverage/ThemeParkAPI$main.coverage" NAME="main Coverage Results" MODIFIED="1697480086211" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$webgui.coverage" NAME="webgui Coverage Results" MODIFIED="1700400556244" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$Image_Processor_Tests.coverage" NAME="Image Processor Tests Coverage Results" MODIFIED="1715192748748" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
-    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1715614358935" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
+    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1715887302085" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$code_ota_test.coverage" NAME="code-ota-test Coverage Results" MODIFIED="1707784478271" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$code.coverage" NAME="code Coverage Results" MODIFIED="1703862608085" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/ThemeParkAPI$test_suite.coverage" NAME="test-suite Coverage Results" MODIFIED="1715102655055" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />

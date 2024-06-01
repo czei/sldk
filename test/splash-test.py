@@ -61,20 +61,20 @@ display = framebufferio.FramebufferDisplay(matrix_board, auto_refresh=False)
 # but if you change the font you might find that other values work better.
 line1 = adafruit_display_text.label.Label(
     terminalio.FONT,
-    color=0xff0000,
+    color=0xaaaa00,
     text="THEME PARK")
 line1.x = display.width
 line1.x = 3
-line1.y = 5
+line1.y = 7
 
 line2 = adafruit_display_text.label.Label(
     terminalio.FONT,
-    color=0x0080ff,
+    color=0xb37300,
     text="WAITS",
     scale=2)
 
 line2.x = 3
-line2.y = 20
+line2.y = 22
 
 # Put each line of text into a Group, then show that group.
 g = displayio.Group()
@@ -90,16 +90,13 @@ image, palette = adafruit_imageload.load(
 #        changing_bitmap[x, y] = bitmap[x,y]
 
 # Create a TileGrid to render the bitmap on the display
-tile_grid = displayio.TileGrid(image, pixel_shader=palette)
+# tile_grid = displayio.TileGrid(image, pixel_shader=palette)
 
 # tile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)
-g.append(tile_grid)
-# display.show(g)
+g.append(line1)
+g.append(line2)
+display.show(g)
 display.refresh(minimum_frames_per_second=0)
-
-image[0,0] = 255
-
-
 
 while True:
     display.refresh(minimum_frames_per_second=0)
