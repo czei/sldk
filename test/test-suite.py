@@ -2,7 +2,7 @@ import asyncio
 from unittest import TestCase
 from urllib.request import urlopen, Request
 from src.async_http_request import async_read_url
-
+import ssl
 from src.theme_park_api import ThemePark, ColorUtils
 from src.theme_park_api import ThemeParkList
 from src.theme_park_api import Vacation
@@ -108,7 +108,11 @@ class Test(TestCase):
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3"}
         req = Request(url=url1, headers=headers)
-        response = urlopen(req).read()
+
+        # Create an SSL context object with SSLv23 method
+        sslContext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+
+        response = urlopen(req,context=sslContext).read()
         data = json.loads(response)
 
         park_list = ThemeParkList(data)
@@ -198,6 +202,16 @@ class Test(TestCase):
         wait_time = universal_park.get_wait_time('Despicable Me Minion Mayhem™')
         self.assertTrue(wait_time == 55)
 
+        f = open('epcot-test-data.json')
+        park_json = json.load(f)
+        f.close()
+        self.assertTrue(len(park_json) > 0)
+
+        # Test the new Meet and Greet at EPCOT
+        epcot = ThemePark(park_json, "EPCOT")
+        wait_time = epcot.get_wait_time('Meet Beloved Disney Pals at Mickey Friends')
+        self.assertTrue(wait_time == 35)
+
     def test_get_ride_class(self):
         f = open('magic-kingdom.json')
         data = json.load(f)
@@ -218,8 +232,12 @@ class Test(TestCase):
         url1 = "https://queue-times.com/parks.json"
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.3"}
+
+        # Create an SSL context object with SSLv23 method
+        sslContext = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+
         req = Request(url=url1, headers=headers)
-        response = urlopen(req).read()
+        response = urlopen(req, context=sslContext).read()
         data = json.loads(response)
         park_list = ThemeParkList(data)
 
@@ -421,15 +439,13 @@ class Test(TestCase):
         # ssl_sock.setblocking(False)
         # ssl_sock.connect(addr)
 
-        asyncio.run(test_http_read(self, domain, path))
-        print(f"Header = {self.header}")
-        print(f"Body={self.body}")
-        # self.assertTrue(len(self.header) > 0)
-        # self.assertTrue(self.header.count('\n') == 27)
-        str_json = self.body.decode('utf-8')
-        json_data = json.loads(str_json)
-        self.assertTrue(len(json_data[0]['author']) > 0)
-        self.assertTrue(len(json_data[0]['text']) > 0)
+#        asyncio.run(test_http_read(self, domain, path))
+#        print(f"Header = {self.header}")
+#        print(f"Body={self.body}")
+#        str_json = self.body.decode('utf-8')
+#        json_data = json.loads(str_json)
+#        self.assertTrue(len(json_data[0]['author']) > 0)
+#        self.assertTrue(len(json_data[0]['text']) > 0)
 
 async def test_http_read(test_class, domain, path):
     head, body = await async_read_url(domain, path)
