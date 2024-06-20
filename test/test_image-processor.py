@@ -1,10 +1,13 @@
-from unittest import TestCase
 from __future__ import annotations
+
 from typing import Union, Tuple
+from unittest import TestCase
+
 from PIL import Image
-from ._structs import RectangleStruct
 
 import src.image_processor
+# from ._structs import RectangleStruct
+
 # from displayio import Bitmap
 
 # SPDX-FileCopyrightText: 2020 Melissa LeBlanc-Williams for Adafruit Industries

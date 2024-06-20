@@ -40,7 +40,7 @@ class ImageProcessor:
     # Change the current pixel's value
     def handle_next_pixel(self):
         p = self.get_current_pixel()
-        self.image[p.x, p.y] = self.process_pixel(p)
+        self.image[p.x, p.y] = ImageProcessor.process_pixel(p)
         self.pixel_index += 1
         if self.pixel_index >= len(self.pixels):
             self.pixel_index = 0

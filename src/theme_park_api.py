@@ -798,7 +798,10 @@ class MessageQueue:
                 vac_message = f"Vacation to {vac.name} in: {days_until} days"
                 self.add_scroll_message(vac_message, 0)
             elif days_until == 1:
-                vac_message = f"Your vacation to {vac.name} is tomorrow!!!!!!!!!!!!!"
+                vac_message = f"Your vacation to {vac.name} is tomorrow!!!"
+                self.add_scroll_message(vac_message, 0)
+            elif days_until == 0:
+                vac_message = f"Your vacation to {vac.name} is TODAY!!!!!!!!!!!!!"
                 self.add_scroll_message(vac_message, 0)
 
     async def add_required_message(self, parkName):
