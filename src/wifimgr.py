@@ -6,12 +6,12 @@ import wifi
 import adafruit_logging as logging
 
 logger = logging.getLogger('Test')
-logger.setLevel(logging.ERROR)
-# logger.setLevel(logging.DEBUG)
-try:
-    logger.addHandler(logging.FileHandler("error_log"))
-except OSError:
-    print("Read-only file system")
+# logger.setLevel(logging.ERROR)
+logger.setLevel(logging.DEBUG)
+#try:
+#    logger.addHandler(logging.FileHandler("error_log"))
+#except OSError:
+#    print("Read-only file system")
 
 # extract access point mac address
 mac_ap = ' '.join([hex(i) for i in wifi.radio.mac_address_ap])
@@ -27,6 +27,7 @@ FILE_NETWORK_PROFILES = "../secrets.py"
 ap_enabled = False
 server_socket = None
 
+
 # Fixed a bug where SSIDs and passwords couldn't have spaces or non alpha
 # characters.
 def url_decode(input_string):
@@ -36,7 +37,7 @@ def url_decode(input_string):
     i = 0
     while i < len(input_string):
         if input_string[i] == "%" and i < len(input_string) - 2:
-            hex_value = input_string[i+1:i+3].lower()
+            hex_value = input_string[i + 1:i + 3].lower()
             if all(c in hex_chars for c in hex_value):
                 result += chr(int(hex_value, 16))
                 i += 3
@@ -44,6 +45,7 @@ def url_decode(input_string):
         result += input_string[i]
         i += 1
     return result
+
 
 def do_connect(ssid, password):
     wifi.radio.enabled = True
@@ -53,7 +55,8 @@ def do_connect(ssid, password):
     try:
         wifi.radio.connect(ssid, password)
     except Exception as e:
-        logger.error(f"Wifi connection error: {str(e)} at {wifi.radio.ipv4_address}")
+        logger.error(f"Wifi connection error: {str(e)}")
+        return False
     for retry in range(200):
         connected = wifi.radio.ap_info is not None
         if connected:
@@ -70,7 +73,7 @@ def do_connect(ssid, password):
         # print('%s, subnet: %s, gateway: %s, DNS: %s' % tuple(t))
 
     # else:
-        # print('\nFailed. Not Connected to: ' + ssid)
+    # print('\nFailed. Not Connected to: ' + ssid)
     return connected
 
 
@@ -142,7 +145,7 @@ def get_connection():
                         # print(", open")
                         connected = do_connect(ssid, None)
                 # else:
-                    # print(", unknown")
+                # print(", unknown")
                 if connected:
                     break
         # no networks configured
@@ -152,35 +155,44 @@ def get_connection():
         if connected:
             return wifi.radio
 
+
 def handle_configure(client, request):
     global ap_enabled
-    print('Handle configure start')
-    print("Request:", request.strip())
-    match = re.search("ssid=([^&]*)&password=(.*)", request)
+    logger.debug('Handle configure start')
+    # logger.debug("Request:", request.strip())
+    match = re.search("ssid=([^&]*)", request)
 
     if match is None:
-        send_response(client, "Parameters not found", status_code=400)
-        print('Handle configure aborted, missing parameters')
+        response = construct_html_page()
+        response = construct_html_page("You didn't select a wifi channel.  Please hit the back button and try again.")
+        send_response(client, response, status_code=400)
+        logger.error(f"handle_configure: missing password or wifi channel")
+        return False
+
+    match = re.search("&password=(.*)", request)
+    if match is None:
+        response = construct_html_page()
+        response = construct_html_page("You didn't enter a password.  Please hit the back button and try again.")
+        send_response(client, response, status_code=400)
+        logger.error(f"handle_configure: missing password or wifi channel")
         return False
 
     # Fixed a bug where SSIDs and passwords couldn't have spaces or non alpha
     # characters.
 
-    #ssid = match.group(1).replace("%3F", "?").replace("%21", "!")
     ssid = url_decode(match.group(1))
-    #password = match.group(2).replace("%3F", "?").replace("%21", "!")
     password = url_decode(match.group(2))
 
-    print(f'Handling configure {ssid} : {password}')
+    logger.info(f'Handling configure {ssid} : {password}')
 
     if len(ssid) == 0:
-        send_response(client, "SSID must be provided", status_code=400)
-        print('Handling configure aborted, no SSID provided')
+        send_response(client, "Please pick a wifi channel!", status_code=400)
+        logger.error('Handling configure aborted, no wifi channel selected')
         return False
 
     write_result = write_profiles(ssid, password)
     if write_result is False:
-        print('Failed to write changes')
+        logger.error('Failed to write wifi settings to file.')
 
     if do_connect(ssid, password):
         try:
@@ -188,7 +200,7 @@ def handle_configure(client, request):
         except OSError:
             profiles = {}
         write_result = write_profiles(ssid, password)
-        response = get_html_head() + """\
+        response = get_new_html_head() + """\
   <p>
         """
         response = response + """\
@@ -196,7 +208,7 @@ def handle_configure(client, request):
         """ % dict(ssid=ssid)
 
         if write_result is False:
-            print('Failed to write changes')
+            logger.error('Failed to write wifi settings to file.')
             response = response + """\
     <br><br>
     Failed to save changes.
@@ -221,9 +233,9 @@ def handle_configure(client, request):
         # return write_result
     else:
 
-        response = get_html_head()
+        response = get_new_html_head()
         response = response + """\
-    <h1>Could not connect to the WiFi network "%(ssid)s".</h1>
+    <h1>Could not connect to the WiFi network "%(ssid)s", probably because the password is incorrect.</h1>
      <form>
       <div>
        <input type="button" value="Go back" onclick="history.back()">
@@ -235,10 +247,10 @@ def handle_configure(client, request):
         # print('Handle configure ended, no connection')
         return False
 
+
 def handle_not_found(client, url):
-    # print('Handle not found start')
     send_response(client, "Path not found: {}".format(url), status_code=404)
-    # print('Handle not found end')
+
 
 def get_html_footer():
     return """\
@@ -254,6 +266,27 @@ def get_html_footer():
 </body>
 </html>
     """
+
+
+def get_new_html_head():
+    data = """\
+<!DOCTYPE html>
+<html>
+<head>
+<title>TPW Wi-Fi Setup</title>
+<style>
+"""
+    f = open("src/wifi_style.css")
+    data = data + f.read()
+    f.close()
+    data = data + """\
+</style>
+</head>
+<body>
+<h1>Wi-Fi Client Setup</h1>
+"""
+    return data
+
 
 def get_html_head():
     global AP_SSID
@@ -347,6 +380,7 @@ def get_html_head():
 <h1>""" + AP_SSID + """ - Wi-Fi client setup</h1>
 """
 
+
 def sendall(client, data):
     data = data.replace('  ', ' ')
     while len(data):
@@ -364,6 +398,7 @@ def sendall(client, data):
                 pass
             break
 
+
 def handle_root(client):
     # print('Handle / start')
     wifi.radio.enabled = True
@@ -374,7 +409,7 @@ def handle_root(client):
         networks.append([n.ssid, n.channel])
     wifi.radio.stop_scanning_networks()
     send_header(client)
-    sendall(client, get_html_head())
+    sendall(client, get_new_html_head())
     sendall(client, """\
   <form action="configure" method="post">
     """)
@@ -388,7 +423,7 @@ def handle_root(client):
    <br>
         """.format(network[0], network[1]))
     sendall(client, """\
-   <div><label>Password:</label> <input class="text" name="password" type="password" ></div>
+   <div><p></p></div><div class="password"><label class="password">Password:</label> <input class="text" name="password" type="password" ></div>
    <p><button>Connect</button></p>
   </form>
     """)
@@ -408,17 +443,19 @@ def handle_root(client):
     client.close()
     # print('Handle / end')
 
+
 def read_profiles():
     profiles = {}
     import secrets
     print(secrets.secrets['password'])
     try:
-        profiles [secrets.secrets['ssid']] = secrets.secrets['password']
+        profiles[secrets.secrets['ssid']] = secrets.secrets['password']
         #profiles[ssid] = password
     except OSError as e:
         logger.error(f"Error: {str(e)} reading secrets file.")
         profiles = {}
     return profiles
+
 
 def send_header(client, status_code=200, content_length=None):
     sendall(client, "HTTP/1.0 {} OK\r\n".format(status_code))
@@ -427,12 +464,14 @@ def send_header(client, status_code=200, content_length=None):
         sendall(client, "Content-Length: {}\r\n".format(content_length))
     sendall(client, "\r\n")
 
+
 def send_response(client, payload, status_code=200):
     content_length = len(payload)
     send_header(client, status_code, content_length)
     if content_length > 0:
         sendall(client, payload)
     client.close()
+
 
 def start_ap(port=80):
     global ap_enabled, server_socket
@@ -457,16 +496,15 @@ def start_ap(port=80):
     server_socket.bind(addr)
     server_socket.listen(1)
     if storage.getmount('/').readonly:
-        print('File system is read only')
+        logger.debug('File system is read only')
     else:
-        print('File system is writeable')
+        logger.debug('File system is writeable')
     # print('Access point started, connect to WiFi "' + AP_SSID + '"', end='')
     # if (AP_AUTHMODES[0] != wifi.AuthMode.OPEN):
-        # print(', the password is "' + AP_PASSWORD + '"')
+    # print(', the password is "' + AP_PASSWORD + '"')
     # else:
-        # print('')
-    print('Visit http://' + str(wifi.radio.ipv4_address_ap) + '/ in your web browser')
-    # print('Listening on:', addr)
+    # print('')
+    logger.debug('Visit http://' + str(wifi.radio.ipv4_address_ap) + '/ in your web browser')
 
     while True:
         if wifi.radio.ap_info is not None:
@@ -483,12 +521,10 @@ def start_ap(port=80):
                 client, addr = server_socket.accept()
             except OSError as e:
                 logger.error(f"Wifi error: {str(e)} at {wifi.radio.ipv4_address}")
-                print("Exception", str(e))
                 time.sleep(0.25)
-                pass
             break
 
-        print('Client connected - %s:%s' % addr)
+        logger.debug('Client connected - %s:%s' % addr)
         try:
             client.settimeout(5)
 
@@ -498,18 +534,18 @@ def start_ap(port=80):
                     buffer = bytearray(512)
                     client.recv_into(buffer, 512)
                     request += buffer
-                    # print('Received data')
-            except OSError:
-                pass
+                    logger.debug('Received data')
+            except OSError as e:
+                logger.error(f"Web server http error: {str(e)}")
 
             # Handle form data from Safari on macOS and iOS; it sends \r\n\r\nssid=<ssid>&password=<password>
             try:
                 buffer = bytearray(1024)
                 client.recv_into(buffer, 1024)
                 request += buffer
-                # print("Received form data after \\r\\n\\r\\n(i.e. from Safari on macOS or iOS)")
-            except OSError:
-                pass
+                logger.debug("Received form data after \\r\\n\\r\\n(i.e. from Safari on macOS or iOS)")
+            except OSError as e:
+                logger.error(f"Web server http error: {str(e)}")
 
             request = request.decode().strip("\x00").replace('%23', '#')
 
@@ -535,16 +571,17 @@ def start_ap(port=80):
     server_socket.close()
     client.close()
 
+
 def write_profiles(ssid, password):
-    print('Write profiles start')
-    print('Preparing line for "' + ssid + '"')
+    logger.debug('Write profiles start')
+    logger.debug('Preparing line for "' + ssid + '"')
     lines = []
     lines.append("secrets = {\n")
     lines.append(f"\'ssid' : \'{ssid}\',\n")
     lines.append(f"\'password' : \'{password}\',\n")
     lines.append("}\n")
     try:
-        print('Writing ' + FILE_NETWORK_PROFILES)
+        logger.debug('Writing ' + FILE_NETWORK_PROFILES)
         with open(FILE_NETWORK_PROFILES, "w") as f:
             f.write(''.join(lines))
             f.close()
@@ -552,3 +589,11 @@ def write_profiles(ssid, password):
     except OSError as e:
         logger.error(f"Error writing secrets.py to disk: {str(e)}")
         return False
+
+
+def construct_html_page(message):
+    response = get_new_html_head() + "<p>"
+    response = response + message
+    response = response + "</p>"
+    response = response + get_html_footer()
+    return response
