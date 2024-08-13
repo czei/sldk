@@ -19,6 +19,13 @@ release: $(SRC_DIR)/*.py
 debug : $(TEST_DIR)
 	cp -f $(SRC_DIR)/theme_park_api.py $(TEST_DIR)/src
 	cp -f $(SRC_DIR)/themeparkwaits.py $(TEST_DIR)/src
+	cp -f $(SRC_DIR)/theme_park_display.py $(TEST_DIR)/src
+	cp -f $(SRC_DIR)/wifimgr.py $(TEST_DIR)/src
+	cp -f $(SRC_DIR)/ota.py $(TEST_DIR)/src
+	cp -f $(SRC_DIR)/ota_updater.py $(TEST_DIR)/src
+	cp -f $(SRC_DIR)/style.css $(TEST_DIR)/src
+	cp -f $(SRC_DIR)/wifi_style.css $(TEST_DIR)/src
+	cp -f $(SRC_DIR)/webgui.py $(TEST_DIR)/src
 
 test: $(TEST_DIR)
 	cp -f boot.py $(TEST_DIR)

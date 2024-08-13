@@ -643,11 +643,8 @@ class AsyncScrollingDisplay(Display):
 class MatrixPortalDisplay(Display):
     def __init__(self, mp, setting_manager, scrolldelay=0.03):
         super().__init__(setting_manager)
-        # super().__init__(scrolldelay)
-
         self.matrix_portal = mp
         self.scroll_delay = scrolldelay
-
         self.WAIT_TIME = 0
         self.matrix_portal.add_text(
             text_font=terminalio.FONT,

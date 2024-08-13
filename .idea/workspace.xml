@@ -8,29 +8,28 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Updated parsing to support parks with rides in lands and not in lands simultaneously. This was for the new Meet Beloved Disney Pals in EPCOT.">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Modified to allow external CSS file to make editing easier than modifying code.">
+      <change afterPath="$PROJECT_DIR$/src/fonts/Teeny-Tiny-Pixls-5.bdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/fonts/teeny-tiny-pixls-font/TeenyTinyPixls-o2zo.ttf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/fonts/teeny-tiny-pixls-font/info.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/fonts/teeny-tiny-pixls-font/misc/License.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/theme_park_display.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/wifi_style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/test_display.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test/test_filesystem.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/image_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/image_processor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/makefile" beforeDir="false" afterPath="$PROJECT_DIR$/makefile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/theme_park_api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/themeparkwaits.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/themeparkwaits.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/themeparkwaits.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/production/ThemeParkAPI/src/themeparkwaits.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/TestSuite/TestSuite.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/__init__ 2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/bitmap_test 2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/bitmap_text_test 2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/closed-park 2.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/code-http-test 2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/code-mdns-test 2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/code-ota-test 2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/conftest 2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/cp_bug_trigger 2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/epcot-test-data 2.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/error_log 2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pixel-dust-test 2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/settings 2.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/sparkle_test 2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/splash-test 2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_image-processor 2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_image-processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_image-processor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/themeparkwaits.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/webgui.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/webgui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/wifimgr.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/wifimgr.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/error_log" beforeDir="false" afterPath="$PROJECT_DIR$/test/error_log" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,7 +60,7 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file:///Volumes/CIRCUITPY/src/.version" root0="SKIP_INSPECTION" />
+    <setting file="file:///Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/adafruit_httpserver/server.py" root0="SKIP_INSPECTION" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -111,7 +110,7 @@
     &quot;git-widget-placeholder&quot;: &quot;master&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
     &quot;last_directory_selection&quot;: &quot;/Users/czei/Library/Mobile Documents/com~apple~CloudDocs/Projects/Disney/ThemeParkAPI&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/czei/Desktop/ThemeParkAPI&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/czei/Library/Mobile Documents/com~apple~CloudDocs/Projects/Disney/ThemeParkAPI/test&quot;,
     &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
@@ -140,6 +139,7 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/test" />
       <recent name="$PROJECT_DIR$" />
       <recent name="/Volumes/CIRCUITPY" />
     </key>
@@ -151,7 +151,7 @@
       <recent name="$PROJECT_DIR$/CIRCUITPY" />
     </key>
   </component>
-  <component name="RunManager" selected="Makefile Target.all">
+  <component name="RunManager" selected="Makefile Target.debug">
     <configuration name="all" type="MAKEFILE_TARGET_RUN_CONFIGURATION" factoryName="Makefile" temporary="true">
       <makefile filename="$PROJECT_DIR$/makefile" target="all" workingDirectory="" arguments="">
         <envs />
@@ -224,8 +224,8 @@
         <item itemvalue="Makefile Target.debug" />
         <item itemvalue="Makefile Target.test" />
         <item itemvalue="Makefile Target.release" />
-        <item itemvalue="Makefile Target.debug" />
         <item itemvalue="Makefile Target.copy" />
+        <item itemvalue="Makefile Target.all" />
       </list>
     </recent_temporary>
   </component>
@@ -571,31 +571,31 @@
       <workItem from="1718732981343" duration="6415000" />
       <workItem from="1718739758002" duration="1976000" />
       <workItem from="1718743859983" duration="5241000" />
-      <workItem from="1718894921466" duration="45000" />
-    </task>
-    <task id="LOCAL-00035" summary="Updated test suite for new ThemeParkList refactoring.">
-      <option name="closed" value="true" />
-      <created>1707706695921</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1707706695921</updated>
-    </task>
-    <task id="LOCAL-00036" summary="Fixed bugs from refactoring ThemeParkList class.">
-      <option name="closed" value="true" />
-      <created>1708044309519</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1708044309519</updated>
-    </task>
-    <task id="LOCAL-00037" summary="Fixed skip settings bugs from ThemeParkList refactor.">
-      <option name="closed" value="true" />
-      <created>1708046410577</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1708046410577</updated>
+      <workItem from="1718894921466" duration="1036000" />
+      <workItem from="1720617669126" duration="40000" />
+      <workItem from="1720640323122" duration="1432000" />
+      <workItem from="1720648580736" duration="1976000" />
+      <workItem from="1721090389919" duration="2549000" />
+      <workItem from="1721243799610" duration="28948000" />
+      <workItem from="1721662423579" duration="579000" />
+      <workItem from="1721663016048" duration="1573000" />
+      <workItem from="1721673116162" duration="11784000" />
+      <workItem from="1721847036111" duration="19000" />
+      <workItem from="1721847063558" duration="9978000" />
+      <workItem from="1722027936384" duration="608000" />
+      <workItem from="1722295794503" duration="6000" />
+      <workItem from="1722372107418" duration="2331000" />
+      <workItem from="1722430358895" duration="18478000" />
+      <workItem from="1722559112408" duration="4537000" />
+      <workItem from="1722629650416" duration="12215000" />
+      <workItem from="1722861146179" duration="14498000" />
+      <workItem from="1722983839639" duration="5195000" />
+      <workItem from="1723052851958" duration="3000" />
+      <workItem from="1723052863950" duration="31000" />
+      <workItem from="1723320602554" duration="24112000" />
+      <workItem from="1723511459564" duration="2717000" />
+      <workItem from="1723514910465" duration="48000" />
+      <workItem from="1723514966165" duration="6116000" />
     </task>
     <task id="LOCAL-00038" summary="ALmost have updater working ota.">
       <option name="closed" value="true" />
@@ -965,7 +965,31 @@
       <option name="project" value="LOCAL" />
       <updated>1718743839442</updated>
     </task>
-    <option name="localTasksCounter" value="84" />
+    <task id="LOCAL-00084" summary="Updated vacation message to include special text for the same day.">
+      <option name="closed" value="true" />
+      <created>1718895004566</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1718895004566</updated>
+    </task>
+    <task id="LOCAL-00085" summary="Added an explicit file close when writing the secrets file, and added error logging to file to the wifimgr library.">
+      <option name="closed" value="true" />
+      <created>1720650466991</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1720650466992</updated>
+    </task>
+    <task id="LOCAL-00086" summary="Modified to allow external CSS file to make editing easier than modifying code.">
+      <option name="closed" value="true" />
+      <created>1722524825743</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1722524825743</updated>
+    </task>
+    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -1001,9 +1025,6 @@
       <path value="$PROJECT_DIR$" />
       <path value="$PROJECT_DIR$/themeparkwaits" />
     </ignored-roots>
-    <MESSAGE value="Changed dependency to always copy all files since it wasn't picking up changed files." />
-    <MESSAGE value="Deleted bitmap file." />
-    <MESSAGE value="Adding vertical scrolling for splash screen." />
     <MESSAGE value="Moved lib into the src directory so that the live updating will catch new libraries." />
     <MESSAGE value="Added src/lib to the path so that libraries will load." />
     <MESSAGE value="Reduced bit depth to try and figure out cause of crashes." />
@@ -1026,13 +1047,16 @@
     <MESSAGE value="Turned off debug mode." />
     <MESSAGE value="Added name of park before wait times." />
     <MESSAGE value="Updated parsing to support parks with rides in lands and not in lands simultaneously. This was for the new Meet Beloved Disney Pals in EPCOT." />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated parsing to support parks with rides in lands and not in lands simultaneously. This was for the new Meet Beloved Disney Pals in EPCOT." />
+    <MESSAGE value="Updated vacation message to include special text for the same day." />
+    <MESSAGE value="Added an explicit file close when writing the secrets file, and added error logging to file to the wifimgr library." />
+    <MESSAGE value="Modified to allow external CSS file to make editing easier than modifying code." />
+    <option name="LAST_COMMIT_MESSAGE" value="Modified to allow external CSS file to make editing easier than modifying code." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
     <select />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1718744264453" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/ThemeParkAPI$.coverage" NAME=" Coverage Results" MODIFIED="1721311767465" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/test" />
   </component>
 </project>

@@ -40,11 +40,11 @@ from adafruit_matrixportal.matrixportal import MatrixPortal
 
 from src import theme_park_api, wifimgr
 from src.color_utils import ColorUtils
-from src.theme_park_api import set_system_clock, MatrixPortalDisplay
+from src.theme_park_api import set_system_clock
 from src.theme_park_api import ThemeParkList
 from src.theme_park_api import ThemePark
 from src.theme_park_api import Vacation
-from src.theme_park_api import AsyncScrollingDisplay
+from src.theme_park_display import AsyncScrollingDisplay, SimpleScrollingDisplay
 from src.theme_park_api import MessageQueue
 from src.theme_park_api import SettingsManager
 from src.theme_park_api import load_credentials
@@ -142,7 +142,7 @@ vacation_date.load_settings(settings)
 #
 def run_setup_message(setup_text, repeat_count):
     local_portal = MatrixPortal(status_neopixel=board.NEOPIXEL, debug=True)
-    local_display = MatrixPortalDisplay(local_portal, settings)
+    local_display = SimpleScrollingDisplay(local_portal, settings)
 
     for i in range(repeat_count):
         try:

@@ -1,17 +1,30 @@
+import asyncio
 import re
 import socketpool
 import storage
 import time
 import wifi
 import adafruit_logging as logging
+import adafruit_httpserver
+from adafruit_httpserver import (
+    Status,
+    REQUEST_HANDLED_RESPONSE_SENT,
+    Request,
+    Response,
+    Headers,
+    GET,
+    POST,
+    Server
+)
 
 logger = logging.getLogger('Test')
 # logger.setLevel(logging.ERROR)
 logger.setLevel(logging.DEBUG)
-#try:
+# try:
 #    logger.addHandler(logging.FileHandler("error_log"))
-#except OSError:
+# except OSError:
 #    print("Read-only file system")
+
 
 # extract access point mac address
 mac_ap = ' '.join([hex(i) for i in wifi.radio.mac_address_ap])
@@ -26,23 +39,24 @@ AP_AUTHMODES = [wifi.AuthMode.WPA2, wifi.AuthMode.PSK]
 FILE_NETWORK_PROFILES = "../secrets.py"
 ap_enabled = False
 server_socket = None
+web_server = Server(socketpool.SocketPool(wifi.radio), "/static", debug=False)
 
 
-# Fixed a bug where SSIDs and passwords couldn't have spaces or non alpha
+# Fixed a bug where SSIDs and passwords couldn't have spaces or non-alpha
 # characters.
 def url_decode(input_string):
-    input_string = input_string.replace('+', ' ')
+    output_string = input_string.replace('+', ' ')
     hex_chars = "0123456789abcdef"
     result = ""
     i = 0
-    while i < len(input_string):
-        if input_string[i] == "%" and i < len(input_string) - 2:
-            hex_value = input_string[i + 1:i + 3].lower()
+    while i < len(output_string):
+        if output_string[i] == "%" and i < len(output_string) - 2:
+            hex_value = output_string[i + 1:i + 3].lower()
             if all(c in hex_chars for c in hex_value):
                 result += chr(int(hex_value, 16))
                 i += 3
                 continue
-        result += input_string[i]
+        result += output_string[i]
         i += 1
     return result
 
@@ -152,8 +166,31 @@ def get_connection():
         else:
             connected = start_ap()
 
-        if connected:
-            return wifi.radio
+    if connected:
+        return wifi.radio
+
+
+def start_web_server(settings):
+    global web_server
+    logger.debug("starting web server..")
+    web_server.start(str(wifi.radio.ipv4_address_ap), 80)
+    logger.debug("Listening on http://%s:80" % str(wifi.radio.ipv4_address_ap))
+
+
+async def run_web_server(termination_func):
+    global web_server
+    logger.debug(f"Termination function is {termination_func()}")
+    # If you want you can stop the server by calling server.stop() anywhere in your code
+    while termination_func() is False and web_server.stopped is False:
+        try:
+            # Process any waiting HTTP requests
+            web_server.poll()
+            await asyncio.sleep(1)
+        except OSError as error:
+            logger.error(f"Web server loop stopped with error: {str(error)}")
+            # traceback.print_exc()
+            continue
+    logger.debug(f"Exiting wifimgr:run_web_server()")
 
 
 def handle_configure(client, request):
@@ -201,21 +238,21 @@ def handle_configure(client, request):
             profiles = {}
         write_result = write_profiles(ssid, password)
         response = get_new_html_head() + """\
-  <p>
-        """
+      <p>
+            """
         response = response + """\
-   Successfully connected to the WiFi network "%(ssid)s".
-        """ % dict(ssid=ssid)
+       Successfully connected to the WiFi network "%(ssid)s".
+            """ % dict(ssid=ssid)
 
-        if write_result is False:
-            logger.error('Failed to write wifi settings to file.')
-            response = response + """\
+    if write_result is False:
+        logger.error('Failed to write wifi settings to file.')
+        response = response + """\
     <br><br>
     Failed to save changes.
             """
         response = response + """\
-  </p>
-        """
+      </p>
+            """
         response = response + get_html_footer()
         send_response(client, response)
         time.sleep(30)
@@ -235,13 +272,13 @@ def handle_configure(client, request):
 
         response = get_new_html_head()
         response = response + """\
-    <h1>Could not connect to the WiFi network "%(ssid)s", probably because the password is incorrect.</h1>
-     <form>
-      <div>
-       <input type="button" value="Go back" onclick="history.back()">
-     </div>
-    </form>
-        """ % dict(ssid=ssid)
+        <h1>Could not connect to the WiFi network "%(ssid)s", probably because the password is incorrect.</h1>
+         <form>
+          <div>
+           <input type="button" value="Go back" onclick="history.back()">
+         </div>
+        </form>
+            """ % dict(ssid=ssid)
         response = response + get_html_footer()
         send_response(client, response)
         # print('Handle configure ended, no connection')
@@ -254,131 +291,101 @@ def handle_not_found(client, url):
 
 def get_html_footer():
     return """\
- <p class="footer">
-  <a href="https://github.com/dotpointer/circuitpython_wifimanager"
-   target="_blank" rel="noopener">dotpointer / circuitpython_wifimanager</a>
-  <br>
-  Based on <a href="https://github.com/tayfunulu/WiFiManager"
-  target="_blank" rel="noopener">tayfunulu / WiFiManager</a> and
-  <a href="https://github.com/cpopp/MicroPythonSamples"
-   target="_blank" rel="noopener">cpopp / MicroPythonSamples</a>
-  </p>
-</body>
-</html>
-    """
+     <p class="footer">
+     Inspired by this library: 
+      <a href="https://github.com/dotpointer/circuitpython_wifimanager"
+       target="_blank" rel="noopener">dotpointer/circuitpython_wifimanager</a>
+      <p>
+    </body>
+    </html>
+        """
 
 
 def get_new_html_head():
     data = """\
-<!DOCTYPE html>
-<html>
-<head>
-<title>TPW Wi-Fi Setup</title>
-<style>
-"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+    <title>TPW Wi-Fi Setup</title>
+    <style>
+    """
     f = open("src/wifi_style.css")
     data = data + f.read()
     f.close()
     data = data + """\
-</style>
-</head>
-<body>
-<h1>Wi-Fi Client Setup</h1>
-"""
+    </style>
+    </head>
+    <body>
+    <h1>Wi-Fi Client Setup</h1>
+    <hr>
+    """
     return data
 
 
-def get_html_head():
-    global AP_SSID
-    return """\
-<!DOCTYPE html>
-<html>
-<head>
-<title>""" + AP_SSID + """ - Wi-Fi client setup</title>
-<style>
-  a {
-  color:#fff;
-  }
-  a:hover {
-  color:#ddd;
-  }
-  h1 {
-  font-size: 28px;
-  }
-  body {
-  background:#1e1e1e;
-  border-bottom:10px solid #e71c8c;
-  color:#fff;
-  font-family:Arial, sans-serif;
-  font-size:24px;
-  margin:0;
-  padding:5px;
-  text-align:center;
-  }
-  button {
-  background:transparent;
-  border-radius:30px;
-  border:3px solid #fff;
-  color:#fff;
-  cursor:pointer;
-  font-weight:bold;
-  padding:5px 20px;
-  }
-  button:hover {
-  color:#000;
-  background:#fff
-  }
-  button, label {
-  cursor:pointer;
-  font-size: 24px;
-  }
-  html {
-  background-repeat:no-repeat;
-  background:#333;
-  height:100%;
-  margin:0;
-  }
-  input.text {
-  background:transparent;
-  border-radius:30px;
-  border:3px solid #fff;
-  color:#fff;
-  font-size: 24px;
-  font-weight:bold;
-  padding:3px 10px;
-  }
-  table {
-  margin-left:auto;
-  margin-right:auto;
-  }
-  .footer {
-  font-size:18px;
-  }
-  .network {
-  background:transparent;
-  border-radius:30px;
-  border:3px solid #fff;
-  color:#fff;
-  cursor:pointer;
-  display:inline-block;
-  font-weight:bold;
-  margin: 5px auto;
-  }
-  .network input[type="radio"] {
-  border:none;
-  cursor:pointer;
-  height: 17px;
-  outline:3px;
-  }
-  .network label {
-  display:inline-block;
-  padding:5px 20px;
-  }
-</style>
-</head>
-<body>
-<h1>""" + AP_SSID + """ - Wi-Fi client setup</h1>
-"""
+@web_server.route("/", [POST])
+def base(request: Request):
+    logger.debug("Wifi GUI webserver handing POST to /")
+
+    ssid = ""
+    password = ""
+    for name, value in request.form_data.items():
+        if name is "network":
+            ssid = url_decode(value)
+        if name is "password":
+            password = url_decode(value)
+
+    logger.debug(f"Network = {ssid} Password={password}")
+    if ssid != "" and password != "":
+        write_profiles(ssid,password)
+
+    response = get_new_html_head()
+    response += """
+    <div><p>Network configuration accepted.  Attempting to connect to Wifi Network.</p></div>
+    """
+    response = response + get_html_footer()
+    return adafruit_httpserver.Response(request, response, content_type="text/html")
+
+@web_server.route("/", [GET])
+def base(request: Request):
+    logger.debug("Wifi GUI webserver handing GET call to /")
+
+    wifi.radio.enabled = True
+    networks = []
+    for n in wifi.radio.start_scanning_networks():
+        # logger.debug("Found \"%s\", #%s" % (n.ssid, n.channel))
+        networks.append([n.ssid, n.channel])
+
+    wifi.radio.stop_scanning_networks()
+    response = get_new_html_head()
+    response = response + """\
+          <form action="/" method="post">
+           <div class="network">
+           <label for="network">Choose Wifi Network:</label>
+           <br>
+           <select class="dropdown" id="network" name="network">"""
+
+    while len(networks):
+        network = networks.pop(0)
+        response = response + """
+                <option value="{0}">{0}</option>
+                """.format(network[0])
+
+    response = response + """\
+            </select>
+            <div class="password"><label>Password:</label> <input class="text" name="password" type="password" ></div>
+            <div class=button_container>
+            <p><button>Connect</button></p></div>
+            </div>
+            <br>
+            </form>
+            """
+
+    if storage.getmount('/').readonly:
+        response = response + """\
+          <p>Warning, the file system is in read-only mode, settings will not be saved.</p>
+                """
+    response = response + get_html_footer()
+    return adafruit_httpserver.Response(request, response, content_type="text/html")
 
 
 def sendall(client, data):
@@ -411,34 +418,39 @@ def handle_root(client):
     send_header(client)
     sendall(client, get_new_html_head())
     sendall(client, """\
-  <form action="configure" method="post">
-    """)
+      <form action="configure" method="post">
+       <div class="network">
+       <label for="network">Choose Wifi Network:</label>
+       <br>
+       <select class="dropdown" id=network" name=network">
+        """)
     while len(networks):
         network = networks.pop(0)
         sendall(client, """\
-   <div class="network">
-    <input type="radio" id="ssid_{0}" name="ssid" value="{0}" />
-    <label for="ssid_{0}">{0} (#{1})</label>
-   </div>
-   <br>
-        """.format(network[0], network[1]))
+            <option value="{0}">{0}</option>
+            """.format(network[0]))
+
     sendall(client, """\
-   <div><p></p></div><div class="password"><label class="password">Password:</label> <input class="text" name="password" type="password" ></div>
-   <p><button>Connect</button></p>
-  </form>
-    """)
+            </select>
+            <div class="password"><label>Password:</label> <input class="text" name="password" type="password" ></div>
+            <div class=button_container>
+            <p><button>Connect</button></p></div>
+            </div>
+            <br>
+            </form>
+            """)
 
     if storage.getmount('/').readonly:
         sendall(client, """\
-  <p>Warning, the file system is in read-only mode, settings will not be saved.</p>
-        """)
+      <p>Warning, the file system is in read-only mode, settings will not be saved.</p>
+            """)
     else:
         sendall(client, """\
-  <p>
-   The SSID and password will be saved in the
-   "%(filename)s" on the device.
-  </p>
-        """ % dict(filename=FILE_NETWORK_PROFILES))
+      <p>
+       The SSID and password will be saved in the
+       "%(filename)s" on the device.
+      </p>
+            """ % dict(filename=FILE_NETWORK_PROFILES))
     sendall(client, get_html_footer())
     client.close()
     # print('Handle / end')
@@ -450,7 +462,7 @@ def read_profiles():
     print(secrets.secrets['password'])
     try:
         profiles[secrets.secrets['ssid']] = secrets.secrets['password']
-        #profiles[ssid] = password
+        # profiles[ssid] = password
     except OSError as e:
         logger.error(f"Error: {str(e)} reading secrets file.")
         profiles = {}
@@ -471,6 +483,25 @@ def send_response(client, payload, status_code=200):
     if content_length > 0:
         sendall(client, payload)
     client.close()
+
+
+def start_access_point(port=80):
+    global ap_enabled, server_socket, AP_AUTHMODES
+
+    wifi.radio.enabled = True
+    if ap_enabled is False:
+        # to use encrypted AP, use authmode=[wifi.AuthMode.WPA2, wifi.AuthMode.PSK]
+        if (AP_AUTHMODES[0] == wifi.AuthMode.OPEN):
+            wifi.radio.start_ap(ssid=AP_SSID, authmode=AP_AUTHMODES)
+        else:
+            wifi.radio.start_ap(ssid=AP_SSID, password=AP_PASSWORD, authmode=AP_AUTHMODES)
+        ap_enabled = True
+
+
+def stop_access_point():
+    global ap_enabled
+    wifi.radio.stop_ap()
+    ap_enabled = False
 
 
 def start_ap(port=80):
@@ -570,7 +601,6 @@ def start_ap(port=80):
     # machine.
     server_socket.close()
     client.close()
-
 
 def write_profiles(ssid, password):
     logger.debug('Write profiles start')
