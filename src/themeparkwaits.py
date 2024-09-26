@@ -10,6 +10,7 @@ sys.path.append('/src/lib')
 import os
 import gc
 import asyncio
+import traceback
 import mdns
 import time
 import traceback
@@ -171,8 +172,8 @@ def run_setup_message(setup_text, repeat_count):
             now = datetime.now()
 
         except RuntimeError as e:
-            # traceback.print_exc()
-            logger.error(str(e))
+            logger.error(f"Error running setup message: {str(e)}")
+            logger.error(f"Stack Trace: {traceback.format_exc()}")
 
 
 async def try_wifi_until_connected():
@@ -194,15 +195,18 @@ async def try_wifi_until_connected():
             wifi.radio.connect(ssid, password)
         except (RuntimeError) as e:
             logger.error(f"Wifi runtime error: {str(e)} at {wifi.radio.ipv4_address}")
+            logger.error(f"Stack Trace: {traceback.format_exc()}")
             await display.show_scroll_message(f"Wifi runtime error: {str(e)}")
         except (ConnectionError) as e:
             logger.error(f"Wifi connection error: {str(e)} at {wifi.radio.ipv4_address}")
+            logger.error(f"Stack Trace: {traceback.format_exc()}")
             if "Authentication" in str(e):
                 await display.show_scroll_message(f"Bad password.  Please reset the LED scroller using the INIT button as described in the instructions.")
             else:
                 await display.show_scroll_message(f"Wifi connection error: {str(e)}")
         except (ValueError) as e:
             logger.error(f"Wifi value error: {str(e)} at {wifi.radio.ipv4_address}")
+            logger.error(f"Stack Trace: {traceback.format_exc()}")
             await display.show_scroll_message(f"Wifi value error: {str(e)}")
 
 #             #  Give it a couple of attempts to connect before reporting an error
@@ -250,6 +254,7 @@ def configure_wifi():
 
         except OSError as e:
             logger.critical("Exception starting wifi access point and web server: {e}")
+            logger.critical(f"Stack Trace: {traceback.format_exc()}")
 
     # Now that we've got an ssid and password, time to connect to
     # the network.
@@ -303,8 +308,9 @@ async def update_live_wait_time():
         logger.info(f"Finished HTTP GET from {park_list.current_park.name}:{park_list.current_park.id}")
         park_list.current_park.update(json_response)
 
-    except OSError:
-        logger.critical("Unable to update ride times.")
+    except OSError as e:
+        logger.critical(f"Unable to update ride times: {str(e)}")
+        logger.critical(f"Stack Trace: {traceback.format_exc()}")
 
 
 def generate_main_page():
@@ -569,8 +575,8 @@ async def run_web_server():
 
         # If you want you can stop the server by calling server.stop() anywhere in your code
         except OSError as error:
-            logger.error(str(error))
-            # traceback.print_exc()
+            logger.error(f"Error getting web server poll result: {str(error)}")
+            logger.error(f"Stack Trace: {traceback.format_exc()}")
             continue
 
 
@@ -664,10 +670,11 @@ async def periodically_update_ride_times():
         except OSError as error:
             messages.init()
             messages.add_scroll_message("Unable to contact wait time server.  Will try again in 5 minutes.")
-            logger.error(str(error))
+            logger.error(f"Error contacting queue-times server: {str(error)}")
+            logger.error(f"Stack Trace: {traceback.format_exc()}")
         except RuntimeError as error:
-            logger.error(str(error))
-            traceback.print_exc()
+            logger.error(f"Error contacting queue-times server: {str(error)}")
+            logger.error(f"Stack Trace: {traceback.format_exc()}")
 
 try:
     # A list of all ~100 supported parks
@@ -680,6 +687,7 @@ try:
     park_list.load_settings(settings)
 except OSError as e:
     logger.critical(f"Caught exception OSError connecting to queue-times.com: {e}")
+    logger.error(f"Stack Trace: {traceback.format_exc()}")
     # messages.init()
     while True:
         asyncio.run(display.show_scroll_message("Unable to contact queue-times.com. Please verify Wifi network access and then restart the LED display."))
