@@ -26,6 +26,7 @@ debug : $(TEST_DIR)
 	cp -f $(SRC_DIR)/style.css $(TEST_DIR)/src
 	cp -f $(SRC_DIR)/wifi_style.css $(TEST_DIR)/src
 	cp -f $(SRC_DIR)/webgui.py $(TEST_DIR)/src
+	cp -f $(SRC_DIR)/ErrorHandler.py $(TEST_DIR)/src
 
 test: $(TEST_DIR)
 	cp -f boot.py $(TEST_DIR)
