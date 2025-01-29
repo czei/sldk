@@ -30,8 +30,8 @@ class ErrorHandler:
 
     def debug(self, message):
         print(message)
-        # with open(self.fileName, 'a') as file:
-        #     file.write(message + "\n")
+        with open(self.fileName, 'a') as file:
+            file.write(message + "\n")
 
     @staticmethod
     def info(message):
