@@ -3,12 +3,15 @@ from unittest import TestCase
 from urllib.request import urlopen, Request
 from src.async_http_request import async_read_url
 import ssl
+
+from src.shopify_connect import parse_order_date
+from src.shopify_connect import valid_subscription
 from src.theme_park_api import ThemePark, ColorUtils
 from src.theme_park_api import ThemeParkList
 from src.theme_park_api import Vacation
 import json
-import datetime
 from adafruit_datetime import datetime
+from adafruit_datetime import date
 from src.theme_park_api import SettingsManager
 from src.theme_park_api import load_credentials
 from src.theme_park_api import url_decode
@@ -413,6 +416,34 @@ class Test(TestCase):
         new_color = ColorUtils.scale_color("0xffa500", 1)
         self.assertTrue(new_color == "0xffa500")
 
+    async def test_shopify(self):
+        # Example Usage
+        json_string = """{
+            "data": {
+                "orders": {
+                    "edges": [
+                        {
+                            "node": {
+                                "name": "#1047",
+                                "processedAt": "2024-01-17T15:31:22Z"
+                            }
+                        }
+                    ]
+                }
+            }
+        }"""
+
+        subscription_date = parse_order_date(json_string)
+        self.assertTrue(subscription_date.year == 2024)
+        self.assertTrue(subscription_date.month == "01")
+        self.assertTrue(subscription_date.day == "17")
+
+        test_date = date(2024, 1, 19)
+        self.assertTrue(valid_subscription(subscription_date, test_date) is True)
+
+        test_date = date(2024, 2, 19)
+        self.assertTrue(valid_subscription(subscription_date, test_date) is False)
+
     def test_async_http(self):
 
         # Connecting to sockets is different from an actual OS not
@@ -451,3 +482,4 @@ async def test_http_read(test_class, domain, path):
     head, body = await async_read_url(domain, path)
     test_class.header = head
     test_class.body = body
+

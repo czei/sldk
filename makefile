@@ -17,6 +17,8 @@ release: $(SRC_DIR)/*.py
 
 # Copy files to the connected MatrixPortal S3
 debug : $(TEST_DIR)
+	cp -f boot.py $(TEST_DIR)
+	cp -f code.py $(TEST_DIR)
 	cp -f $(SRC_DIR)/theme_park_api.py $(TEST_DIR)/src
 	cp -f $(SRC_DIR)/themeparkwaits.py $(TEST_DIR)/src
 	cp -f $(SRC_DIR)/theme_park_display.py $(TEST_DIR)/src
@@ -27,6 +29,7 @@ debug : $(TEST_DIR)
 	cp -f $(SRC_DIR)/wifi_style.css $(TEST_DIR)/src
 	cp -f $(SRC_DIR)/webgui.py $(TEST_DIR)/src
 	cp -f $(SRC_DIR)/ErrorHandler.py $(TEST_DIR)/src
+	cp -f $(SRC_DIR)/shopify_connect.py $(TEST_DIR)/src
 
 test: $(TEST_DIR)
 	cp -f boot.py $(TEST_DIR)
