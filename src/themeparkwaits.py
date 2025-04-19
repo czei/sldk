@@ -284,7 +284,7 @@ mdns_server.hostname = settings.settings["domain_name"]
 mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=80)
 
 
-# TODO Convert to non-blocking
+# @TODO Convert to non-blocking
 # https://docs.circuitpython.org/en/latest/shared-bindings/socketpool/index.html
 #
 async def update_live_wait_time():
@@ -391,15 +391,15 @@ def generate_main_page():
     page += "<p>"
     page += "</p>"
 
-    page += "<h2>Subscription</h2>"
-    page += "<div>"
-    page += "<p>"
-    page += "<label for=\"Name\">Email:</label>"
-    page += f"<input type=\"text\" name=\"email\" style=\"text-align: left;\" value=\"{settings.settings["email"]}\">"
-    page += "</p>"
-    page += "<p>"
-    page += "<label for=\"Status\">Status:</label>"
-    page += f"{settings.settings["subscription_status"]}"
+    # page += "<h2>Subscription</h2>"
+    # page += "<div>"
+    # page += "<p>"
+    # page += "<label for=\"Name\">Email:</label>"
+    # page += f"<input type=\"text\" name=\"email\" style=\"text-align: left;\" value=\"{settings.settings["email"]}\">"
+    # page += "</p>"
+    # page += "<p>"
+    # page += "<label for=\"Status\">Status:</label>"
+    # page += f"{settings.settings["subscription_status"]}"
 
     page += "<p>"
     page += "<label for=\"Submit\"></label>"
@@ -536,6 +536,7 @@ def base(request: Request):
 
 @web_server.route("/", [GET])
 def base(request: Request):
+    global http_requests
     if len(request.query_params) > 0:
         vacation_date.parse(str(request.query_params))
         park_list.parse(str(request.query_params))
@@ -551,7 +552,7 @@ def base(request: Request):
         src.shopify_connect.parse_form_params(settings, str(request.query_params))
 
         # Get the subscription status
-        update_subscription_status(settings, http_requests)
+        # update_subscription_status(settings, http_requests)
         # Save the settings to disk
         try:
             settings.save_settings()
@@ -649,13 +650,14 @@ async def update_ride_times_wrapper():
     messages.regenerate_flag = False
     await asyncio.sleep(0)  # let other tasks run
 
-    sub_status = settings.settings["subscription_status"]
-    if sub_status is "Subscribed":
-        await messages.add_rides(park_list)
-    else:
-        messages.add_scroll_message(f"No subscription for email {settings.settings['email']}.")
-        messages.add_scroll_message("Check subscription at themeparkwaits.com")
+    # sub_status = settings.settings["subscription_status"]
+    # if sub_status is "Subscribed":
+    #     await messages.add_rides(park_list)
+    # else:
+    #     messages.add_scroll_message(f"No subscription for email {settings.settings['email']}.")
+    #     messages.add_scroll_message("Check subscription at themeparkwaits.com")
 
+    await messages.add_rides(park_list)
     await messages.add_vacation(vacation_date)
     messages.add_scroll_message(f"Configure at: http://{settings.settings["domain_name"]}.local")
     await messages.add_splash(2)
@@ -679,6 +681,7 @@ def run_garbage_collector():
     return mem_free
 
 async def periodically_update_subscription_status():
+    global http_requests
     while True:
         try:
             update_subscription_status(settings, http_requests)
