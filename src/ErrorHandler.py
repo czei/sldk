@@ -5,7 +5,7 @@ class ErrorHandler:
     def __init__(self, file_name):
         self.fileName = file_name
         if self.file_exists(file_name) is False:
-            with open(self.fileName, 'w') as file:
+            with open(self.fileName, 'w', encoding='utf-8') as file:
                 file.write('')  # Creates an empty file
 
     @staticmethod
@@ -27,21 +27,26 @@ class ErrorHandler:
         # Write to filesystem when it is write-enabled
         # Print to screen with read-only
         try:
-            with open(self.fileName, 'a') as file:
+            with open(self.fileName, 'a', encoding='utf-8', errors='replace') as file:
                 file.write(except_str + "\n")
                 file.write(st_str + "\n")
         except OSError:
             print(st_str)
-            print("UnicodeEncodeError")
+            print("Error writing to log file")
 
     def debug(self, message):
         print(message)
-        # try:
-        #     with open(self.fileName, 'a') as file:
-        #         file.write(message + "\n")
-        # except OSError:
-        #     print(message)
+        self.write_to_file(message)
 
-    @staticmethod
-    def info(message):
+    def write_to_file(self, message):
+        # Write to filesystem when it is write-enabled
+        # Print to screen with read-only
+        try:
+            with open(self.fileName, 'a', encoding='utf-8', errors='replace') as file:
+                file.write(message + "\n")
+        except OSError:
+            print("Error writing to log file")
+
+    def info(self, message):
         print(message)
+        self.write_to_file(message)

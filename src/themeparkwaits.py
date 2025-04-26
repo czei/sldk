@@ -4,7 +4,6 @@
 # Copyright 2024 3DUPFitters LLC
 #
 import sys
-
 sys.path.append('/src/lib')
 # import board
 import gc
@@ -34,7 +33,7 @@ from adafruit_matrixportal.matrixportal import MatrixPortal
 
 from src import theme_park_api, wifimgr
 from src.color_utils import ColorUtils
-from src.theme_park_api import set_system_clock, update_subscription_status
+from src.theme_park_api import set_system_clock
 from src.theme_park_api import ThemeParkList
 from src.theme_park_api import ThemePark
 from src.theme_park_api import Vacation
@@ -47,7 +46,6 @@ from src.theme_park_api import url_decode
 from src.webgui import generate_header
 from src.theme_park_api import Timer
 from src.ota_updater import OTAUpdater
-from src.theme_park_api import update_subscription_status
 import src.shopify_connect
 
 logger = ErrorHandler("error_log")
@@ -252,6 +250,22 @@ def configure_wifi():
     # the network.
     asyncio.run(asyncio.gather(try_wifi_until_connected()))
 
+# //TODO - Implement retries on updating the times
+# import time
+#
+# def safe_get(requests, url, retries=3, delay=5):
+#     for attempt in range(retries):
+#         try:
+#             response = requests.get(url)
+#             return response
+#         except OSError as e:
+#             print(f"Request failed: {e}, retrying in {delay} seconds...")
+#             time.sleep(delay)
+#     return None
+#
+# if not wifi.radio.connected:
+#     wifi.radio.connect(ssid, password)
+#
 
 async def run_configure_wifi_message():
     while is_wifi_password_configured() is False:
@@ -271,7 +285,14 @@ def is_wifi_password_configured() -> bool:
     return is_configured
 
 
-http_requests = adafruit_requests.Session(socket_pool, ssl.create_default_context())
+# Create the HTTP session function to ensure proper context management
+def create_http_session():
+    """Create and return a new HTTP session with SSL context"""
+    return adafruit_requests.Session(socket_pool, ssl.create_default_context())
+
+
+# Initialize the global session
+http_requests = create_http_session()
 web_server = adafruit_httpserver.Server(socket_pool, "/static", debug=False)
 
 # Prompt for wifi configure if not exists, and then configure
@@ -284,37 +305,141 @@ mdns_server.hostname = settings.settings["domain_name"]
 mdns_server.advertise_service(service_type="_http", protocol="_tcp", port=80)
 
 
+# Function to check for DNS resolution issues
+def check_internet_connectivity():
+    """
+    Checks if the device can resolve domain names. Returns True if able to resolve,
+    False if not.
+    """
+    try:
+        # Try to resolve a well-known domain using socket_pool instead of wifi.radio
+        socket_pool.getaddrinfo("queue-times.com", 443)
+        return True
+    except OSError as e:
+        # DNS resolution failed
+        logger.error(e, "DNS resolution failed for queue-times.com")
+        return False
+
+
+# Function to reconnect wifi if needed
+async def ensure_network_connectivity():
+    """
+    Ensures network connectivity is available, reconnecting if needed.
+    Returns True if connectivity is restored, False otherwise.
+    """
+    # First check if we're already connected
+    if wifi.radio.connected:
+        # Test if DNS resolution works
+        if check_internet_connectivity():
+            return True
+
+        # If we're connected but can't resolve DNS, try to reconnect
+        logger.info("Connected to WiFi but DNS resolution failed, reconnecting...")
+        try:
+            wifi.radio.enabled = False
+            await asyncio.sleep(2)
+            wifi.radio.enabled = True
+            await asyncio.sleep(2)
+        except Exception as e:
+            logger.error(e, "Error cycling WiFi radio")
+
+    # Try to reconnect to WiFi
+    await try_wifi_until_connected()
+
+    # Test connectivity again after reconnection attempt
+    await asyncio.sleep(5)  # Give it time to establish DNS
+    return check_internet_connectivity()
+
+
+# Define function to recreate HTTP session
+def recreate_http_session():
+    """Recreate the HTTP session and return it"""
+    global http_requests
+    http_requests = create_http_session()
+    logger.info("HTTP session recreated")
+    return http_requests
+
+
 # @TODO Convert to non-blocking
 # https://docs.circuitpython.org/en/latest/shared-bindings/socketpool/index.html
 #
 async def update_live_wait_time():
-    await try_wifi_until_connected()
-    global http_requests
+    """Update live wait times for the current park, with proper error handling and session management"""
     if park_list.current_park.id <= 0:
         return
-    try:
-        logger.info(f"About to start HTTP GET for Park {park_list.current_park.name}:{park_list.current_park.id}")
-        local_url = park_list.current_park.get_url()
-        logger.info(f"From URL: {local_url}")
-        is_updated = False
-        with http_requests.get(local_url) as local_response:
-            logger.info(f"Finished HTTP GET from {park_list.current_park.name}:{park_list.current_park.id}")
-            logger.info(f"HTTP status code: {local_response.status_code}")
-            if local_response.status_code is not 200:
-                logger.error(f"HTTP GET code {local_response.status_code} failed for {park_list.current_park.name}:{park_list.current_park.id}")
+
+    # Max retries for connection errors
+    max_retries = 3
+    retry_count = 0
+
+    while retry_count <= max_retries:
+        # Ensure we have network connectivity before attempting HTTP requests
+        network_ok = await ensure_network_connectivity()
+        if not network_ok:
+            logger.error("Network connectivity check failed, waiting before retry...")
+            await display.show_scroll_message("Network DNS issues - trying to reconnect...")
+            retry_count += 1
+            if retry_count <= max_retries:
+                await asyncio.sleep(5)  # Wait before retry
+                continue
             else:
-                park_list.current_park.update(local_response.json())
-                is_updated = True
+                logger.error("Max retries reached for network connectivity, giving up")
+                return
 
-        if is_updated is False:
-            logger.error(f"HTTP GET failed for {park_list.current_park.name}:{park_list.current_park.id}")
+        try:
+            logger.info(f"About to start HTTP GET for Park {park_list.current_park.name}:{park_list.current_park.id}")
+            local_url = park_list.current_park.get_url()
+            logger.info(f"From URL: {local_url}")
+            is_updated = False
 
-    except RuntimeError as e:
-        http_requests = adafruit_requests.Session(socket_pool, ssl.create_default_context())
-        logger.error(e, "RuntimeError: Unable to update ride times.")
-    except OSError as e:
-        http_requests = adafruit_requests.Session(socket_pool, ssl.create_default_context())
-        logger.error(e, "OSError: Unable to update ride times.")
+            # Use the global session with proper context management
+            with http_requests.get(local_url) as local_response:
+                logger.info(f"Finished HTTP GET from {park_list.current_park.name}:{park_list.current_park.id}")
+                logger.info(f"HTTP status code: {local_response.status_code}")
+                if local_response.status_code is not 200:
+                    logger.error(f"HTTP GET code {local_response.status_code} failed for {park_list.current_park.name}:{park_list.current_park.id}")
+                else:
+                    park_list.current_park.update(local_response.json())
+                    is_updated = True
+                    # Force garbage collection after JSON processing
+                    run_garbage_collector()
+
+            if is_updated is False:
+                logger.error(f"HTTP GET failed for {park_list.current_park.name}:{park_list.current_park.id}")
+            else:
+                # Success, exit the retry loop
+                break
+
+        except (RuntimeError, OSError) as e:
+            # Log the error
+            error_type = "RuntimeError" if isinstance(e, RuntimeError) else "OSError"
+            error_message = str(e)
+            logger.error(e, f"{error_type}: Unable to update ride times: {error_message}")
+
+            # Special handling for DNS resolution errors
+            if "Name or service not known" in error_message or "gaierror" in error_message:
+                logger.info("DNS resolution error detected, will attempt to reconnect network")
+                await display.show_scroll_message("DNS error - reconnecting network...")
+                # Don't recreate the session yet, first try to fix network connectivity
+                await asyncio.sleep(2)
+            else:
+                # Close and recreate the session for other types of errors
+                try:
+                    # Create a new session (old one will be garbage collected)
+                    recreate_http_session()
+                except Exception as session_error:
+                    logger.error(session_error, "Error recreating HTTP session")
+
+            retry_count += 1
+            if retry_count <= max_retries:
+                logger.info(f"Retrying connection {retry_count}/{max_retries}...")
+                await asyncio.sleep(3 * retry_count)  # Increasing backoff time
+            else:
+                logger.error("Max retries reached, giving up on update")
+                await display.show_scroll_message("Unable to update ride times - network issues")
+
+    # Force garbage collection after all network operations
+    run_garbage_collector()
 
 
 def generate_main_page():
@@ -536,7 +661,6 @@ def base(request: Request):
 
 @web_server.route("/", [GET])
 def base(request: Request):
-    global http_requests
     if len(request.query_params) > 0:
         vacation_date.parse(str(request.query_params))
         park_list.parse(str(request.query_params))
@@ -599,6 +723,39 @@ async def run_web_server():
         except OSError as e:
             logger.error(e, "Problem in run_web_server")
             continue
+
+
+async def network_monitor():
+    """Periodically checks network connectivity and attempts to fix DNS issues"""
+    last_check_time = 0
+    check_interval = 60 * 30  # 30 minutes
+
+    while True:
+        current_time = time.monotonic()
+        # Only check periodically to avoid unnecessary overhead
+        if current_time - last_check_time > check_interval:
+            last_check_time = current_time
+
+            # Check connectivity only if connected to WiFi
+            if wifi.radio.connected:
+                network_ok = check_internet_connectivity()
+                if not network_ok:
+                    logger.info("Periodic network check: DNS resolution failed, attempting to recover")
+                    # Attempt to fix network connectivity
+                    try:
+                        # Reset WiFi radio
+                        wifi.radio.enabled = False
+                        await asyncio.sleep(2)
+                        wifi.radio.enabled = True
+                        await asyncio.sleep(5)  # Wait for reconnection
+
+                        # Recreate the HTTP session
+                        recreate_http_session()
+                        logger.info("Network recovery: WiFi reset and HTTP session recreated")
+                    except Exception as e:
+                        logger.error(e, "Error during network recovery")
+
+        await asyncio.sleep(5)  # Light sleep before checking conditions again
 
 
 async def run_display():
@@ -680,20 +837,6 @@ def run_garbage_collector():
         logger.error(f"GC took {elapsed_time} seconds")
     return mem_free
 
-async def periodically_update_subscription_status():
-    global http_requests
-    while True:
-        try:
-            update_subscription_status(settings, http_requests)
-
-            # Check once a day for subscription status changes
-            await asyncio.sleep(60*60*24)
-        except OSError as e:
-            messages.init()
-            messages.add_scroll_message("Unable to update subscription status.")
-            logger.error(e, "OSError: Unable to contact Shopify GraphQL API")
-
-
 async def periodically_update_ride_times():
     """
     If the user has selected a park, update the ride values ever so often.
@@ -748,7 +891,7 @@ except OSError as e:
 asyncio.run(asyncio.gather(download_and_install_update_if_available()))
 
 # check to see if the user has paid for a subscription
-update_subscription_status(settings, http_requests)
+# update_subscription_status(settings, http_requests)
 
 # Start the web server GUI
 start_web_server(web_server, wifi.radio.ipv4_address)
@@ -756,7 +899,6 @@ start_web_server(web_server, wifi.radio.ipv4_address)
 asyncio.run(asyncio.gather(
     run_display(),
     run_web_server(),
-    periodically_update_subscription_status()
 ))
 
 # Removed because updating ride times was blocking the display from running

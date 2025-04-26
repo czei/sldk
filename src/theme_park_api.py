@@ -12,7 +12,6 @@ sys.path.append('/src/lib')
 import asyncio
 from adafruit_datetime import datetime
 from src.color_utils import ColorUtils
-from src.shopify_connect import is_subscription_active
 
 import json
 import time
@@ -29,17 +28,6 @@ except ModuleNotFoundError:
         class RTC:
             def __init__(self):
                 self.datetime = datetime()
-
-
-#'Red': '0xcc3333',
-
-def update_subscription_status(sm, http_requests):
-    email = sm.settings["email"]
-    status = is_subscription_active(http_requests, email)
-    if status is True:
-        sm.settings["subscription_status"] = "Subscribed"
-    else:
-        sm.settings["subscription_status"] = "Unsubscribed"
 
 def set_system_clock(http_requests):
     # Set device time from the internet
