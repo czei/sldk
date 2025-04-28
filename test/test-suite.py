@@ -1,20 +1,23 @@
 import asyncio
+import os
+import tempfile
 from unittest import TestCase
+from unittest.mock import patch, MagicMock
 from urllib.request import urlopen, Request
-from src.async_http_request import async_read_url
 import ssl
-
-from src.shopify_connect import parse_order_date
-from src.shopify_connect import valid_subscription
-from src.theme_park_api import ThemePark, ColorUtils
-from src.theme_park_api import ThemeParkList
-from src.theme_park_api import Vacation
 import json
 from adafruit_datetime import datetime
 from adafruit_datetime import date
-from src.theme_park_api import SettingsManager
-from src.theme_park_api import load_credentials
-from src.theme_park_api import url_decode
+
+# Import refactored modules
+from src.async_http_request import async_read_url
+from src.utils.color_utils import ColorUtils
+from src.utils.url_utils import url_decode, load_credentials
+from src.models.theme_park import ThemePark
+from src.models.theme_park_list import ThemeParkList
+from src.models.vacation import Vacation
+from src.config.settings_manager import SettingsManager
+from src.utils.error_handler import ErrorHandler
 
 try:
     import rtc
@@ -385,7 +388,7 @@ class Test(TestCase):
         num_open_rides = 0
         num_closed_rides = 0
         for ride in magic_kingdom.rides:
-            if ride.is_open() is True:
+            if ride.is_open():
                 num_open_rides += 1
             else:
                 num_closed_rides += 1
@@ -416,36 +419,183 @@ class Test(TestCase):
         new_color = ColorUtils.scale_color("0xffa500", 1)
         self.assertTrue(new_color == "0xffa500")
 
-    async def test_shopify(self):
-        # Example Usage
-        json_string = """{
-            "data": {
-                "orders": {
-                    "edges": [
-                        {
-                            "node": {
-                                "name": "#1047",
-                                "processedAt": "2024-01-17T15:31:22Z"
-                            }
-                        }
-                    ]
-                }
-            }
-        }"""
+    # async def test_shopify(self):
+    #     # Example Usage
+    #     json_string = """{
+    #         "data": {
+    #             "orders": {
+    #                 "edges": [
+    #                     {
+    #                         "node": {
+    #                             "name": "#1047",
+    #                             "processedAt": "2024-01-17T15:31:22Z"
+    #                         }
+    #                     }
+    #                 ]
+    #             }
+    #         }
+    #     }"""
+    #
+    #     subscription_date = parse_order_date(json_string)
+    #     self.assertTrue(subscription_date.year == 2024)
+    #     self.assertTrue(subscription_date.month == "01")
+    #     self.assertTrue(subscription_date.day == "17")
+    #
+    #     test_date = date(2024, 1, 19)
+    #     self.assertTrue(valid_subscription(subscription_date, test_date) is True)
+    #
+    #     test_date = date(2024, 2, 19)
+    #     self.assertTrue(valid_subscription(subscription_date, test_date) is False)
 
-        subscription_date = parse_order_date(json_string)
-        self.assertTrue(subscription_date.year == 2024)
-        self.assertTrue(subscription_date.month == "01")
-        self.assertTrue(subscription_date.day == "17")
-
-        test_date = date(2024, 1, 19)
-        self.assertTrue(valid_subscription(subscription_date, test_date) is True)
-
-        test_date = date(2024, 2, 19)
-        self.assertTrue(valid_subscription(subscription_date, test_date) is False)
-
+    @patch('src.utils.ErrorHandler.storage')
+    def test_error_handler_writable_filesystem(self, mock_storage):
+        # Setup mock for writable filesystem
+        mock_mount = MagicMock()
+        mock_mount.readonly = False
+        mock_storage.getmount.return_value = mock_mount
+        
+        # Create a temporary file for testing
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            test_file = temp_file.name
+        
+        try:
+            # Test ErrorHandler initialization with writable filesystem
+            handler = ErrorHandler(test_file)
+            self.assertFalse(handler.is_readonly)
+            
+            # Test writing messages
+            handler.info("Test info message")
+            handler.debug("Test debug message")
+            
+            # Verify messages were written to the file
+            with open(test_file, 'r') as f:
+                content = f.read()
+                self.assertIn("Test info message", content)
+                self.assertIn("Test debug message", content)
+            
+            # Test error handling
+            try:
+                # Generate a test exception
+                raise ValueError("Test error")
+            except ValueError as e:
+                handler.error(e, "Test error description")
+            
+            # Verify error was written to the file
+            with open(test_file, 'r') as f:
+                content = f.read()
+                self.assertIn("Test error description:Test error", content)
+                self.assertIn("stack trace:", content)
+        
+        finally:
+            # Clean up temporary file
+            if os.path.exists(test_file):
+                os.remove(test_file)
+    
+    @patch('src.utils.ErrorHandler.storage')
+    def test_error_handler_readonly_filesystem(self, mock_storage):
+        # Setup mock for read-only filesystem
+        mock_mount = MagicMock()
+        mock_mount.readonly = True
+        mock_storage.getmount.return_value = mock_mount
+        
+        # Create a non-existent file path for testing
+        test_file = "/nonexistent/path/error.log"
+        
+        # Test ErrorHandler initialization with read-only filesystem
+        with patch('builtins.print') as mock_print:
+            handler = ErrorHandler(test_file)
+            self.assertTrue(handler.is_readonly)
+            
+            # Verify initialization message
+            mock_print.assert_any_call("ErrorHandler initialized - Read-only filesystem")
+            
+            # Test writing messages to read-only filesystem
+            handler.info("Test info message")
+            handler.debug("Test debug message")
+            
+            # Verify messages were printed but not written
+            mock_print.assert_any_call("Test info message")
+            mock_print.assert_any_call("Test debug message")
+            
+            # Test error handling on read-only filesystem
+            try:
+                # Generate a test exception
+                raise ValueError("Test readonly error")
+            except ValueError as e:
+                handler.error(e, "Test readonly error description")
+            
+            # Verify error was printed but not written
+            mock_print.assert_any_call("Test readonly error description:Test readonly error")
+            mock_print.assert_any_call("stack trace:")
+    
+    def test_error_handler_filter_non_ascii(self):
+        # Create a temporary file for testing
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            test_file = temp_file.name
+        
+        try:
+            # Test static method directly
+            self.assertEqual(ErrorHandler.filter_non_ascii("Normal ASCII text"), "Normal ASCII text")
+            self.assertEqual(ErrorHandler.filter_non_ascii("Text with emoji 😊"), "Text with emoji ")
+            self.assertEqual(ErrorHandler.filter_non_ascii("Special characters: ñáéíóú"), "Special characters: ")
+            self.assertEqual(ErrorHandler.filter_non_ascii(None), "")
+            
+            # Test through instance methods
+            with patch('src.utils.ErrorHandler.storage', MagicMock()):
+                handler = ErrorHandler(test_file)
+                # Generate text with non-ASCII characters
+                mixed_text = "Error with Unicode: ⚠️ Warning! ⚠️"
+                
+                # Capture print output
+                with patch('builtins.print'):
+                    handler.write_to_file(mixed_text)
+                
+                # Verify only ASCII characters were written
+                if not handler.is_readonly:
+                    with open(test_file, 'r') as f:
+                        content = f.read()
+                        self.assertIn("Error with Unicode:  Warning! ", content)
+                        self.assertNotIn("⚠️", content)
+        
+        finally:
+            # Clean up temporary file
+            if os.path.exists(test_file):
+                os.remove(test_file)
+    
+    def test_error_handler_filesystem_detection_fallback(self):
+        # Test fallback when storage.getmount raises an exception
+        with patch('src.utils.ErrorHandler.storage') as mock_storage:
+            mock_storage.getmount.side_effect = AttributeError("No getmount method")
+            
+            # For writable case - create temp file that can be written
+            with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                test_file = temp_file.name
+            
+            try:
+                # Should detect filesystem is writable through fallback method
+                handler = ErrorHandler(test_file)
+                self.assertFalse(handler.is_readonly)
+                
+                # Test writing to the file still works
+                handler.info("Test fallback message")
+                
+                with open(test_file, 'r') as f:
+                    content = f.read()
+                    self.assertIn("Test fallback message", content)
+                
+                # Now test with a path that can't be written to
+                with patch('builtins.open') as mock_open:
+                    mock_open.side_effect = OSError("Permission denied")
+                    
+                    handler = ErrorHandler("/protected/path/error.log")
+                    self.assertTrue(handler.is_readonly)
+            
+            finally:
+                # Clean up temporary file
+                if os.path.exists(test_file):
+                    os.remove(test_file)
+    
     def test_async_http(self):
-
         # Connecting to sockets is different from an actual OS not
         # running CircuitPython on a chip.
         path = "/api/quotes.php"

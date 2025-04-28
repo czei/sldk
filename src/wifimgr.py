@@ -39,7 +39,7 @@ AP_AUTHMODES = [wifi.AuthMode.WPA2, wifi.AuthMode.PSK]
 FILE_NETWORK_PROFILES = "../secrets.py"
 ap_enabled = False
 server_socket = None
-web_server = Server(socketpool.SocketPool(wifi.radio), "/static", debug=False)
+web_server = Server(socketpool.SocketPool(wifi.radio), "/www", debug=False)
 
 
 # Fixed a bug where SSIDs and passwords couldn't have spaces or non-alpha
@@ -309,9 +309,15 @@ def get_new_html_head():
     <title>TPW Wi-Fi Setup</title>
     <style>
     """
-    f = open("src/wifi_style.css")
-    data = data + f.read()
-    f.close()
+    try:
+        f = open("www/wifi_style.css")
+        data = data + f.read()
+        f.close()
+    except OSError:
+        # Fallback to src directory if file not found in www
+        f = open("src/wifi_style.css")
+        data = data + f.read()
+        f.close()
     data = data + """\
     </style>
     </head>

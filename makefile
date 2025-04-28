@@ -16,22 +16,15 @@ release: $(SRC_DIR)/*.py
 	cp -rf $(SRC_DIR) $(RELEASE_DESTDIR)
 
 # Copy files to the connected MatrixPortal S3
-debug : $(TEST_DIR)
+copy_to_circuitpy : $(TEST_DIR)
 	cp -f boot.py $(TEST_DIR)
 	cp -f code.py $(TEST_DIR)
-	cp -f $(SRC_DIR)/theme_park_api.py $(TEST_DIR)/src
-	cp -f $(SRC_DIR)/themeparkwaits.py $(TEST_DIR)/src
-	cp -f $(SRC_DIR)/theme_park_display.py $(TEST_DIR)/src
-	cp -f $(SRC_DIR)/wifimgr.py $(TEST_DIR)/src
-	cp -f $(SRC_DIR)/ota.py $(TEST_DIR)/src
-	cp -f $(SRC_DIR)/ota_updater.py $(TEST_DIR)/src
-	cp -f $(SRC_DIR)/style.css $(TEST_DIR)/src
-	cp -f $(SRC_DIR)/wifi_style.css $(TEST_DIR)/src
-	cp -f $(SRC_DIR)/webgui.py $(TEST_DIR)/src
-	cp -f $(SRC_DIR)/ErrorHandler.py $(TEST_DIR)/src
-	cp -f $(SRC_DIR)/shopify_connect.py $(TEST_DIR)/src
-
-test: $(TEST_DIR)
-	cp -f boot.py $(TEST_DIR)
-	cp -f code.py $(TEST_DIR)
-	cp -rf $(SRC_DIR) $(TEST_DIR)
+	rsync -av --update --progress $(SRC_DIR)/../www $(TEST_DIR)
+	rsync -av --update --progress \
+		--exclude='lib/' \
+		--exclude='images/' \
+		--exclude='fonts/' \
+		--exclude='.DS_STORE' \
+		--exclude="__pycache__" \
+		--exclude="__init__.py" \
+		$(SRC_DIR)/ $(TEST_DIR)/src/

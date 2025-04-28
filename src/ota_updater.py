@@ -25,7 +25,7 @@ class OTAUpdater:
     def __del__(self):
         self.http_client = None
 
-    def check_for_update_to_install_during_next_reboot(self) -> bool:
+    def check_for_update_to_install_during_next_reboot(self):
         """Function which will check the GitHub repo if there is a newer version available.
         
         This method expects an active internet connection and will compare the current 
@@ -49,11 +49,11 @@ class OTAUpdater:
 
         return False
 
-    def update_available_at_boot(self)->bool:
+    def update_available_at_boot(self):
         is_available = self.new_version_dir in os.listdir(self.module) and '.version' in os.listdir(self.modulepath(self.new_version_dir))
         return is_available
 
-    def install_update_if_available_after_boot(self, ssid, password) -> bool:
+    def install_update_if_available_after_boot(self, ssid, password):
         """This method will install the latest version if out-of-date after boot.
         
         This method, which should be called first thing after booting, will check if the 
@@ -74,7 +74,7 @@ class OTAUpdater:
         print('No new updates found...')
         return False
 
-    def install_update_if_available(self) -> bool:
+    def install_update_if_available(self):
         """This method will immediately install the latest version if out-of-date.
         
         This method expects an active internet connection and allows you to decide yourself
@@ -216,7 +216,7 @@ class OTAUpdater:
                 os.remove(directory + '/' + entry)
         os.rmdir(directory)
 
-    def _os_supports_rename(self) -> bool:
+    def _os_supports_rename(self):
         self._mk_dirs('otaUpdater/osRenameTest')
         os.rename('otaUpdater', 'otaUpdated')
         result = len(os.listdir('otaUpdated')) > 0
@@ -253,14 +253,14 @@ class OTAUpdater:
             toFile.close()
         fromFile.close()
 
-    def _exists_dir(self, path) -> bool:
+    def _exists_dir(self, path):
         try:
             os.listdir(path)
             return True
         except:
             return False
 
-    def _mk_dirs(self, path:str):
+    def _mk_dirs(self, path):
         paths = path.split('/')
 
         pathToCreate = ''
@@ -269,7 +269,7 @@ class OTAUpdater:
             pathToCreate = pathToCreate + x + '/'
 
     # different micropython versions act differently when directory already exists
-    def mkdir(self, path:str):
+    def mkdir(self, path):
         try:
             os.mkdir(path)
         except OSError as exc:

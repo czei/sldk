@@ -15,7 +15,7 @@ from src.color_utils import ColorUtils
 
 import json
 import time
-from src.ErrorHandler import ErrorHandler
+from src.utils.error_handler import ErrorHandler
 logger = ErrorHandler("error_log")
 
 try:
@@ -72,30 +72,58 @@ class ThemeParkList:
         self.skip_meet = False
         self.skip_closed = False
 
-        for company in json_response:
-            for parks in company:
-                if parks == "parks":
-                    park = company[parks]
-                    name = ""
-                    park_id = 0
-                    latitude = 0
-                    longitude = 0
-                    for item in park:
-                        # logger.debug(f"park = {item}")
-                        for element in item:
-                            if element == "name":
-                                name = item[element]
-                            if element == "id":
-                                park_id = item[element]
-                            if element == "latitude":
-                                latitude = item[element]
-                            if element == "longitude":
-                                longitude = item[element]
-                        park = ThemePark("", ThemePark.remove_non_ascii(name), park_id, latitude, longitude)
-                        self.park_list.append(park)
+        # Handle empty or invalid JSON response
+        if not json_response:
+            logger.error("Empty JSON response when initializing ThemeParkList")
+            return
 
-        sorted_park_list = sorted(self.park_list, key=lambda park: park.name)
-        self.park_list = sorted_park_list
+        try:
+            for company in json_response:
+                # Handle case where JSON structure doesn't match expected format
+                if not isinstance(company, dict):
+                    continue
+                    
+                for parks in company:
+                    if parks == "parks":
+                        park = company[parks]
+                        if not isinstance(park, list):
+                            continue
+                            
+                        for item in park:
+                            if not isinstance(item, dict):
+                                continue
+                                
+                            name = ""
+                            park_id = 0
+                            latitude = 0
+                            longitude = 0
+                            
+                            # Extract park properties
+                            for element in item:
+                                if element == "name":
+                                    name = item[element]
+                                if element == "id":
+                                    park_id = item[element]
+                                if element == "latitude":
+                                    latitude = item[element]
+                                if element == "longitude":
+                                    longitude = item[element]
+                                    
+                            # Only add parks with valid names and IDs
+                            if name and park_id:
+                                park = ThemePark("", ThemePark.remove_non_ascii(name), park_id, latitude, longitude)
+                                self.park_list.append(park)
+                            
+            # Sort park list alphabetically
+            if self.park_list:
+                sorted_park_list = sorted(self.park_list, key=lambda park: park.name)
+                self.park_list = sorted_park_list
+                logger.debug(f"Initialized ThemeParkList with {len(self.park_list)} parks")
+            else:
+                logger.error("No parks found in JSON response")
+        except Exception as e:
+            logger.error(e, "Error parsing JSON in ThemeParkList initialization")
+            # Keep the empty park list
 
     @staticmethod
     def get_park_url_from_id(self, park_id):
@@ -160,19 +188,37 @@ class ThemeParkList:
     def parse(self, str_params):
         params = str_params.split("&")
         # logger.debug(f"Params = {params}")
+        # Always reset checkboxes since they won't be in params if unchecked
         self.skip_meet = False
         self.skip_closed = False
+        
         for param in params:
+            if '=' not in param:
+                continue
+                
             name_value = param.split("=")
+            if len(name_value) != 2:
+                continue
+                
             if name_value[0] == "park-id":
-                self.current_park = self.get_park_by_id(int(name_value[1]))
-                logger.debug(f"New park name = {self.current_park.name}")
-                logger.debug(f"New park id = {self.current_park.id}")
-                logger.debug(f"New park latitude = {self.current_park.latitude}")
-                logger.debug(f"New park longitude = {self.current_park.longitude}")
+                try:
+                    park_id = int(name_value[1])
+                    new_park = self.get_park_by_id(park_id)
+                    if new_park and new_park.is_valid():
+                        self.current_park = new_park
+                        logger.debug(f"New park name = {self.current_park.name}")
+                        logger.debug(f"New park id = {self.current_park.id}")
+                        logger.debug(f"New park latitude = {self.current_park.latitude}")
+                        logger.debug(f"New park longitude = {self.current_park.longitude}")
+                    else:
+                        logger.error(f"Invalid park ID: {park_id}")
+                except (ValueError, TypeError) as e:
+                    logger.error(e, f"Error parsing park ID: {name_value[1]}")
+                    
             if name_value[0] == "skip_closed":
                 logger.debug("Skip closed is True")
                 self.skip_closed = True
+                
             if name_value[0] == "skip_meet":
                 logger.debug("Skip meet is True")
                 self.skip_meet = True
@@ -364,16 +410,30 @@ class Vacation:
     def parse(self, str_params):
         params = str_params.split("&")
         for param in params:
+            if '=' not in param:
+                continue
+                
             name_value = param.split("=")
+            if len(name_value) != 2:
+                continue
+                
             if name_value[0] == "Name":
-                #self.name = str(name_value[1]).replace("+", " ")
-                self.name = url_decode(name_value[1])
+                self.name = url_decode(name_value[1]) if name_value[1] else ""
             if name_value[0] == "Year":
-                self.year = int(name_value[1])
+                try:
+                    self.year = int(name_value[1]) if name_value[1] else 0
+                except (TypeError, ValueError):
+                    self.year = 0
             if name_value[0] == "Month":
-                self.month = int(name_value[1])
+                try:
+                    self.month = int(name_value[1]) if name_value[1] else 0
+                except (TypeError, ValueError):
+                    self.month = 0
             if name_value[0] == "Day":
-                self.day = int(name_value[1])
+                try:
+                    self.day = int(name_value[1]) if name_value[1] else 0
+                except (TypeError, ValueError):
+                    self.day = 0
 
     def get_days_until(self):
         today = datetime.now()
@@ -396,13 +456,22 @@ class Vacation:
 
     def load_settings(self, sm):
         if "next_visit" in sm.settings.keys():
-            self.name = sm.settings.get("next_visit")
+            self.name = sm.settings.get("next_visit", "")
         if "next_visit_year" in sm.settings.keys():
-            self.year = sm.settings.get("next_visit_year")
+            try:
+                self.year = int(sm.settings.get("next_visit_year", 0))
+            except (TypeError, ValueError):
+                self.year = 0
         if "next_visit_month" in sm.settings.keys():
-            self.month = sm.settings.get("next_visit_month")
+            try:
+                self.month = int(sm.settings.get("next_visit_month", 0))
+            except (TypeError, ValueError):
+                self.month = 0
         if "next_visit_day" in sm.settings.keys():
-            self.day = sm.settings.get("next_visit_day")
+            try:
+                self.day = int(sm.settings.get("next_visit_day", 0))
+            except (TypeError, ValueError):
+                self.day = 0
 
 
 REQUIRED_MESSAGE = "queue-times.com"
@@ -509,8 +578,9 @@ class SettingsManager:
         self.settings = self.load_settings()
         self.scroll_speed = {"Slow": 0.06, "Medium": 0.04, "Fast": 0.02}
 
+        # Initialize default settings if not present
         if self.settings.get("subscription_status") is None:
-            self.settings[""] = "Unknown"
+            self.settings["subscription_status"] = "Unknown"
         if self.settings.get("email") is None:
             self.settings["email"] = ""
         if self.settings.get("domain_name") is None:
