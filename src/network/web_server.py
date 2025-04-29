@@ -4,25 +4,23 @@ Copyright 2024 3DUPFitters LLC
 """
 import asyncio
 import time
-import re
 
 from adafruit_datetime import datetime
 from adafruit_httpserver import Server
 from adafruit_httpserver import Request
 from adafruit_httpserver import Response
-from adafruit_httpserver import Headers
-from adafruit_httpserver import Status
 from adafruit_httpserver.methods import GET, POST
 
 from src.models.vacation import Vacation
+from src.utils.color_utils import ColorUtils
 from src.utils.error_handler import ErrorHandler
 
 # Initialize logger
 logger = ErrorHandler("error_log")
 
-
 class ThemeParkWebServer:
     """Web server implementation for ThemeParkAPI"""
+    COLOR_PARAMS = ["default_color", "ride_name_color", "ride_wait_time_color"]
 
     def __init__(self, socket_pool, app_instance):
         """
@@ -34,7 +32,7 @@ class ThemeParkWebServer:
         """
         self.app = app_instance
         # Use a more secure root path instead of "/" to prevent exposing sensitive files
-        self.server = Server(socket_pool, "/www", debug=True)
+        self.server = Server(socket_pool, "src/www", debug=True)
         self.is_running = False
         self.last_settings_save = 0  # Track when settings were last saved
 
@@ -73,13 +71,13 @@ class ThemeParkWebServer:
             try:
                 # First try to read from www directory (preferred location)
                 try:
-                    with open("/www/style.css", "r") as f:
+                    with open("/src/www/style.css", "r") as f:
                         content = f.read()
                     logger.debug("Successfully served style.css from /www")
                     return Response(request, content, content_type="text/css")
                 except OSError:
                     # Fallback to src directory for backward compatibility
-                    with open("/src/style.css", "r") as f:
+                    with open("/www/style.css", "r") as f:
                         content = f.read()
                     logger.debug("Successfully served style.css from /src")
                     return Response(request, content, content_type="text/css")
@@ -217,43 +215,50 @@ class ThemeParkWebServer:
 
         # Track display settings changes
         brightness_changed = False
+        brightness_match = False
         scroll_changed = False
-
+        import re
         # Process display settings
         if "domain_name=" in query_params:
             try:
                 # Extract domain name value
-                import re
+
                 domain_match = re.search(r'domain_name=([^&]+)', query_params)
                 if domain_match:
                     domain_name = domain_match.group(1)
                     self.app.settings_manager.settings["domain_name"] = domain_name
                     logger.debug(f"Updated domain name to {domain_name}")
-
-                # Extract brightness scale
-                brightness_match = re.search(r'brightness_scale=([^&]+)', query_params)
-                if brightness_match:
-                    brightness = brightness_match.group(1)
-                    self.app.settings_manager.settings["brightness_scale"] = brightness
-                    logger.debug(f"Updated brightness to {brightness}")
-                    brightness_changed = True
-
-                    # Apply brightness change immediately if display available
-                    if hasattr(self.app, 'display') and hasattr(self.app.display, 'set_colors'):
-                        self.app.display.set_colors(self.app.settings_manager)
-                        logger.debug("Applied new brightness setting to display")
-
-                # Extract scroll speed
-                scroll_match = re.search(r'scroll_speed=([^&]+)', query_params)
-                if scroll_match:
-                    scroll_speed = scroll_match.group(1)
-                    self.app.settings_manager.settings["scroll_speed"] = scroll_speed
-                    logger.debug(f"Updated scroll speed to {scroll_speed}")
-                    scroll_changed = True
-
-                    # No immediate action needed for scroll speed as it's read on demand when scrolling
             except Exception as e:
                 logger.error(e, "Error updating display settings")
+
+        # Extract brightness scale
+        brightness_match = re.search(r'brightness_scale=([^&]+)', query_params)
+        if brightness_match:
+            brightness = brightness_match.group(1)
+            self.app.settings_manager.settings["brightness_scale"] = brightness
+            logger.debug(f"Updated brightness to {brightness}")
+            brightness_changed = True
+
+        self._process_color_params(query_params)
+
+        # Save settings after changes
+        try:
+            self.app.settings_manager.save_settings()
+            logger.debug("Settings saved successfully after processing query params")
+
+            if (brightness_changed or scroll_changed) and hasattr(self.app, 'message_queue'):
+                self.app.display.set_colors(self.app.settings_manager)
+                logger.debug("Reset message queue after display settings change")
+        except Exception as e:
+            logger.error(e, "Error saving settings")
+
+            # Extract scroll speed
+            scroll_match = re.search(r'scroll_speed=([^&]+)', query_params)
+            if scroll_match:
+                scroll_speed = scroll_match.group(1)
+                self.app.settings_manager.settings["scroll_speed"] = scroll_speed
+                logger.debug(f"Updated scroll speed to {scroll_speed}")
+                # No immediate action needed for scroll speed as it's read on demand when scrolling
 
         # Save settings
         try:
@@ -364,16 +369,18 @@ class ThemeParkWebServer:
         """
         page = "<!DOCTYPE html><html><head>"
         page += "<title>Theme Park Waits</title>"
-        page += "<link rel=\"stylesheet\" href=\"style.css\">"
+        page += "<link rel=\"stylesheet\" href=\"/style.css\">"
         page += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
         page += "</head>"
         page += "<body>"
 
         page += "<div class=\"navbar\">"
         page += "<a href=\"/\">Theme Park Wait Times</a>"
-        page += "<div class=\"settings\">"
-        page += "<a href=\"/settings\" class=\"settings\">&#x2699;</a>"
-        page += "</div></div>"
+        page += "</div>"
+        # Add gear icon using image for better sizing control
+        page += "<div class=\"gear-icon\">"
+        page += "<a href=\"/settings\"><img src=\"gear.png\" alt=\"Settings\"></a>"
+        page += "</div>"
 
         # Main content
         page += "<div class=\"main-content\">"
@@ -458,6 +465,10 @@ class ThemeParkWebServer:
                 current_park_id = None
                 if "current_park" in response_data:
                     current_park_id = response_data["current_park"]["id"]
+                
+                # Add "Select Park" as first option
+                select_park_selected = "selected" if current_park_id is None else ""
+                page += f"<option value=\"\" {select_park_selected}>Select Park</option>"
 
                 for park in parks:
                     selected = "selected" if park["id"] == current_park_id else ""
@@ -604,13 +615,17 @@ class ThemeParkWebServer:
 
         page = "<!DOCTYPE html><html><head>"
         page += "<title>Settings - Theme Park Waits</title>"
-        page += "<link rel=\"stylesheet\" href=\"style.css\">"
+        page += "<link rel=\"stylesheet\" href=\"/style.css\">"
         page += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
         page += "</head>"
         page += "<body>"
 
         page += "<div class=\"navbar\">"
         page += "<a href=\"/\">Theme Park Wait Times</a>"
+        page += "</div>"
+        # Add gear icon using image for consistent styling with main page
+        page += "<div class=\"gear-icon\">"
+        page += "<a href=\"/settings\"><img src=\"gear.png\" alt=\"Settings\"></a>"
         page += "</div>"
 
         page += "<div class=\"main-content\">"
@@ -633,7 +648,7 @@ class ThemeParkWebServer:
         page += "<label for=\"domain_name\">Hostname (.local):</label>"
         domain_name = settings.get("domain_name", "themeparkwaits")
         page += f"<input type=\"text\" id=\"domain_name\" name=\"domain_name\" value=\"{domain_name}\">"
-        page += "<br><small>Changes require a device restart</small>"
+        page += "<br><small>Hostname change requires a device restart</small>"
         page += "</div>"
 
         # Brightness
@@ -653,74 +668,17 @@ class ThemeParkWebServer:
             page += f"<option value=\"{speed}\" {selected}>{speed}</option>"
         page += "</select>"
         page += "</div>"
+        page += "</div>"
 
-        # # Vacation countdown
-        # page += "<div class=\"settings-section\">"
-        # page += "<h3>Vacation Countdown</h3>"
-        #
-        # page += "<div class=\"form-group\">"
-        # page += "<label for=\"Name\">Vacation Name:</label>"
-        # vacation_name = settings.get("next_visit", "")
-        # page += f"<input type=\"text\" id=\"Name\" name=\"Name\" value=\"{vacation_name}\">"
-        # page += "</div>"
-        #
-        # page += "<div class=\"form-group\">"
-        # page += "<label for=\"Year\">Year:</label>"
-        # year = settings.get("next_visit_year", "")
-        # # Make sure the year has a default value if empty
-        # if year == "":
-        #     # Get current year
-        #     try:
-        #         from adafruit_datetime import datetime
-        #         current_year = datetime.now().year
-        #         year = current_year
-        #     except:
-        #         year = 2024
-        # page += f"<input type=\"number\" id=\"Year\" name=\"Year\" value=\"{year}\">"
-        # page += "</div>"
-        #
-        # page += "<div class=\"form-group\">"
-        # page += "<label for=\"Month\">Month:</label>"
-        # month = settings.get("next_visit_month", "")
-        # # Default to month 1 if empty
-        # if month == "":
-        #     month = 1
-        # # Create dropdown for months
-        # page += "<select id=\"Month\" name=\"Month\" class=\"dropdown\">"
-        # month_names = ["January", "February", "March", "April", "May", "June",
-        #                "July", "August", "September", "October", "November", "December"]
-        # for i in range(1, 13):
-        #     # Handle type conversion safely with fallbacks
-        #     try:
-        #         current_month = int(month)
-        #     except (ValueError, TypeError):
-        #         current_month = 1
-        #
-        #     selected = "selected" if current_month == i else ""
-        #     page += f"<option value=\"{i}\" {selected}>{i} - {month_names[i - 1]}</option>"
-        # page += "</select>"
-        # page += "</div>"
-        #
-        # page += "<div class=\"form-group\">"
-        # page += "<label for=\"Day\">Day:</label>"
-        # day = settings.get("next_visit_day", "")
-        # # Default to day 1 if empty
-        # if day == "":
-        #     day = 1
-        # # Create dropdown for days
-        # page += "<select id=\"Day\" name=\"Day\" class=\"dropdown\">"
-        # for i in range(1, 32):
-        #     # Handle type conversion safely with fallbacks
-        #     try:
-        #         current_day = int(day)
-        #     except (ValueError, TypeError):
-        #         current_day = 1
-        #
-        #     selected = "selected" if current_day == i else ""
-        #     page += f"<option value=\"{i}\" {selected}>{i}</option>"
-        # page += "</select>"
-        # page += "</div>"
-
+        # Color settings
+        page += "<div class=\"settings-section\">"
+        page += "<h3>Color Settings</h3>"
+        for color_setting_name, color_value in settings.items():
+            if "color" in color_setting_name:
+                page += "<p>"
+                page += f"<label for=\"Name\">{self.app.settings_manager.get_pretty_name(color_setting_name)}</label>"
+                page += ColorUtils.html_color_chooser(color_setting_name, hex_num_str=color_value)
+                page += "</p>"
         page += "</div>"
 
         page += "<button type=\"submit\">Save Settings</button>"
@@ -728,3 +686,51 @@ class ThemeParkWebServer:
 
         page += "</div></body></html>"
         return page
+
+    def _process_color_params(self, query_params: str) -> None:
+        """
+        Extract and update color-related settings from query parameters,
+        decoding URL-encoded values without using urllib.parse.unquote.
+        """
+        import re
+
+        for color_param in self.COLOR_PARAMS:
+            try:
+                color_pattern = f'{color_param}=([^&]+)'
+                match = re.search(color_pattern, query_params)
+                if match:
+                    color_value = self._url_decode(match.group(1))
+                    self.app.settings_manager.set(color_param, color_value)
+                    logger.debug(f"Updated {color_param} to {color_value}")
+            except Exception as e:
+                logger.error(e, f"Error updating {color_param}")
+
+    def _url_decode(self, encoded_str: str) -> str:
+        """
+        Decodes a percent-encoded string (e.g., 'Hello%20World') and plus signs ('+') to spaces,
+        replicating urllib.parse.unquote's basic functionality compatible with CircuitPython.
+        """
+        import binascii
+        res = []
+        i = 0
+        length = len(encoded_str)
+        while i < length:
+            char = encoded_str[i]
+            if char == '+':
+                res.append(' ')
+                i += 1
+            elif char == '%' and i + 2 < length:
+                hex_value = encoded_str[i+1:i+3]
+                try:
+                    decoded_char = chr(int(hex_value, 16))
+                    res.append(decoded_char)
+                    i += 3
+                except ValueError:
+                    # Invalid percent-encoding, keep as is
+                    res.append('%')
+                    i += 1
+            else:
+                res.append(char)
+                i += 1
+        return ''.join(res)
+

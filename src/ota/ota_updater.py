@@ -65,7 +65,7 @@ class OTAUpdater:
 
         if self.new_version_dir in os.listdir(self.module):
             if '.version' in os.listdir(self.modulepath(self.new_version_dir)):
-                latest_version = self.get_version(self.modulepath(self.new_version_dir), '.version')
+                latest_version = self.get_version(self.modulepath(self.new_version_dir), '../.version')
                 print('New update found: ', latest_version)
                 OTAUpdater._using_network(ssid, password)
                 self.install_update_if_available()

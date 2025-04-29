@@ -43,8 +43,13 @@ p {
 label { 
     display: table-cell; 
     padding-right: 14px; 
-    padding-bottom: 14px; 
+    padding-bottom: 8px; 
     font-weight: bold;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
 }
 input { 
     display: table-cell;
@@ -54,6 +59,13 @@ input {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
+}
+input[type="text"] {
+    max-width: 300px;
+}
+input[type="range"] {
+    max-width: 300px;
+    margin-top: 5px;
 }
 select {
     padding: 8px;
@@ -103,9 +115,9 @@ h3 {
 }
 
 .gear-icon img {
-  width: 24px; /* Adjust size as needed */
-  height: 24px;
-  margin: 10px; /* Adjust spacing as needed */
+  width: 44px; /* Adjust size as needed */
+  height: 44px;
+  margin: 13px; /* Adjust spacing as needed */
 }
 
 .dropdown-content {
@@ -169,9 +181,52 @@ h3 {
     font-weight: normal;
 }
 
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 15px;
+    color: #666;
+}
+
+.settings-section {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #eee;
+}
+
+button {
+    background-color: #faa538;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: block;
+    font-size: 16px;
+    margin: 20px auto;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 50%;
+    max-width: 200px;
+}
+
+button:hover {
+    background-color: #e09030;
+}
 
 .settings {
    float: right;
+}
+
+.settings-icon {
+   font-size: 48px;
+   padding: 10px 20px !important;
 }
 
 /* Mobile friendly styles */
@@ -197,24 +252,5 @@ h3 {
         border-radius: 8px;
         margin-bottom: 20px;
         border: 1px solid #eee;
-    }
-    
-    button {
-        background-color: #faa538;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 10px 0;
-        cursor: pointer;
-        border-radius: 4px;
-        width: 100%;
-    }
-    
-    button:hover {
-        background-color: #e09030;
     }
 }

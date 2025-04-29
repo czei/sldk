@@ -9,569 +9,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Removed the code that was handling subscriptions.">
-      <change afterPath="$PROJECT_DIR$/remove_typing.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/api/theme_park_service.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/config/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/config/settings_manager.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/lib/adafruit_ntp.mpy" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/models/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/models/theme_park.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/models/theme_park_list.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/models/theme_park_ride.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/models/vacation.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/network/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/network/http_client.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/network/web_server.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/network/wifi_manager.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/ui/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/ui/display_base.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/ui/display_impl.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/ui/message_queue.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/color_utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/error_handler.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/system_utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/timer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/url_utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/experiments/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test/test_error_handler.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/gear.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/settings.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/wifi-setup.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/www/wifi_style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/code.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_log" beforeDir="false" afterPath="$PROJECT_DIR$/error_log" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CLAUDE.md" beforeDir="false" afterPath="$PROJECT_DIR$/CLAUDE.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/error_log" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/makefile" beforeDir="false" afterPath="$PROJECT_DIR$/makefile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/Setup/MatrixPortal_S3_FactoryReset.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/Setup/adafruit-circuitpython-adafruit_matrixportal_s3-en_US-8.2.9.uf2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/ThemeParkAPI.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/boot.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/code.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/images/gear.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/images/gear.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/Setup/MatrixPortal_S3_FactoryReset.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/Setup/adafruit-circuitpython-adafruit_matrixportal_s3-en_US-8.2.9.uf2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/boot.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/code.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/images/gear.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/images/gear.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/Setup/MatrixPortal_S3_FactoryReset.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/Setup/adafruit-circuitpython-adafruit_matrixportal_s3-en_US-8.2.9.uf2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/boot.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/code.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/images/gear.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/images/gear.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/Setup/MatrixPortal_S3_FactoryReset.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/Setup/adafruit-circuitpython-adafruit_matrixportal_s3-en_US-8.2.9.uf2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/boot.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/code.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/images/gear.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/images/gear.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/makefile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/secrets.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/.version" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/async_http_request.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/color_utils.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/fonts/tom-thumb.bdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/image_processor.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/images/OpeningLEDLogo.bmp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/bdf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/bitmap_font.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/glyph_cache.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/pcf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/ttf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bus_device/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bus_device/i2c_device.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bus_device/spi_device.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_connection_manager.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_datetime.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_display_text/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_display_text/bitmap_label.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_display_text/label.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_display_text/scrolling_label.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/PWMOut.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/adafruit_esp32spi.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/adafruit_esp32spi_socket.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/adafruit_esp32spi_wifimanager.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/digitalio.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_fakerequests.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/authentication.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/exceptions.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/headers.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/interfaces.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/methods.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/mime_types.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/request.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/response.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/route.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/server.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/status.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/indexed.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/negative_height_check.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/truecolor.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/displayio_types.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/gif.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/png.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pbm_ascii.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pbm_binary.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pgm/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pgm/ascii.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pgm/binary.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/ppm_ascii.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/ppm_binary.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/tilegrid_inflator.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_io/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_io/adafruit_io.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_io/adafruit_io_errors.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_logging.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/graphics.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/matrix.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/matrixportal.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/network.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_minimqtt/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_minimqtt/adafruit_minimqtt.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_minimqtt/matcher.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_miniqr.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_pixelbuf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/graphics.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/network.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/wifi_coprocessor.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/wifi_esp32s2.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_requests.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_ticks.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/core.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/event.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/funcs.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/lock.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/manifest.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/stream.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/task.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/neopixel.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/simpleio.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/ota.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/ota_updater.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/theme_park_api.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/themeparkwaits.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/webgui.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/wifimgr.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/.release" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/bitmap_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/bitmap_text_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/closed-park.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/code-http-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/code-mdns-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/code-ota-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/conftest.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/cp_bug_trigger.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/error_log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/magic-kingdom.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/pixel-dust-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/sand_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/settings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/sparkle_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/test-suite.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/test_image-processor.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/theme-park-list.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/universal.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/writeover_bitmap_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/secrets.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/.version" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/async_http_request.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/color_utils.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/fonts/tom-thumb.bdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/image_processor.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/images/OpeningLEDLogo.bmp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/bdf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/bitmap_font.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/glyph_cache.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/pcf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/ttf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bus_device/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bus_device/i2c_device.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bus_device/spi_device.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_connection_manager.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_datetime.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_display_text/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_display_text/bitmap_label.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_display_text/label.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_display_text/scrolling_label.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/PWMOut.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/adafruit_esp32spi.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/adafruit_esp32spi_socket.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/adafruit_esp32spi_wifimanager.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/digitalio.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_fakerequests.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/authentication.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/exceptions.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/headers.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/interfaces.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/methods.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/mime_types.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/request.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/response.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/route.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/server.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/status.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/indexed.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/negative_height_check.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/truecolor.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/displayio_types.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/gif.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/png.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pbm_ascii.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pbm_binary.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pgm/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pgm/ascii.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pgm/binary.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/ppm_ascii.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/ppm_binary.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/tilegrid_inflator.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_io/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_io/adafruit_io.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_io/adafruit_io_errors.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_logging.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/graphics.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/matrix.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/matrixportal.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/network.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_minimqtt/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_minimqtt/adafruit_minimqtt.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_minimqtt/matcher.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_miniqr.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_pixelbuf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/graphics.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/network.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/wifi_coprocessor.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/wifi_esp32s2.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_requests.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_ticks.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/core.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/event.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/funcs.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/lock.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/manifest.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/stream.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/task.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/neopixel.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/simpleio.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/ota.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/ota_updater.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/theme_park_api.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/themeparkwaits.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/webgui.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/src/wifimgr.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/.release" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/bitmap_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/bitmap_text_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/closed-park.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/code-http-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/code-mdns-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/code-ota-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/conftest.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/cp_bug_trigger.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/error_log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/magic-kingdom.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/pixel-dust-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/sand_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/settings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/sparkle_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/test-suite.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/test_image-processor.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/theme-park-list.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/universal.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/production/ThemeParkAPI/test/writeover_bitmap_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/secrets.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/.version" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/async_http_request.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/color_utils.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/fonts/tom-thumb.bdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/image_processor.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/images/OpeningLEDLogo.bmp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/bdf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/bitmap_font.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/glyph_cache.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/pcf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/ttf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bus_device/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bus_device/i2c_device.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_bus_device/spi_device.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_connection_manager.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_datetime.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_display_text/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_display_text/bitmap_label.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_display_text/label.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_display_text/scrolling_label.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/PWMOut.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/adafruit_esp32spi.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/adafruit_esp32spi_socket.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/adafruit_esp32spi_wifimanager.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_esp32spi/digitalio.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_fakerequests.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/authentication.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/exceptions.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/headers.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/interfaces.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/methods.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/mime_types.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/request.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/response.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/route.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/server.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_httpserver/status.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/indexed.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/negative_height_check.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/truecolor.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/displayio_types.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/gif.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/png.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pbm_ascii.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pbm_binary.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pgm/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pgm/ascii.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pgm/binary.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/ppm_ascii.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/ppm_binary.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_imageload/tilegrid_inflator.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_io/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_io/adafruit_io.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_io/adafruit_io_errors.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_logging.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/graphics.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/matrix.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/matrixportal.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_matrixportal/network.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_minimqtt/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_minimqtt/adafruit_minimqtt.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_minimqtt/matcher.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_miniqr.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_pixelbuf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/graphics.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/network.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/wifi_coprocessor.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_portalbase/wifi_esp32s2.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_requests.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/adafruit_ticks.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/core.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/event.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/funcs.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/lock.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/manifest.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/stream.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/asyncio/task.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/neopixel.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/lib/simpleio.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/ota.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/ota_updater.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/theme_park_api.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/themeparkwaits.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/webgui.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/src/wifimgr.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/.release" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/bitmap_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/bitmap_text_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/closed-park.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/code-http-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/code-mdns-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/code-ota-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/conftest.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/cp_bug_trigger.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/error_log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/magic-kingdom.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/pixel-dust-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/sand_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/settings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/sparkle_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/test-suite.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/test_image-processor.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/theme-park-list.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/universal.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/production/ThemeParkAPI/test/writeover_bitmap_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/secrets.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/.version" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/async_http_request.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/color_utils.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/fonts/tom-thumb.bdf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/image_processor.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/images/OpeningLEDLogo.bmp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/bdf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/bitmap_font.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/glyph_cache.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/pcf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_bitmap_font/ttf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_bus_device/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_bus_device/i2c_device.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_bus_device/spi_device.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_connection_manager.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_datetime.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_display_text/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_display_text/bitmap_label.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_display_text/label.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_display_text/scrolling_label.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_esp32spi/PWMOut.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_esp32spi/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_esp32spi/adafruit_esp32spi.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_esp32spi/adafruit_esp32spi_socket.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_esp32spi/adafruit_esp32spi_wifimanager.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_esp32spi/digitalio.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_fakerequests.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_httpserver/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_httpserver/authentication.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_httpserver/exceptions.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_httpserver/headers.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_httpserver/interfaces.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_httpserver/methods.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_httpserver/mime_types.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_httpserver/request.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_httpserver/response.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_httpserver/route.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_httpserver/server.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_httpserver/status.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/indexed.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/negative_height_check.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/bmp/truecolor.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/displayio_types.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/gif.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/png.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pbm_ascii.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pbm_binary.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pgm/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pgm/ascii.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/pgm/binary.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/ppm_ascii.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/pnm/ppm_binary.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_imageload/tilegrid_inflator.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_io/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_io/adafruit_io.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_io/adafruit_io_errors.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_logging.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_matrixportal/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_matrixportal/graphics.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_matrixportal/matrix.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_matrixportal/matrixportal.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_matrixportal/network.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_minimqtt/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_minimqtt/adafruit_minimqtt.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_minimqtt/matcher.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_miniqr.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_pixelbuf.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_portalbase/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_portalbase/graphics.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_portalbase/network.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_portalbase/wifi_coprocessor.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_portalbase/wifi_esp32s2.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_requests.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/adafruit_ticks.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/asyncio/__init__.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/asyncio/core.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/asyncio/event.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/asyncio/funcs.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/asyncio/lock.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/asyncio/manifest.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/asyncio/stream.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/asyncio/task.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/neopixel.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/lib/simpleio.mpy" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/ota.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/ota_updater.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/theme_park_api.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/themeparkwaits.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/webgui.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/src/wifimgr.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/.release" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/bitmap_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/bitmap_text_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/closed-park.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/code-http-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/code-mdns-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/code-ota-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/conftest.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/cp_bug_trigger.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/error_log" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/magic-kingdom.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/pixel-dust-test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/sand_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/settings.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/sparkle_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/test-suite.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/test_image-processor.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/theme-park-list.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/universal.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/production/ThemeParkAPI/test/writeover_bitmap_test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ErrorHandler.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ota_updater.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ota_updater.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/shopify_connect.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/www/style.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/theme_park_api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/themeparkwaits.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/webgui.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/wifimgr.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/wifimgr.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/error_log" beforeDir="false" afterPath="$PROJECT_DIR$/test/error_log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/pixel-dust-test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/experiments/pixel-dust-test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/settings.json" beforeDir="false" afterPath="$PROJECT_DIR$/test/settings.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/sparkle_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/experiments/sparkle_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/async_http_request.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/network/async_http_request.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/color_utils.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/error_log" beforeDir="false" afterPath="$PROJECT_DIR$/src/ota/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/image_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/image_processor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/network/web_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/network/web_server.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/network/wifi_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/network/wifi_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ota.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ota/ota.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ota_updater.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ota/ota_updater.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/theme_park_api.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/theme_park_display.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ui/message_queue.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/message_queue.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/color_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/color_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/utils/system_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/system_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/wifi_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/www/wifi_style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/wifimgr.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/code-ota-test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/code-ota-test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/experiments/test_image-processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/experiments/test_image-processor.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/test/test-suite.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/test-suite.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_image-processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/experiments/test_image-processor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/writeover_bitmap_test 2.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/experiments/writeover_bitmap_test 2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/writeover_bitmap_test.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/experiments/writeover_bitmap_test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/gear.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/www/gear.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/www/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/settings.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/www/settings.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/www/style.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/wifi-setup.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/www/wifi-setup.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/wifi_style.css" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -625,62 +91,62 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "Makefile Target.all.executor": "Run",
-    "Makefile Target.copy.executor": "Run",
-    "Makefile Target.copy_to_circuitpy.executor": "Run",
-    "Makefile Target.debug.executor": "Run",
-    "Makefile Target.release.executor": "Run",
-    "Makefile Target.test.executor": "Run",
-    "MicroPython.Flash test-suite.py.executor": "Run",
-    "MicroPython.Flash test_image-processor.py.executor": "Run",
-    "MicroPython.TestImageProcessor.executor": "Run",
-    "Python tests.Image Processor Tests.executor": "Run",
-    "Python tests.Main Test Suite.executor": "Run",
-    "Python tests.Python tests in test-suite.py.executor": "Run",
-    "Python tests.Python tests in test_image-processor.py.executor": "Run",
-    "Python tests.Python tests in test_theme-park_api.py.executor": "Run",
-    "Python tests.test_image-processor.py.executor": "Run",
-    "Python.ThemeParkAPI Python Env.executor": "Run",
-    "Python.async_http_request.executor": "Run",
-    "Python.code-ota-test.executor": "Run",
-    "Python.code.executor": "Run",
-    "Python.pixel-dust-test.executor": "Run",
-    "Python.shopify.executor": "Run",
-    "Python.shopify_connect.executor": "Run",
-    "Python.test-suite.executor": "Run",
-    "Python.theme_park_api.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "master",
-    "junie.onboarding.icon.badge.shown": "true",
-    "kotlin-language-version-configured": "true",
-    "last_directory_selection": "/Users/czei/Library/Mobile Documents/com~apple~CloudDocs/Projects/Disney/ThemeParkAPI",
-    "last_opened_file_path": "/Users/czei/Projects/Disney/ThemeParkAPI",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "SDKs",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.13873734",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;Makefile Target.all.executor&quot;: &quot;Run&quot;,
+    &quot;Makefile Target.copy.executor&quot;: &quot;Run&quot;,
+    &quot;Makefile Target.copy_to_circuitpy.executor&quot;: &quot;Run&quot;,
+    &quot;Makefile Target.debug.executor&quot;: &quot;Run&quot;,
+    &quot;Makefile Target.release.executor&quot;: &quot;Run&quot;,
+    &quot;Makefile Target.test.executor&quot;: &quot;Run&quot;,
+    &quot;MicroPython.Flash test-suite.py.executor&quot;: &quot;Run&quot;,
+    &quot;MicroPython.Flash test_image-processor.py.executor&quot;: &quot;Run&quot;,
+    &quot;MicroPython.TestImageProcessor.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Image Processor Tests.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Main Test Suite.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test-suite.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test_image-processor.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.Python tests in test_theme-park_api.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.test_image-processor.py.executor&quot;: &quot;Run&quot;,
+    &quot;Python.ThemeParkAPI Python Env.executor&quot;: &quot;Run&quot;,
+    &quot;Python.async_http_request.executor&quot;: &quot;Run&quot;,
+    &quot;Python.code-ota-test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.code.executor&quot;: &quot;Run&quot;,
+    &quot;Python.pixel-dust-test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.shopify.executor&quot;: &quot;Run&quot;,
+    &quot;Python.shopify_connect.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test-suite.executor&quot;: &quot;Run&quot;,
+    &quot;Python.theme_park_api.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_directory_selection&quot;: &quot;/Users/czei/Library/Mobile Documents/com~apple~CloudDocs/Projects/Disney/ThemeParkAPI&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/czei/Projects/Disney/ThemeParkAPI&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;SDKs&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.13873734&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
-      "Python"
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;Python&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings module-name="ThemeParkAPI">
@@ -695,11 +161,15 @@
       <recent name="/Volumes/CIRCUITPY" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/www" />
-      <recent name="$PROJECT_DIR$/test/experiments" />
       <recent name="$PROJECT_DIR$/src/utils" />
-      <recent name="$PROJECT_DIR$/test" />
-      <recent name="$PROJECT_DIR$/test/TestSuite" />
+      <recent name="$PROJECT_DIR$/www" />
+      <recent name="$PROJECT_DIR$/src/ota" />
+      <recent name="$PROJECT_DIR$/src/network" />
+      <recent name="$PROJECT_DIR$/test/experiments" />
+    </key>
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="" />
+      <recent name="src" />
     </key>
   </component>
   <component name="RunManager" selected="Makefile Target.copy_to_circuitpy">
@@ -783,10 +253,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Makefile Target.copy_to_circuitpy" />
-        <item itemvalue="Makefile Target.debug" />
-        <item itemvalue="Makefile Target.debug" />
-        <item itemvalue="Makefile Target.debug" />
         <item itemvalue="Makefile Target.test" />
+        <item itemvalue="Makefile Target.release" />
+        <item itemvalue="Makefile Target.debug" />
+        <item itemvalue="Makefile Target.copy" />
       </list>
     </recent_temporary>
   </component>

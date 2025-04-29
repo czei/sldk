@@ -79,3 +79,82 @@ class ColorUtils:
         b = max(0, min(255, b))
         
         return ColorUtils.from_rgb(r, g, b)
+
+
+    @staticmethod
+    def hex_str_to_rgb(hex_string):
+        # Remove leading characters
+        if hex_string.startswith('0x'):
+            hex_string = hex_string[2:]
+
+        # Check that the input is valid
+        if len(hex_string) != 6:
+            raise ValueError('Input string should be in the format #RRGGBB')
+
+        # Split the input into rgb components
+        r, g, b = int(hex_string[0:2], 16), int(hex_string[2:4], 16), int(hex_string[4:6], 16)
+
+        return r, g, b
+
+    @staticmethod
+    def convert_3bit_bitmap_to_4bit(bitmap_3_bit, palette):
+        # 3-bit max value is 8 and 6-bit max value is 64
+        scale_factor = 16 / 8   # 2 to the 18th power = 262,144
+        scale_factor = 1.0
+
+        # Calculate new width and height
+        width = bitmap_3_bit.width
+        height = bitmap_3_bit.height
+
+        # Create 4-bit bitmap with same dimensions
+        # TODO Need to fix
+        # bitmap_4_bit = displayio.Bitmap(width, height, 4096)
+        bitmap_4_bit = None
+
+        # Copy and scale pixel values from 3-bit to 6-bit bitmap
+        for y in range(height):
+            for x in range(width):
+                old_value = bitmap_3_bit[x, y]
+                hex_value = ColorUtils.pad_hex(old_value)
+                #print(f"Old Value = {old_value} Hex = {hex_value}")
+                new_value = ColorUtils.hex_str_to_number(ColorUtils.scale_color(hex_value, scale_factor))
+                # new_value = round(old_value * scale_factor)
+                #print(f"Old Value = {old_value} Scaled = {new_value}")
+                bitmap_4_bit[x, y] = new_value
+
+        return bitmap_4_bit
+
+    @staticmethod
+    def pad_hex(num):
+        hex_val = hex(num)[2:]  # remove '0x'
+        # return hex_val.zfill(6)
+        length = len(hex_val)
+        for i in range(0, 6 - length):
+            hex_val = "0" + hex_val
+        return hex_val
+
+    @staticmethod
+    def html_color_chooser(name, hex_num_str):
+        """
+        :param name: Name of the HTML select field
+        :param hex_num_str:  A string representation of the selected color
+        :return:
+        """
+        html = ""
+        html += f"<select name=\"{name}\" id=\"{id}\">\n"
+        for color in ColorUtils.colors:
+            if ColorUtils.colors[color] == hex_num_str:
+                html += f"<option value=\"{ColorUtils.colors[color]}\" selected>{color}</option>\n"
+            else:
+                html += f"<option value=\"{ColorUtils.colors[color]}\">{color}</option>\n"
+
+        html += "</select>"
+        return html
+
+    @staticmethod
+    def hex_str_to_number(hex_string):
+        return int(hex_string, 16)
+
+    @staticmethod
+    def number_to_hex_string(num):
+        return hex(num)

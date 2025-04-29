@@ -1,16 +1,14 @@
-import asyncio
 import os
 import tempfile
 from unittest import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from urllib.request import urlopen, Request
 import ssl
 import json
 from adafruit_datetime import datetime
-from adafruit_datetime import date
 
 # Import refactored modules
-from src.async_http_request import async_read_url
+from src.network.async_http_request import async_read_url
 from src.utils.color_utils import ColorUtils
 from src.utils.url_utils import url_decode, load_credentials
 from src.models.theme_park import ThemePark

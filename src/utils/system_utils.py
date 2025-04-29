@@ -43,7 +43,7 @@ async def set_system_clock_ntp(socket_pool, tz_offset=None):
     """
     from src.utils.error_handler import ErrorHandler
     logger = ErrorHandler("error_log")
-    
+
     if not HAS_NTP or not HAS_HARDWARE:
         logger.info("NTP module not available or hardware not supported")
         return False

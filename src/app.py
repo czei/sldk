@@ -14,6 +14,7 @@ from src.ui.message_queue import MessageQueue
 from src.utils.error_handler import ErrorHandler
 from src.utils.timer import Timer
 from src.network.wifi_manager import WiFiManager
+from src.utils.url_utils import load_credentials
 
 # Initialize logger
 logger = ErrorHandler("error_log")
@@ -40,6 +41,7 @@ class ThemeParkApp:
         self.message_queue = MessageQueue(display, 4)
         self.update_timer = Timer(300)  # Update every 5 minutes
         self.wifi_manager = WiFiManager(self.settings_manager)
+        self.web_server = socketpool.SocketPool(wifi.radio)
 
         # Set up the callback for session updates in the WiFi manager
         self.wifi_manager.update_http_clients = self.update_http_client
@@ -59,12 +61,46 @@ class ThemeParkApp:
         # TODO: Figure out how to make the initialization process async to talk to an event-drive display to update users.
         # init_task = asyncio.create_task(self._initialize_background_data())
 
-        await self.initialize_wifi()
-        await self.initialize_clock()
-        await self.initialize_park_list()
-        await self.initialize_wait_times()
+        await self._initialize_wifi_password()
+        await self._initialize_wifi()
+        await self._initialize_clock()
+        await self._initialize_park_list()
+        await self._initialize_wait_times()
 
-    async def initialize_wifi(self):
+    async def _initialize_wifi_password(self):
+        # Load Current Wifi Password
+        ssid, password = load_credentials()
+
+        #
+        # True when first starting device or the Wifi has been reset
+        #
+        if ssid != "" and password != "":
+            return
+
+        # Have to configure Wi-FI before the network will work
+        # Run the Wifi configure GUI and the configure message at the same time
+        try:
+            self.wifi_manager.start_access_point()
+            self.wifi_manager.start_web_server()
+            #wifimgr.web_server.serve_forever(str(wifi.radio.ipv4_address_ap))
+
+            # Pass a lambda that calls is_wifi_password_configured instead of calling it directly
+            asyncio.run(asyncio.gather(
+                self.wifi_manager.run_web_server(lambda: self.is_wifi_password_configured()),
+                self.run_configure_wifi_message()
+            ))
+
+            self.wifi_manager.web_server.stop()
+            self.wifi_manager.stop_access_point()
+
+        except OSError as e:
+            logger.error(e,"Exception starting wifi access point and web server: {e}")
+
+        # Now that we've got an ssid and password, time to connect to
+        # the network.
+        # asyncio.run(asyncio.gather(self.try_wifi_until_connected()))
+
+    async def _initialize_wifi(self):
         """Initialize network and theme park data in the background"""
         # Show WiFi connection message with actual SSID
         ssid = self.wifi_manager.ssid
@@ -86,12 +122,53 @@ class ThemeParkApp:
         else:
             await self.display.show_centered("WiFi Failed", f"Check settings", 2)
 
-    async def initialize_park_list(self):
+    async def run_configure_wifi_message(self):
+        while self.is_wifi_password_configured() is False:
+            setup_text1 = f"Connect your phone to Wifi channel {self.wifi_manager.AP_SSID}, password \"{self.wifi_manager.AP_PASSWORD}\"."
+            setup_text2 = "  Then load page http://192.168.4.1"
+            await self.display.show_centered(setup_text1, setup_text2, 1)
+
+    async def try_wifi_until_connected(self):
+        ssid, password = load_credentials()
+
+        # Try to connect 3 times before giving up in
+        # case the Wifi is unstable.
+        attempts = 1
+        if wifi.radio.connected is True:
+            logger.debug(f"Already connected to wifi {ssid}: at {wifi.radio.ipv4_address}")
+        else:
+            logger.debug(f"Connecting to wifi {ssid}: at {wifi.radio.ipv4_address}")
+
+        while wifi.radio.connected is not True:
+            try:
+                setup_text1 = f"Connecting to Wifi:"
+                setup_text2 = f"{ssid}"
+                await self.display.show_centered(setup_text1, setup_text2, 2)
+                wifi.radio.connect(ssid, password)
+            except (RuntimeError) as e:
+                logger.error(e,f"Wifi runtime error: {str(e)} at {wifi.radio.ipv4_address}")
+                await self.display.show_scroll_message(f"Wifi runtime error: {str(e)}")
+            except (ConnectionError) as e:
+                logger.error(e, f"Wifi connection error: {str(e)} at {wifi.radio.ipv4_address}")
+                if "Authentication" in str(e):
+                    await self.display.show_scroll_message(f"Bad password.  Please reset the LED scroller using the INIT button as described in the instructions.")
+                else:
+                    await self.display.show_scroll_message(f"Wifi connection error: {str(e)}")
+            except (ValueError) as e:
+                logger.error(e, "Wifi value error")
+                # logger.error(f"Wifi value error: {str(e)} at {wifi.radio.ipv4_address}")
+                await self.display.show_scroll_message(f"Wifi value error: {str(e)}")
+
+            except OSError as e:
+                logger.error(e, "Unknown error connecting to Wifi")
+
+
+    async def _initialize_park_list(self):
         # Initialize theme park service
         # await self.display.show_scroll_message("Downloading list of theme parks...")
         await self.theme_park_service.initialize()
 
-    async def initialize_wait_times(self):
+    async def _initialize_wait_times(self):
         # Update data for the first time, not checking timer
         # (This will show its own update message)
         await self.update_data(True)
@@ -99,9 +176,9 @@ class ThemeParkApp:
         # Get accurate wait until next update
         self.update_timer.reset()
 
-    async def initialize_clock(self):
+    async def _initialize_clock(self):
         # Takes too much time
-        # await self.display.show_scroll_message("Setting date/time...")
+        await self.display.show_scroll_message("Setting time...")
         try:
             logger.info("Setting system clock...")
             # Get the actual socket pool, not from HTTP client
@@ -118,6 +195,14 @@ class ThemeParkApp:
 
     async def update_data(self, ignore_timer):
         """Update theme park data from the API"""
+        # Check if there's a valid park selected
+        if not self.theme_park_service.park_list or not self.theme_park_service.park_list.current_park.is_valid():
+            # No valid park selected, no need to update data
+            # Just regenerate message queue to show prompt to select park
+            self.message_queue.init()
+            await self.build_messages()
+            return
+
         # Check for forced update flag in theme_park_service
         force_update = False
         if hasattr(self.theme_park_service, 'update_needed'):
@@ -132,11 +217,8 @@ class ThemeParkApp:
         logger.info("Updating theme park data")
 
         # Show scrolling message that data is being updated
-        if self.theme_park_service.park_list and self.theme_park_service.park_list.current_park.is_valid():
-            park_name = self.theme_park_service.park_list.current_park.name
-            await self.display.show_scroll_message(f"Updating {park_name} wait times from queue-times.com...")
-        else:
-            await self.display.show_scroll_message("Updating wait times from queue-times.com...")
+        park_name = self.theme_park_service.park_list.current_park.name
+        await self.display.show_scroll_message(f"Updating {park_name} wait times from queue-times.com...")
 
         # Reset the timer immediately to prevent multiple updates
         self.update_timer.reset()
@@ -160,17 +242,31 @@ class ThemeParkApp:
         # Always add splash screen at front
         await self.message_queue.add_splash(4)
 
+        # Get domain name for configuration URL
+        domain_name = self.settings_manager.get("domain_name", "themeparkwaits")
+        
+        # Check if a park is selected
+        if not self.theme_park_service.park_list or not self.theme_park_service.park_list.current_park.is_valid():
+            # No park selected - show message to choose a park
+            await self.message_queue.add_scroll_message(f"Choose theme park at http://{domain_name}.local", 1)
+            # Repeat the message
+            await self.message_queue.add_scroll_message(f"Choose theme park at http://{domain_name}.local", 1)
+            # Add vacation information if set
+            # await self.message_queue.add_vacation(self.theme_park_service.vacation)
+            return
+        
+        # Park is selected - show regular configuration message
+        await self.message_queue.add_scroll_message(f"Configure at http://{domain_name}.local", 1)
+
         # Add vacation information if set
         await self.message_queue.add_vacation(self.theme_park_service.vacation)
 
-        # Add park data if available
-        if self.theme_park_service.park_list:
-            await self.message_queue.add_rides(self.theme_park_service.park_list)
+        # Add park data
+        await self.message_queue.add_rides(self.theme_park_service.park_list)
 
         # Add attribution message
-        if self.theme_park_service.park_list and self.theme_park_service.park_list.current_park.is_valid():
-            await self.message_queue.add_required_message(
-                self.theme_park_service.park_list.current_park.name)
+        await self.message_queue.add_required_message(
+            self.theme_park_service.park_list.current_park.name)
 
     async def _initialize_http_client(self, socket_pool):
         """Initialize the HTTP client with a fresh session after WiFi is connected"""
@@ -332,8 +428,8 @@ class ThemeParkApp:
         web_server = None
         try:
             web_server = self.start_web_server(self.socket_pool)
-        except ImportError:
-            logger.info("Running without web server in simulation mode")
+        except ImportError as e:
+            logger.error(e,"Running without web server in simulation mode")
 
         if web_server:
             # Run display and web server concurrently
@@ -346,3 +442,10 @@ class ThemeParkApp:
             # Just run the display loop if no web server
             logger.info("Running display loop only")
             await self.run_display_loop()
+
+    @staticmethod
+    def is_wifi_password_configured() -> bool:
+        ssid, password = load_credentials()
+        # logger.debug(f"SSID: {ssid} Password: {password}")
+        is_configured = ssid != "" and password != ""
+        return is_configured

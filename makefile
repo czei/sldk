@@ -19,7 +19,6 @@ release: $(SRC_DIR)/*.py
 copy_to_circuitpy : $(TEST_DIR)
 	cp -f boot.py $(TEST_DIR)
 	cp -f code.py $(TEST_DIR)
-	rsync -av --update --progress $(SRC_DIR)/../www $(TEST_DIR)
 	rsync -av --update --progress \
 		--exclude='lib/' \
 		--exclude='images/' \

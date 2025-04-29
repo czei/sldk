@@ -3,9 +3,8 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Build Commands
-* `make debug` - Deploy to MatrixPortal S3 device
+* `make copy_to_circuitpy` - Deploy to MatrixPortal S3 device
 * `make release` - Copy files to release archive
-* `make test` - Copy all files to the MatrixPortal S3 for testing
 
 ## Testing
 * Run all tests: `python -m pytest test/test-suite.py -v`
@@ -26,3 +25,4 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 * Support both running on actual hardware and testing in standard Python environment
 * Test functionality in isolation before deploying to hardware
 * Ensure tests properly mock CircuitPython-specific modules
+* Separate functionality that could be applied to any CircuitPython project from the specific functionality of this project. The ultimate goal is to refactor into an open source library.

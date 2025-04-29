@@ -39,7 +39,7 @@ class MessageQueue:
         self.delay_queue = []
         self.index = 0
 
-    def add_scroll_message(self, the_message, delay=2):
+    async def add_scroll_message(self, the_message, delay=2):
         """
         Add a scrolling message to the queue
         
@@ -74,13 +74,13 @@ class MessageQueue:
             days_until = vac.get_days_until()
             if days_until > 1:
                 vac_message = f"Vacation to {vac.name} in: {days_until} days"
-                self.add_scroll_message(vac_message, 0)
+                await self.add_scroll_message(vac_message, 0)
             elif days_until == 1:
                 vac_message = f"Your vacation to {vac.name} is tomorrow!!!"
-                self.add_scroll_message(vac_message, 0)
+                await self.add_scroll_message(vac_message, 0)
             elif days_until == 0:
                 vac_message = f"Your vacation to {vac.name} is TODAY!!!!!!!!!!!!!"
-                self.add_scroll_message(vac_message, 0)
+                await self.add_scroll_message(vac_message, 0)
 
     async def add_required_message(self, park_name):
         """

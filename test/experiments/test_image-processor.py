@@ -6,7 +6,7 @@ from unittest import TestCase
 
 from PIL import Image
 
-import src.image_processor
+import src.utils.image_processor
 # from ._structs import RectangleStruct
 
 # from displayio import Bitmap
@@ -211,7 +211,7 @@ class TestImageProcessor(TestCase):
         bitmap = create_bitmap(16, 16)
         bitmap[7,7] = 7  # Set a pixel at position (7, 7) to be "on".
 
-        ip = src.image_processor.ImageProcessor(bitmap)
+        ip = src.utils.image_processor.ImageProcessor(bitmap)
         self.assertTrue(bitmap.width == 16)
         self.assertTrue(bitmap.height == 16)
         # self.assertTrue(len(ip.pixels) == 1)
