@@ -6,6 +6,7 @@ import asyncio
 import json
 import gc
 import socketpool
+import time
 import wifi
 
 from src.config.settings_manager import SettingsManager
@@ -200,7 +201,10 @@ class ThemeParkApp:
             # No valid park selected, no need to update data
             # Just regenerate message queue to show prompt to select park
             self.message_queue.init()
-            await self.build_messages()
+            # No park selected - show message to choose a park
+            domain_name = self.settings_manager.get("domain_name", "themeparkwaits")
+            await self.message_queue.add_scroll_message(f"Choose theme park at http://{domain_name}.local", 1)
+            await self.message_queue.add_splash()
             return
 
         # Check for forced update flag in theme_park_service
@@ -247,12 +251,6 @@ class ThemeParkApp:
         
         # Check if a park is selected
         if not self.theme_park_service.park_list or not self.theme_park_service.park_list.current_park.is_valid():
-            # No park selected - show message to choose a park
-            await self.message_queue.add_scroll_message(f"Choose theme park at http://{domain_name}.local", 1)
-            # Repeat the message
-            await self.message_queue.add_scroll_message(f"Choose theme park at http://{domain_name}.local", 1)
-            # Add vacation information if set
-            # await self.message_queue.add_vacation(self.theme_park_service.vacation)
             return
         
         # Park is selected - show regular configuration message
@@ -354,7 +352,7 @@ class ThemeParkApp:
 
     def start_web_server(self, socket_pool):
         """
-        Start the web server
+        Start the web server with enhanced reliability features
         
         Args:
             socket_pool: The socket pool to use
@@ -362,6 +360,17 @@ class ThemeParkApp:
         Returns:
             The web server instance
         """
+        # Apply HTTP response patch to handle client disconnections gracefully
+        try:
+            from src.network.http_response_patch import apply_http_response_patch
+            patch_result = apply_http_response_patch()
+            if patch_result:
+                logger.info("HTTP response patch applied successfully")
+            else:
+                logger.warning("HTTP response patch could not be applied")
+        except ImportError:
+            logger.warning("HTTP response patch module not found")
+        
         from src.network.web_server import ThemeParkWebServer
 
         # Create and start web server
@@ -404,21 +413,79 @@ class ThemeParkApp:
                 await asyncio.sleep(1)  # Delay to prevent rapid error loops
 
     async def run_web_server_loop(self, web_server):
-        """Run the web server polling loop"""
+        """Run the web server polling loop with improved reliability"""
         if not web_server:
             return
 
+        # Track server health
+        consecutive_errors = 0
+        max_consecutive_errors = 5
+        last_restart_time = 0
+        restart_cooldown = 60  # seconds between full server restarts
+
         while True:
             try:
-                # Poll web server for requests without excessive logging
-                await web_server.poll()
+                # Check if web server is running
+                if not web_server.is_running:
+                    # Server is not running - attempt to restart it
+                    logger.info("Web server not running, attempting restart")
+                    
+                    # Check cooldown period
+                    current_time = time.monotonic()
+                    if current_time - last_restart_time > restart_cooldown:
+                        last_restart_time = current_time
+                        
+                        # Create a new web server instance
+                        new_server = self.start_web_server(self.socket_pool)
+                        if new_server and new_server.is_running:
+                            web_server = new_server
+                            logger.info("Successfully created new web server instance")
+                            consecutive_errors = 0
+                        else:
+                            logger.error(None, "Failed to create new web server instance")
+                            # Longer pause before next attempt
+                            await asyncio.sleep(5)
+                    else:
+                        # Still in cooldown period
+                        logger.debug(f"In restart cooldown period ({restart_cooldown - (current_time - last_restart_time):.1f}s remaining)")
+                        await asyncio.sleep(1)
+                    continue
+
+                # Poll web server for requests
+                poll_result = await web_server.poll()
+
+                # If polling was successful, reset error counter
+                if poll_result is not None:
+                    consecutive_errors = 0
 
                 # Small delay to prevent CPU hogging
                 await asyncio.sleep(0.01)
 
             except Exception as e:
                 logger.error(e, "Error in web server loop")
-                await asyncio.sleep(1)  # Delay to prevent rapid error loops
+                consecutive_errors += 1
+                
+                # If we have too many consecutive errors, try restarting the server
+                if consecutive_errors >= max_consecutive_errors:
+                    logger.error(None, f"Too many consecutive errors ({consecutive_errors}), restarting web server")
+                    try:
+                        web_server.stop()
+                        
+                        # Only attempt restart if cooldown period has passed
+                        current_time = time.monotonic()
+                        if current_time - last_restart_time > restart_cooldown:
+                            last_restart_time = current_time
+                            # Try to create a new web server
+                            new_server = self.start_web_server(self.socket_pool)
+                            if new_server and new_server.is_running:
+                                web_server = new_server
+                                logger.info("Successfully created new web server after consecutive errors")
+                                consecutive_errors = 0
+                    except Exception as restart_error:
+                        logger.error(restart_error, "Failed to restart web server after consecutive errors")
+                
+                # Delay to prevent rapid error loops - longer delay with more errors
+                await asyncio.sleep(min(1 + consecutive_errors * 0.5, 5))
 
     async def run(self):
         """Run the main application loop with concurrent tasks"""

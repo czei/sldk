@@ -118,7 +118,7 @@ class ThemeParkWebServer:
 
     def start(self, ip_address):
         """
-        Start the web server
+        Start the web server with improved reliability
         
         Args:
             ip_address: The IP address to bind to
@@ -130,8 +130,33 @@ class ThemeParkWebServer:
             # Try to stop any existing server first
             try:
                 self.server.stop()
-            except:
-                pass
+                # Add a delay to ensure socket is properly released
+                import time
+                time.sleep(1)
+            except Exception as stop_error:
+                logger.error(stop_error, "Error stopping existing server - continuing anyway")
+                
+            # Before starting, check if port is in use - CircuitPython doesn't have socket.SO_REUSEADDR
+            # so we need to ensure the port is free
+            try:
+                import socket
+                test_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                test_socket.bind(("0.0.0.0", 80))
+                test_socket.close()
+                # Port is available
+            except OSError as sock_error:
+                # Port is still in use, try to forcefully clear it
+                logger.error(sock_error, "Port 80 is still in use. Attempting to reset networking...")
+                try:
+                    # Reset the network interface to clear all sockets
+                    import wifi
+                    self.is_running = False
+                    # Wait for any in-flight connections to complete
+                    time.sleep(2)
+                except Exception as reset_error:
+                    logger.error(reset_error, "Failed to reset networking")
+                    self.is_running = False
+                    return
 
             # Start the server with "0.0.0.0" to listen on all interfaces
             # This is important for ensuring the server responds to all incoming connections
@@ -146,9 +171,40 @@ class ThemeParkWebServer:
             self.is_running = False
 
     def stop(self):
-        """Stop the web server"""
-        if self.is_running:
-            self.server.stop()
+        """Stop the web server with improved error handling"""
+        if not self.is_running:
+            return
+            
+        try:
+            # Mark as not running first to prevent further poll operations
+            self.is_running = False
+            
+            # Add delay to allow any in-flight requests to complete
+            import time
+            time.sleep(0.5)
+            
+            try:
+                # Check if server has a valid socket before stopping
+                if hasattr(self.server, 'server_socket') and self.server.server_socket:
+                    self.server.stop()
+                    logger.debug("Web server stopped successfully")
+                else:
+                    logger.debug("Server already stopped or has invalid socket")
+            except Exception as stop_error:
+                logger.error(stop_error, "Error stopping web server")
+                
+            # Ensure we release resources associated with the server
+            if hasattr(self.server, 'server_socket'):
+                try:
+                    if self.server.server_socket:
+                        self.server.server_socket.close()
+                except Exception:
+                    pass
+                    
+        except Exception as e:
+            logger.error(e, "Unexpected error in web server stop")
+        finally:
+            # Always mark as not running, regardless of exceptions
             self.is_running = False
 
     def _process_query_params(self, query_params):
@@ -252,13 +308,13 @@ class ThemeParkWebServer:
         except Exception as e:
             logger.error(e, "Error saving settings")
 
-            # Extract scroll speed
-            scroll_match = re.search(r'scroll_speed=([^&]+)', query_params)
-            if scroll_match:
-                scroll_speed = scroll_match.group(1)
-                self.app.settings_manager.settings["scroll_speed"] = scroll_speed
-                logger.debug(f"Updated scroll speed to {scroll_speed}")
-                # No immediate action needed for scroll speed as it's read on demand when scrolling
+        # Extract scroll speed
+        scroll_match = re.search(r'scroll_speed=([^&]+)', query_params)
+        if scroll_match:
+            scroll_speed = scroll_match.group(1)
+            self.app.settings_manager.settings["scroll_speed"] = scroll_speed
+            logger.debug(f"Updated scroll speed to {scroll_speed}")
+            # No immediate action needed for scroll speed as it's read on demand when scrolling
 
         # Save settings
         try:
@@ -306,7 +362,7 @@ class ThemeParkWebServer:
 
     async def poll(self):
         """
-        Poll the server for incoming requests with error recovery
+        Poll the server for incoming requests with improved error recovery
         
         Returns:
             True if a request was handled, False/None otherwise
@@ -318,44 +374,136 @@ class ThemeParkWebServer:
             # Poll the server for requests
             result = self.server.poll()
 
-            # Short sleep to allow other tasks to run
-            await asyncio.sleep(0)
+            # Short sleep to allow other tasks to run - essential for cooperative multitasking
+            await asyncio.sleep(0.01)  # Slightly longer yield to reduce CPU usage
 
             # Only return a meaningful result for actual requests
-            # The adafruit_httpserver.REQUEST_HANDLED_RESPONSE_SENT constant
-            # is used to indicate a request was actually processed
             from adafruit_httpserver import REQUEST_HANDLED_RESPONSE_SENT
             if result == REQUEST_HANDLED_RESPONSE_SENT:
                 return True
 
             return False
 
+        except BrokenPipeError as pipe_error:
+            # BrokenPipeError is common when client disconnects prematurely
+            # Log but no need to restart server as it's a client-side issue
+            logger.debug(f"Client disconnected prematurely: {pipe_error}")
+            await asyncio.sleep(0.1)  # Brief pause
+            return False
+            
+        except OSError as os_error:
+            # Handle specific OSError cases
+            if os_error.args and os_error.args[0] == 32:  # Broken pipe
+                logger.debug("OSError: Broken pipe - client disconnected")
+                await asyncio.sleep(0.1)
+                return False
+            elif os_error.args and os_error.args[0] == 104:  # Connection reset
+                logger.debug("OSError: Connection reset by client")
+                await asyncio.sleep(0.1)
+                return False
+            else:
+                # Other OS errors might require restart
+                logger.error(os_error, f"OS Error in web server poll: {os_error}")
+                await self._attempt_server_restart()
+                return False
+                
         except Exception as e:
             # Log the error but don't crash the server
-            logger.error(e, "Error in web server poll")
+            logger.error(e, f"Error in web server poll: {type(e).__name__}")
 
             # Brief pause to avoid error loops
-            await asyncio.sleep(0.1)
+            await asyncio.sleep(0.5)  # Longer pause for more serious errors
 
-            # Check if server is still in a valid state
-            try:
-                # Access a server property to check if it's functioning
+            # Check if server still needs to be restarted
+            await self._attempt_server_restart()
+            
+            return False
+    
+    async def _attempt_server_restart(self):
+        """Helper method to attempt server restart with proper error handling"""
+        # First check if the server socket is still valid
+        try:
+            # Access a server property to check if it's functioning
+            if hasattr(self.server, 'server_socket') and self.server.server_socket:
                 addr = self.server.server_socket.getsockname()
                 # If we get here, server socket is still valid
-            except Exception:
-                # Server socket appears invalid, restart server
-                logger.info("Restarting web server after error")
-                try:
-                    self.is_running = False
-                    self.server.stop()
-                    await asyncio.sleep(1)  # Brief delay before restart
-                    self.server.start("0.0.0.0", 80)
-                    self.is_running = True
-                    logger.info("Web server restarted successfully")
-                except Exception as restart_error:
-                    logger.error(restart_error, "Failed to restart web server")
-
-            return False
+                return
+        except Exception:
+            # Server socket appears invalid, needs restart
+            pass
+            
+        # If we get here, server needs restart
+        logger.info("Restarting web server after error")
+        
+        # Implement a circuit breaker pattern to avoid restart loops
+        import time
+        # Track restart time in a module variable
+        if not hasattr(self, '_last_restart_time'):
+            self._last_restart_time = 0
+            self._restart_attempts = 0
+            
+        current_time = time.monotonic()
+        # Limit restarts to max once per 10 seconds to avoid rapid restarts
+        if current_time - self._last_restart_time < 10:
+            self._restart_attempts += 1
+            # If we've had multiple rapid restart attempts, wait longer before trying again
+            if self._restart_attempts > 3:
+                logger.error(None, f"Multiple restart attempts ({self._restart_attempts}), waiting longer...")
+                await asyncio.sleep(5)  # Longer cooldown period
+                if self._restart_attempts > 10:
+                    logger.error(None, "Too many restart attempts, server may be unstable")
+                    self.is_running = False  # Mark as not running to prevent further attempts
+                    return
+            return
+            
+        # Try to restart the server
+        try:
+            # Record this attempt
+            self._last_restart_time = current_time
+            self._restart_attempts += 1
+            
+            # Stop all current connections
+            self.is_running = False
+            try:
+                self.server.stop()
+            except Exception as stop_error:
+                logger.error(stop_error, "Error stopping server during restart")
+            
+            # Wait to ensure sockets are released
+            await asyncio.sleep(2)
+            
+            # Create a fresh server instance to avoid any stale state
+            import socketpool
+            import wifi
+            
+            # Try to clear port 80 if it's still in use
+            try:
+                import socket
+                test_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                test_socket.bind(("0.0.0.0", 80))
+                test_socket.close()
+            except OSError as sock_error:
+                logger.error(sock_error, "Port 80 still in use during restart, may fail")
+                # Continue anyway as we'll catch the error on start
+                await asyncio.sleep(2)  # Additional wait time
+                
+            # Start the server fresh
+            try:
+                self.server = Server(socketpool.SocketPool(wifi.radio), "src/www", debug=True)
+                self.register_routes()  # Re-register the routes
+                self.server.start("0.0.0.0", 80)
+                self.is_running = True
+                logger.info("Web server restarted successfully")
+                
+                # Reset restart counter on success
+                self._restart_attempts = 0
+            except Exception as start_error:
+                logger.error(start_error, "Failed to restart web server")
+                self.is_running = False
+                
+        except Exception as restart_error:
+            logger.error(restart_error, "Unexpected error during server restart")
+            self.is_running = False
 
     def generate_main_page(self):
         """
