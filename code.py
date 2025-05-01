@@ -14,6 +14,8 @@ logger = ErrorHandler("error_log")
 
 # Initialize ThemeParkApp and run it
 async def main():
+
+    display_impl = None
     try:
         # Import hardware-specific modules conditionally
         try:
@@ -58,17 +60,21 @@ async def main():
             logger.info(f"Advertising mDNS hostname: {hostname}.local")
             display_impl = AsyncScrollingDisplay(display, settings_manager)
             
-        except ImportError:
+        except ImportError as e:
             # For non-hardware testing
-            logger.info("Running in simulation mode (no hardware)")
+            logger.error(e, "Running in simulation mode (no hardware)")
             from src.ui.display_base import Display
             from src.network.http_client import HttpClient
             
             # Create mock display
             display_impl = Display(None)
             http_client = HttpClient()
-        
+
+            logger.debug(f"Display implementation type: {type(display_impl)}")
+
         # Create app instance
+
+        logger.debug(f"Display implementation type: {type(display_impl)}")
         app = ThemeParkApp(display_impl, http_client)
         
         # Run the app

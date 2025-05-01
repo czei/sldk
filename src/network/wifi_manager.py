@@ -383,101 +383,55 @@ secrets = {
         # Scan for networks
         networks = self.scan_networks()
         
-        # Get the page template
-        try:
-            with open("/src/wifi-setup.html", "r") as f:
-                template = f.read()
-                
-            # Replace the networks section
-            # Look for form start and insert networks before password field
-            form_start = "<form action=\"configure\" method=\"post\">"
-            password_field = "<div><label>Password:</label>"
-            
-            # Create networks HTML
-            networks_html = ""
+        # Create a clean modern HTML page
+        html = """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <title>WiFi Setup</title>
+            <link rel="stylesheet" href="/wifi_style.css">
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        </head>
+        <body>
+            <h1>WiFi Setup</h1>
+            <form action="configure" method="post">
+        """
+        
+        # Add networks
+        if networks:
+            html += "<p>Select your WiFi network:</p>"
             for i, network in enumerate(networks):
                 ssid = network["ssid"]
                 rssi = network["rssi"]
                 # Convert RSSI to signal bars (1-4)
                 bars = min(4, max(1, int((network["rssi"] + 100) / 15)))
                 
-                networks_html += f"""
+                html += f"""
                 <div class="network">
-                  <input type="radio" id="ssid_{i}" name="ssid" value="{ssid}" />
-                  <label for="ssid_{i}">{ssid} ({bars} bars, {rssi} dBm)</label>
+                    <input type="radio" id="ssid_{i}" name="ssid" value="{ssid}" />
+                    <label for="ssid_{i}">{ssid} ({bars} bars, {rssi} dBm)</label>
                 </div>
-                <br>
                 """
+        else:
+            html += "<p>No networks found. Please scan again.</p>"
+        
+        # Password field
+        html += """
+                <div class="password-container">
+                    <label for="password">Password:</label>
+                    <input class="text" id="password" name="password" type="password" placeholder="WiFi Password">
+                </div>
                 
-            # If we found the template sections, replace them
-            if form_start in template and password_field in template:
-                # Split the template
-                parts = template.split(password_field)
-                if len(parts) == 2:
-                    # Replace content between form start and password field
-                    start_index = parts[0].find(form_start) + len(form_start)
-                    # Insert networks and modify the button section to include scan button
-                    result = parts[0][:start_index] + "\n" + networks_html + password_field + parts[1]
-                    
-                    # Replace the button section with one that includes scan button
-                    button_line = "<p><button>Connect</button></p>"
-                    scan_buttons = """<div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                        <button type="submit">Connect</button>
-                        <a href="/?scan=true" style="display: inline-block; padding: 8px 16px; background-color: #4285f4; color: white; text-decoration: none; border-radius: 4px;">Scan Networks</a>
-                    </div>"""
-                    
-                    result = result.replace(button_line, scan_buttons)
-                    return result
-                    
-            # If we couldn't modify the template, return it as is
-            return template
-                
-        except OSError:
-            # If we can't read the template, create a minimal page
-            html = """
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>WiFi Setup</title>
-                <link rel="stylesheet" href="/wifi_style.css">
-                <meta name="viewport" content="width=device-width, initial-scale=1">
-            </head>
-            <body>
-                <h1>WiFi Setup</h1>
-                <form action="configure" method="post">
-            """
-            
-            # Add networks
-            if networks:
-                for i, network in enumerate(networks):
-                    ssid = network["ssid"]
-                    rssi = network["rssi"]
-                    # Convert RSSI to signal bars (1-4)
-                    bars = min(4, max(1, int((network["rssi"] + 100) / 15)))
-                    
-                    html += f"""
-                    <div class="network">
-                      <input type="radio" id="ssid_{i}" name="ssid" value="{ssid}" />
-                      <label for="ssid_{i}">{ssid} ({bars} bars, {rssi} dBm)</label>
-                    </div>
-                    <br>
-                    """
-            else:
-                html += "<p>No networks found. Please refresh to scan again.</p>"
-                
-            # Complete the form
-            html += """
-                    <div><label>Password:</label> <input class="text" name="password" type="password"></div>
-                    <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-                        <button type="submit">Connect</button>
-                        <a href="/?scan=true" style="display: inline-block; padding: 8px 16px; background-color: #4285f4; color: white; text-decoration: none; border-radius: 4px;">Scan Networks</a>
-                    </div>
-                </form>
-            </body>
-            </html>
-            """
-            
-            return html
+                <div class="button-container">
+                    <button type="submit">Connect</button>
+                </div>
+            </form>
+        </body>
+        </html>
+        """
+        
+        return html
 
     def start_web_server(self):
         logger.debug("starting web server..")
@@ -545,16 +499,47 @@ secrets = {
         def wifi_style(request: Request):
             """Serve WiFi CSS styles"""
             try:
-                with open("/www/wifi_style.css", "r") as f:
-                    content = f.read()
-                logger.debug("Successfully served wifi_style.css")
-                return Response(request, content, content_type="text/css")
+                # Try different possible locations for the CSS file
+                css_paths = [
+                    "/src/www/wifi_style.css",  # Primary location
+                    "/www/wifi_style.css",      # Alternate location
+                    "/wifi_style.css"           # Root location
+                ]
+                
+                content = None
+                for path in css_paths:
+                    try:
+                        with open(path, "r") as f:
+                            content = f.read()
+                            logger.debug(f"Successfully served wifi_style.css from {path}")
+                            break
+                    except OSError:
+                        continue
+                
+                if content:
+                    return Response(request, content, content_type="text/css")
+                else:
+                    raise OSError("Could not find wifi_style.css in any location")
+                    
             except OSError as e:
                 logger.error(e, "Error serving wifi_style.css")
+                # Provide a minimal fallback CSS if file can't be found
                 fallback_css = """
-                body { font-family: Arial, sans-serif; margin: 0; padding: 0; }
-                .network { margin-bottom: 10px; }
-                input[type="radio"] { margin-right: 10px; }
+                body { 
+                    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+                    margin: 0; 
+                    padding: 0; 
+                    background-color: #faa538;
+                    color: white;
+                }
+                h1 { text-align: center; padding: 20px 0; }
+                .network { display: flex; align-items: center; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.2); }
+                input[type="radio"] { margin-right: 10px; width: 20px; height: 20px; }
+                input.text { width: 100%; padding: 12px; border-radius: 30px; margin: 10px 0; border: 2px solid white; background: transparent; color: white; }
+                button { background: white; color: #faa538; border: none; padding: 12px 30px; border-radius: 30px; margin-top: 20px; font-weight: bold; }
+                .scan-button { background: #4285f4; color: white; padding: 12px; border-radius: 30px; text-decoration: none; display: inline-block; }
+                .button-container { display: flex; justify-content: space-between; margin-top: 20px; }
+                form { padding: 0 20px; }
                 """
                 return Response(request, fallback_css, content_type="text/css")
 
@@ -564,7 +549,15 @@ secrets = {
             try:
                 # Get form data from request
                 content_length = int(request.headers.get("Content-Length", 0))
-                form_data = request.body.read(content_length).decode("utf-8")
+                
+                # Fix for the 'bytes' object has no attribute 'read' error
+                # In CircuitPython/Adafruit's HTTP server, request.body is already the bytes,
+                # not a file-like object with a read method
+                if isinstance(request.body, bytes):
+                    form_data = request.body.decode("utf-8")
+                else:
+                    form_data = request.body.read(content_length).decode("utf-8")
+                
                 logger.debug(f"Received form data: {form_data}")
 
                 # Parse form data to get SSID and password
@@ -592,17 +585,34 @@ secrets = {
                     # Try to connect
                     response_html = f"""
                     <!DOCTYPE html>
-                    <html>
+                    <html lang="en">
                     <head>
+                        <meta charset="UTF-8">
                         <title>WiFi Configuration</title>
                         <meta http-equiv="refresh" content="10;url=/" />
+                        <link rel="stylesheet" href="/wifi_style.css">
+                        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+                        <style>
+                            .connection-box {
+                                background: rgba(255, 255, 255, 0.1);
+                                border-radius: 12px;
+                                padding: 20px;
+                                margin: 20px;
+                            }
+                            h2 {
+                                margin-top: 0;
+                            }
+                        </style>
                     </head>
                     <body>
                         <h1>WiFi Configuration</h1>
-                        <p>Connecting to network: {self.ssid}</p>
-                        <p>The device will attempt to connect to the network.</p>
-                        <p>If successful, you will need to connect to your regular WiFi network to access the device.</p>
-                        <p>If connection fails, the access point will remain active and you can try again.</p>
+                        <div class="connection-box">
+                            <h2>Connecting to WiFi</h2>
+                            <p>Network: <strong>{self.ssid}</strong></p>
+                            <p>The device will attempt to connect to the network.</p>
+                            <p>If successful, you will need to connect to your regular WiFi network to access the device.</p>
+                            <p>If connection fails, the access point will remain active and you can try again.</p>
+                        </div>
                     </body>
                     </html>
                     """
@@ -615,15 +625,28 @@ secrets = {
                 else:
                     error_html = """
                     <!DOCTYPE html>
-                    <html>
+                    <html lang="en">
                     <head>
+                        <meta charset="UTF-8">
                         <title>Error</title>
                         <meta http-equiv="refresh" content="5;url=/" />
+                        <link rel="stylesheet" href="/wifi_style.css">
+                        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+                        <style>
+                            .error-box {
+                                background: rgba(255, 0, 0, 0.2);
+                                border-radius: 12px;
+                                padding: 20px;
+                                margin: 20px;
+                            }
+                        </style>
                     </head>
                     <body>
                         <h1>Configuration Error</h1>
-                        <p>Missing SSID or password.</p>
-                        <p>Returning to setup page in 5 seconds...</p>
+                        <div class="error-box">
+                            <p>Missing SSID or password.</p>
+                            <p>Returning to setup page in 5 seconds...</p>
+                        </div>
                     </body>
                     </html>
                     """
@@ -633,15 +656,28 @@ secrets = {
                 logger.error(e, "Error processing WiFi configuration")
                 error_html = """
                 <!DOCTYPE html>
-                <html>
+                <html lang="en">
                 <head>
+                    <meta charset="UTF-8">
                     <title>Error</title>
                     <meta http-equiv="refresh" content="5;url=/" />
+                    <link rel="stylesheet" href="/wifi_style.css">
+                    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+                    <style>
+                        .error-box {
+                            background: rgba(255, 0, 0, 0.2);
+                            border-radius: 12px;
+                            padding: 20px;
+                            margin: 20px;
+                        }
+                    </style>
                 </head>
                 <body>
                     <h1>Configuration Error</h1>
-                    <p>An error occurred while processing your request.</p>
-                    <p>Returning to setup page in 5 seconds...</p>
+                    <div class="error-box">
+                        <p>An error occurred while processing your request.</p>
+                        <p>Returning to setup page in 5 seconds...</p>
+                    </div>
                 </body>
                 </html>
                 """

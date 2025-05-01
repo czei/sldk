@@ -105,7 +105,8 @@ class ThemeParkApp:
         """Initialize network and theme park data in the background"""
         # Show WiFi connection message with actual SSID
         ssid = self.wifi_manager.ssid
-        await self.display.show_centered(f"Connecting to WiFi:", f"{ssid}", 0)
+        logger.debug(f"Display implementation type: {type(self.display)}")
+        await self.display.show_scroll_message(f"Connecting to WiFi {ssid}")
 
         # Create a display callback for connection status updates
         # async def update_connection_status(status):
@@ -116,18 +117,17 @@ class ThemeParkApp:
 
         # Show appropriate message based on connection result
         if connected:
-            await self.display.show_centered("WiFi Connected", f"{ssid}", 1)
+            await self.display.show_scroll_message(f"Connected ...")
             # Create HTTP session after WiFi is connected
             self.socket_pool = socketpool.SocketPool(wifi.radio)
             await self._initialize_http_client(self.socket_pool)
         else:
-            await self.display.show_centered("WiFi Failed", f"Check settings", 2)
+            await self.display.show_scroll_message("WiFi Failed - Check settings")
 
     async def run_configure_wifi_message(self):
         while self.is_wifi_password_configured() is False:
-            setup_text1 = f"Connect your phone to Wifi channel {self.wifi_manager.AP_SSID}, password \"{self.wifi_manager.AP_PASSWORD}\"."
-            setup_text2 = "  Then load page http://192.168.4.1"
-            await self.display.show_centered(setup_text1, setup_text2, 1)
+            setup_text = f"Connect your phone to Wifi channel {self.wifi_manager.AP_SSID}, password \"{self.wifi_manager.AP_PASSWORD}\". Then load page http://192.168.4.1"
+            await self.display.show_scroll_message(setup_text)
 
     async def try_wifi_until_connected(self):
         ssid, password = load_credentials()
@@ -142,9 +142,7 @@ class ThemeParkApp:
 
         while wifi.radio.connected is not True:
             try:
-                setup_text1 = f"Connecting to Wifi:"
-                setup_text2 = f"{ssid}"
-                await self.display.show_centered(setup_text1, setup_text2, 2)
+                await self.display.show_scroll_message(f"Connecting to Wifi: {ssid}")
                 wifi.radio.connect(ssid, password)
             except (RuntimeError) as e:
                 logger.error(e,f"Wifi runtime error: {str(e)} at {wifi.radio.ipv4_address}")
@@ -361,15 +359,15 @@ class ThemeParkApp:
             The web server instance
         """
         # Apply HTTP response patch to handle client disconnections gracefully
-        try:
-            from src.network.http_response_patch import apply_http_response_patch
-            patch_result = apply_http_response_patch()
-            if patch_result:
-                logger.info("HTTP response patch applied successfully")
-            else:
-                logger.warning("HTTP response patch could not be applied")
-        except ImportError:
-            logger.warning("HTTP response patch module not found")
+        # try:
+        #     from src.network.http_response_patch import apply_http_response_patch
+        #     patch_result = apply_http_response_patch()
+        #     if patch_result:
+        #         logger.info("HTTP response patch applied successfully")
+        #     else:
+        #         logger.warning("HTTP response patch could not be applied")
+        # except ImportError:
+        #     logger.warning("HTTP response patch module not found")
         
         from src.network.web_server import ThemeParkWebServer
 
@@ -442,13 +440,13 @@ class ThemeParkApp:
                             logger.info("Successfully created new web server instance")
                             consecutive_errors = 0
                         else:
-                            logger.error(None, "Failed to create new web server instance")
+                            logger.debug("Failed to create new web server instance")
                             # Longer pause before next attempt
                             await asyncio.sleep(5)
                     else:
                         # Still in cooldown period
                         logger.debug(f"In restart cooldown period ({restart_cooldown - (current_time - last_restart_time):.1f}s remaining)")
-                        await asyncio.sleep(1)
+                        await asyncio.sleep(10)
                     continue
 
                 # Poll web server for requests

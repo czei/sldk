@@ -14,6 +14,7 @@ from adafruit_httpserver.methods import GET, POST
 from src.models.vacation import Vacation
 from src.utils.color_utils import ColorUtils
 from src.utils.error_handler import ErrorHandler
+from adafruit_httpserver import REQUEST_HANDLED_RESPONSE_SENT
 
 # Initialize logger
 logger = ErrorHandler("error_log")
@@ -128,35 +129,35 @@ class ThemeParkWebServer:
             logger.debug(f"Starting server on {ip_address}:80")
 
             # Try to stop any existing server first
-            try:
-                self.server.stop()
-                # Add a delay to ensure socket is properly released
-                import time
-                time.sleep(1)
-            except Exception as stop_error:
-                logger.error(stop_error, "Error stopping existing server - continuing anyway")
+            # try:
+            #     self.server.stop()
+            #     # Add a delay to ensure socket is properly released
+            #     import time
+            #     time.sleep(1)
+            # except Exception as stop_error:
+            #     logger.error(stop_error, "Error stopping existing server - continuing anyway")
                 
             # Before starting, check if port is in use - CircuitPython doesn't have socket.SO_REUSEADDR
             # so we need to ensure the port is free
-            try:
-                import socket
-                test_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                test_socket.bind(("0.0.0.0", 80))
-                test_socket.close()
-                # Port is available
-            except OSError as sock_error:
-                # Port is still in use, try to forcefully clear it
-                logger.error(sock_error, "Port 80 is still in use. Attempting to reset networking...")
-                try:
-                    # Reset the network interface to clear all sockets
-                    import wifi
-                    self.is_running = False
-                    # Wait for any in-flight connections to complete
-                    time.sleep(2)
-                except Exception as reset_error:
-                    logger.error(reset_error, "Failed to reset networking")
-                    self.is_running = False
-                    return
+            # try:
+            #     import socket
+            #     test_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            #     test_socket.bind(("0.0.0.0", 80))
+            #     test_socket.close()
+            #     # Port is available
+            # except OSError as sock_error:
+            #     # Port is still in use, try to forcefully clear it
+            #     logger.error(sock_error, "Port 80 is still in use. Attempting to reset networking...")
+            #     try:
+            #         # Reset the network interface to clear all sockets
+            #         import wifi
+            #         self.is_running = False
+            #         # Wait for any in-flight connections to complete
+            #         time.sleep(2)
+            #     except Exception as reset_error:
+            #         logger.error(reset_error, "Failed to reset networking")
+            #         self.is_running = False
+            #         return
 
             # Start the server with "0.0.0.0" to listen on all interfaces
             # This is important for ensuring the server responds to all incoming connections
@@ -375,10 +376,10 @@ class ThemeParkWebServer:
             result = self.server.poll()
 
             # Short sleep to allow other tasks to run - essential for cooperative multitasking
-            await asyncio.sleep(0.01)  # Slightly longer yield to reduce CPU usage
+            await asyncio.sleep(0.10)  # Slightly longer yield to reduce CPU usage
 
             # Only return a meaningful result for actual requests
-            from adafruit_httpserver import REQUEST_HANDLED_RESPONSE_SENT
+
             if result == REQUEST_HANDLED_RESPONSE_SENT:
                 return True
 
