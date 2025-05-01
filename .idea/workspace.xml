@@ -9,20 +9,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45738fb4-cc72-439f-b890-bda242218f1d" name="Changes" comment="Removed the code that was handling subscriptions.">
-      <change afterPath="$PROJECT_DIR$/src/network/web_server.py.old.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Setup/MatrixPortal_S3_FactoryReset 2.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Setup/MatrixPortal_S3_FactoryReset.bin" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Setup/adafruit-circuitpython-adafruit_matrixportal_s3-en_US-8.2.9 2.uf2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Setup/adafruit-circuitpython-adafruit_matrixportal_s3-en_US-8.2.9.uf2" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/code.py" beforeDir="false" afterPath="$PROJECT_DIR$/code.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/network/http_response_patch.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/network/http_response_patch.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/network/web_server.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/network/web_server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/network/wifi_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/network/wifi_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/www/wifi-setup.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/www/wifi_style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/www/wifi_style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
