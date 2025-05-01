@@ -11,8 +11,11 @@ class ErrorHandler:
     def __init__(self, file_name):
         self.fileName = file_name
         if self.file_exists(file_name) is False:
-            with open(self.fileName, 'w') as file:
-                file.write('')  # Creates an empty file
+            try:
+                with open(self.fileName, 'w') as file:
+                    file.write('')  # Creates an empty file
+            except OSError as e:
+                pass
 
     @staticmethod
     def file_exists(file_name):
@@ -42,7 +45,7 @@ class ErrorHandler:
                 file.write(filtered_st_str + "\n")
         except OSError:
             print(st_str)
-            print("Error writing to log file")
+            # print("Error writing to log file")
 
     def debug(self, message):
         print(message)
@@ -58,7 +61,8 @@ class ErrorHandler:
             with open(self.fileName, 'a') as file:
                 file.write(filtered_message + "\n")
         except OSError:
-            print("Error writing to log file")
+            pass
+            # print("Error writing to log file")
 
     def info(self, message):
         print(message)

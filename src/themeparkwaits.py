@@ -46,6 +46,7 @@ from src.theme_park_api import url_decode
 from src.webgui import generate_header
 from src.theme_park_api import Timer
 from src.ota_updater import OTAUpdater
+from src.memory_tracker import MemoryTracker
 import src.shopify_connect
 
 logger = ErrorHandler("error_log")
@@ -826,15 +827,27 @@ async def update_ride_times_wrapper():
     await asyncio.sleep(1)  # let other tasks run
 
 
+# Initialize the memory tracker at module level
+memory_tracker = MemoryTracker("error_log")
+
 def run_garbage_collector():
+    """
+    Run garbage collection and monitor memory usage using MemoryTracker.
+    Returns the current free memory amount.
+    """
     start_time = time.monotonic()
-    gc.collect()
-    mem_free = gc.mem_free()
+    
+    # Use the memory tracker to collect garbage and check memory status
+    memory_stats = memory_tracker.collect_and_check()
+    mem_free = memory_stats["current_free"]
+    
     end_time = time.monotonic()
-    logger.info(f"Memory available: {mem_free}")
+    logger.info(f"Memory available: {mem_free} ({memory_stats['percent_free']:.1f}% of initial)")
+    
     elapsed_time = end_time - start_time
     if elapsed_time > 2:
         logger.error(f"GC took {elapsed_time} seconds")
+        
     return mem_free
 
 async def periodically_update_ride_times():
@@ -889,6 +902,9 @@ except OSError as e:
 # Should only work if the user had previously called
 # ota_updater.check_for_update_to_install_during_next_reboot()
 asyncio.run(asyncio.gather(download_and_install_update_if_available()))
+
+# Run garbage collection to get an early baseline of memory usage
+run_garbage_collector()
 
 # check to see if the user has paid for a subscription
 # update_subscription_status(settings, http_requests)
