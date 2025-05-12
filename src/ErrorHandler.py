@@ -49,7 +49,7 @@ class ErrorHandler:
 
     def debug(self, message):
         print(message)
-        # self.write_to_file(message)
+        self.write_to_file(message)
 
     def write_to_file(self, message):
         # Write to filesystem when it is write-enabled
