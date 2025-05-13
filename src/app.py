@@ -392,17 +392,25 @@ class ThemeParkApp:
     def start_web_server(self, socket_pool):
         """
         Start the web server with enhanced reliability features
-        
+
         Args:
             socket_pool: The socket pool to use
-            
+
         Returns:
             The web server instance
         """
-        # Skip web server in dev mode
+        # Use development web server in dev mode
         if is_dev_mode():
-            logger.info("Dev mode - web server disabled")
-            return None
+            try:
+                from src.network.dev_web_server import DevThemeParkWebServer
+                logger.info("Dev mode - starting development web server")
+                dev_server = DevThemeParkWebServer(self)
+                dev_server.start()
+                logger.info("Development web server started at http://localhost:8080")
+                return dev_server
+            except Exception as e:
+                logger.error(e, "Failed to start development web server")
+                return None
             
         # Apply HTTP response patch to handle client disconnections gracefully
         # try:
@@ -535,24 +543,33 @@ class ThemeParkApp:
         """Run the main application loop with concurrent tasks"""
         await self.initialize_all()
 
-        # Start web server if in hardware mode
+        # Start web server (will use appropriate implementation based on mode)
         web_server = None
-        if not is_dev_mode():
-            try:
-                web_server = self.start_web_server(self.socket_pool)
-            except ImportError as e:
-                logger.error(e,"Running without web server in simulation mode")
+        try:
+            web_server = self.start_web_server(self.socket_pool)
+            if web_server:
+                logger.info(f"Web server started successfully: {type(web_server).__name__}")
+            else:
+                logger.warning("Web server failed to start")
+        except Exception as e:
+            logger.error(e, "Error starting web server")
 
         if web_server:
             # Run display and web server concurrently
-            logger.info("Starting display and web server concurrently")
-            await asyncio.gather(
-                self.run_display_loop(),
-                self.run_web_server_loop(web_server)
-            )
+            if is_dev_mode():
+                # In dev mode, web server runs in its own thread, so we only need the display loop
+                logger.info("Development mode: Running display loop with threaded web server")
+                await self.run_display_loop()
+            else:
+                # In hardware mode, run both loops concurrently
+                logger.info("Hardware mode: Starting display and web server concurrently")
+                await asyncio.gather(
+                    self.run_display_loop(),
+                    self.run_web_server_loop(web_server)
+                )
         else:
             # Just run the display loop if no web server
-            logger.info("Running display loop only")
+            logger.info("Running display loop only (no web server)")
             await self.run_display_loop()
 
     @staticmethod

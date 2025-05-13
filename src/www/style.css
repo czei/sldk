@@ -1,256 +1,138 @@
-.h1 {
-   font-family: Arial, Helvetica, sans-serif;
-}
-
+/* Theme Park API CSS Styles */
 body {
-   font-family: Arial, Helvetica, sans-serif;
-}
-
-@media screen and (max-width: 467px) {
-   ul {
-      display: block;
-   }
-
-   li {
-      display: block;
-   }
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
 }
 
 .navbar {
-   overflow: hidden;
-   background-color: #faa538;
-   max-width: 400px;
+    background-color: #1e90ff;
+    color: white;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
 }
 
 .navbar a {
-   float: left;
-   font-size: 1.5em;
-   font-weight: 700;
-   color: white;
-   text-align: center;
-   padding: 14px 16px;
-   text-decoration: none;
-}
-
-form { 
-    display: table;
-    width: 100%;
-}
-p { 
-    display: table-row; 
-    margin-bottom: 10px;
-}
-label { 
-    display: table-cell; 
-    padding-right: 14px; 
-    padding-bottom: 8px; 
+    color: white;
+    text-decoration: none;
     font-weight: bold;
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-}
-input { 
-    display: table-cell;
-    text-align: left;
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-input[type="text"] {
-    max-width: 300px;
-}
-input[type="range"] {
-    max-width: 300px;
-    margin-top: 5px;
-}
-select {
-    padding: 8px;
-    margin-right: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-h2 {
-    text-align: left;
-    color: #faa538;
-    margin-top: 20px;
-    margin-bottom: 15px;
-}
-
-h3 {
-    color: #faa538;
-    margin-top: 10px;
-    margin-bottom: 15px;
-}
-
-.dropdown {
-   float: left;
-   overflow: hidden;
-}
-
-.dropdown .dropbtn {
-   font-size: 16px;
-   border: none;
-   outline: none;
-   color: white;
-   padding: 14px 16px;
-   background-color: inherit;
-   font-family: inherit;
-   margin: 0;
-}
-
-.navbar a:hover, .dropdown:hover .dropbtn {
-   background-color: gray;
-}
-
 .gear-icon {
-  position: fixed;
-  top: 0;
-  right: 0;
-  z-index: 100; /* Put the icon on top of other elements */
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
 }
 
 .gear-icon img {
-  width: 44px; /* Adjust size as needed */
-  height: 44px;
-  margin: 13px; /* Adjust spacing as needed */
+    width: 24px;
+    height: 24px;
 }
 
-.dropdown-content {
-   display: none;
-   position: absolute;
-   background-color: #f9f9f9;
-   min-width: 160px;
-   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-   z-index: 1;
+.main-content {
+    padding: 1rem;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
-.dropdown-content a {
-   float: none;
-   color: black;
-   padding: 12px 16px;
-   text-decoration: none;
-   display: block;
-   text-align: left;
+h2 {
+    color: #1e90ff;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+    margin-top: 1.5rem;
 }
 
-.dropdown-content a:hover {
-   background-color: #ddd;
-}
-
-.dropdown:hover .dropdown-content {
-   display: block;
-}
-
-.myCheckbox {
-   vertical-align: middle;
-}
-
-.options {
-    margin: 15px 0;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    padding: 15px 0 15px 0;
-    border: 1px solid #eee;
-}
-
-.checkbox-group {
-    display: block;
-    padding: 5px 0 5px 30px;
-    position: relative;
-    margin-bottom: 8px;
-    text-align: left;
-}
-
-.checkbox-group input[type="checkbox"] {
-    position: absolute;
-    left: 4px;
-    top: 3px;
-    width: 16px;
-    height: 16px;
-}
-
-.checkbox-group label {
-    display: inline-block;
-    margin: 0;
-    padding: 0;
-    font-weight: normal;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group small {
-    display: block;
-    margin-top: 5px;
-    margin-bottom: 15px;
-    color: #666;
-}
-
-.settings-section {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    border: 1px solid #eee;
+h3 {
+    color: #333;
+    margin-top: 1rem;
 }
 
 button {
-    background-color: #faa538;
-    color: white;
+    background-color: #1e90ff;
     border: none;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: block;
-    font-size: 16px;
-    margin: 20px auto;
-    cursor: pointer;
     border-radius: 4px;
-    width: 50%;
-    max-width: 200px;
+    padding: 0.5rem 1rem;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 1rem;
 }
 
 button:hover {
-    background-color: #e09030;
+    background-color: #0078d7;
 }
 
-.settings {
-   float: right;
+input, select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin: 0.2rem 0;
 }
 
-.settings-icon {
-   font-size: 48px;
-   padding: 10px 20px !important;
+select {
+    min-width: 200px;
 }
 
-/* Mobile friendly styles */
-@media screen and (max-width: 600px) {
-    .date-selectors {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 15px;
-    }
-    
-    .date-selectors select {
-        flex: 1;
-        margin-right: 5px;
-    }
-    
-    .date-selectors select:last-child {
-        margin-right: 0;
-    }
-    
-    .countdown-section {
-        background-color: #f9f9f9;
-        padding: 15px;
-        border-radius: 8px;
-        margin-bottom: 20px;
-        border: 1px solid #eee;
-    }
+.form-group {
+    margin-bottom: 1rem;
 }
+
+.checkbox-group {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+.options {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 1rem 0;
+    background-color: #f9f9f9;
+}
+
+.countdown-section {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 1rem 0;
+    background-color: #f9f9f9;
+}
+
+.date-selectors {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.settings-section {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 1rem;
+    margin: 1rem 0;
+    background-color: #f9f9f9;
+}
+
+/* Development mode styling */
+body.dev-mode .navbar {
+    background-color: #ff6b6b;
+}
+
+body.dev-mode h2 {
+    color: #ff6b6b;
+}
+
+body.dev-mode button {
+    background-color: #ff6b6b;
+}
+
+body.dev-mode button:hover {
+    background-color: #e05050;
+}
+EOF < /dev/null

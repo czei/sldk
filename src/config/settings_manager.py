@@ -48,6 +48,10 @@ class SettingsManager:
             self.settings["ride_wait_time_color"] = ColorUtils.colors["Old Lace"]
         if self.settings.get("scroll_speed") is None:
             self.settings["scroll_speed"] = "Medium"
+        if self.settings.get("display_mode") is None:
+            self.settings["display_mode"] = "all_rides"
+        if self.settings.get("selected_ride_name") is None:
+            self.settings["selected_ride_name"] = ""
 
     def get_scroll_speed(self):
         """

@@ -17,18 +17,30 @@ class ErrorHandler:
     Handles writing to log files with fallback to console output.
     """
     
+    # Class-level registry to track instances by filename
+    _instances = {}
+
     def __init__(self, file_name):
         """
         Initialize the error handler with read-only filesystem detection
-        
+
         Args:
             file_name: The name of the log file
         """
+        # Return existing instance if already initialized for this file
+        if file_name in ErrorHandler._instances:
+            # Copy properties from existing instance
+            existing = ErrorHandler._instances[file_name]
+            self.fileName = existing.fileName
+            self.is_readonly = existing.is_readonly
+            return
+
+        # Continue with normal initialization for new instance
         self.fileName = file_name
         # Start with the assumption that the filesystem is read-only
         # We'll only set it to writable if we can successfully write to it
         self.is_readonly = True
-        
+
         # First check if we can directly detect read-only status via storage module
         if STORAGE_AVAILABLE:
             try:
@@ -38,31 +50,40 @@ class ErrorHandler:
                 if self.is_readonly:
                     print("Filesystem is read-only according to storage module")
                     print(f"ErrorHandler initialized - read-only filesystem")
+                    # Register this instance before returning
+                    ErrorHandler._instances[file_name] = self
                     return
             except (AttributeError, OSError):
                 # Continue with write test if storage check fails
                 print("Storage module check failed, will try write test")
-        
+
+        # Try to delete the error log file at startup (only if it exists and is writable)
+        try:
+            if self.file_exists(file_name):
+                print(f"Deleting existing log file: {file_name}")
+                os.remove(file_name)
+        except OSError:
+            # Can't delete, assume readonly
+            self.is_readonly = True
+            print(f"Failed to delete existing log file: {file_name}")
+
         # Regardless of storage module results, always verify by attempting to write
         # This is the most reliable test
         try:
-            # Try to write to an existing file first (append mode)
-            if self.file_exists(file_name):
-                with open(self.fileName, 'a') as file:
-                    file.write('')  # Try to append nothing
-                self.is_readonly = False
-            # If file doesn't exist, try to create it
-            else:
-                with open(self.fileName, 'w') as file:
-                    file.write('')  # Try to create an empty file
-                self.is_readonly = False
+            # Try to create the file
+            with open(self.fileName, 'w') as file:
+                file.write('')  # Try to create an empty file
+            self.is_readonly = False
         except OSError as e:
             # If any error occurs during write/create, filesystem is read-only
             self.is_readonly = True
             print(f"Write test failed: {str(e)}")
-        
+
         # Log system state at initialization based on final determination
         print(f"ErrorHandler initialized - {'read-only' if self.is_readonly else 'writable'} filesystem")
+
+        # Register this instance
+        ErrorHandler._instances[file_name] = self
 
     @staticmethod
     def filter_non_ascii(text):

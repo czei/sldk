@@ -40,6 +40,7 @@ class SimulatedLEDMatrix(DisplayInterface):
         self.bg_color = bg_color
         self.window_width = width * (led_size + spacing)
         self.window_height = height * (led_size + spacing)
+        self.settings_manager = None  # Will be set by set_colors method
         
         # Make window larger for better visibility
         self.window_scale = 1.5
@@ -420,10 +421,48 @@ class SimulatedLEDMatrix(DisplayInterface):
         
         if duration:
             await asyncio.sleep(duration)
+            
+    async def show_ride_wait_time(self, wait_time):
+        """
+        Show a ride's wait time
+        
+        Args:
+            wait_time: The wait time to display (as string)
+        """
+        logger.info(f"Showing ride wait time: {wait_time}")
+        self.clear()
+        self.set_text(wait_time, (255, 255, 0))  # Yellow color for wait time
+        
+    async def show_ride_closed(self, message):
+        """
+        Show that a ride is closed
+        
+        Args:
+            message: The message to display (usually "Closed")
+        """
+        logger.info(f"Showing ride closed: {message}")
+        self.clear()
+        self.set_text(message, (255, 0, 0))  # Red color for closed rides
+        
+    async def show_ride_name(self, ride_name):
+        """
+        Show a ride's name
+        
+        Args:
+            ride_name: The name of the ride to display
+        """
+        logger.info(f"Showing ride name: {ride_name}")
+        self.clear()
+        self.set_text(ride_name)
+        # Simulate scrolling time for longer ride names
+        await asyncio.sleep(len(ride_name) * 0.1)
     
     def set_colors(self, settings_manager):
         """Set display colors from settings"""
         try:
+            # Store settings manager for use by message queue
+            self.settings_manager = settings_manager
+            
             # Extract color settings
             settings = getattr(settings_manager, 'settings', {})
             

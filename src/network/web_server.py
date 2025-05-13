@@ -117,6 +117,216 @@ class ThemeParkWebServer:
                 page = self.generate_settings_page()
             return Response(request, page, content_type="text/html")
 
+        @self.server.route("/api/parks", [GET])
+        def api_parks(request: Request):
+            """API endpoint to get list of parks"""
+            import json
+
+            try:
+                # Extract query parameters
+                query_params = str(request.query_params) if request.query_params else ""
+                query = ""
+
+                # Extract search query if present
+                if "q=" in query_params:
+                    import re
+                    query_match = re.search(r'q=([^&]+)', query_params)
+                    if query_match:
+                        query = self._url_decode(query_match.group(1))
+
+                # Get parks data - synchronized approach
+                parks = []
+
+                # Use direct data access
+                if hasattr(self.app, 'theme_park_service') and hasattr(self.app.theme_park_service, 'park_list'):
+                    park_list = self.app.theme_park_service.park_list
+
+                    # Filter parks if query is provided
+                    if query:
+                        query = query.lower()
+                        for park in park_list.park_list:
+                            if query in park.name.lower():
+                                parks.append({
+                                    "id": park.id,
+                                    "name": park.name,
+                                    "latitude": park.latitude,
+                                    "longitude": park.longitude
+                                })
+                    else:
+                        # Get all parks
+                        for park in park_list.park_list:
+                            parks.append({
+                                "id": park.id,
+                                "name": park.name,
+                                "latitude": park.latitude,
+                                "longitude": park.longitude
+                            })
+
+                # Return JSON response
+                response_json = json.dumps({"parks": parks})
+                return Response(request, response_json, content_type="application/json")
+
+            except Exception as e:
+                logger.error(e, "Error in parks API endpoint")
+                error_json = json.dumps({"error": "Failed to get parks data"})
+                return Response(request, error_json, content_type="application/json", status=500)
+
+        @self.server.route("/api/park", [GET])
+        def api_park(request: Request):
+            """API endpoint to get data for a specific park"""
+            import json
+
+            try:
+                # Extract park ID from query string
+                query_params = str(request.query_params) if request.query_params else ""
+                park_id = None
+
+                if "id=" in query_params:
+                    import re
+                    id_match = re.search(r'id=(\d+)', query_params)
+                    if id_match:
+                        park_id = int(id_match.group(1))
+
+                # If no park ID provided, use current park
+                if not park_id and hasattr(self.app, 'theme_park_service'):
+                    if (hasattr(self.app.theme_park_service, 'park_list') and
+                            hasattr(self.app.theme_park_service.park_list, 'current_park')):
+                        park_id = self.app.theme_park_service.park_list.current_park.id
+
+                if not park_id:
+                    error_json = json.dumps({"error": "No park ID provided and no current park set"})
+                    return Response(request, error_json, content_type="application/json", status=400)
+
+                # Get park data - synchronized approach
+                # Use direct data access to get current park data
+                park_data = {}
+
+                if hasattr(self.app, 'theme_park_service'):
+                    # Get park from park list
+                    park = None
+                    if hasattr(self.app.theme_park_service, 'park_list'):
+                        park = self.app.theme_park_service.park_list.get_park_by_id(park_id)
+
+                    if park:
+                        # Build park data response
+                        rides = []
+                        for ride in park.rides:
+                            rides.append({
+                                "name": ride.name,
+                                "wait_time": ride.wait_time,
+                                "is_open": ride.open_flag
+                            })
+
+                        park_data = {
+                            "id": park.id,
+                            "name": park.name,
+                            "is_open": park.is_open,
+                            "rides": rides,
+                            "latitude": park.latitude,
+                            "longitude": park.longitude
+                        }
+                    else:
+                        error_json = json.dumps({"error": f"Park with ID {park_id} not found"})
+                        return Response(request, error_json, content_type="application/json", status=404)
+                else:
+                    error_json = json.dumps({"error": "Theme park service not available"})
+                    return Response(request, error_json, content_type="application/json", status=500)
+
+                # Return JSON response
+                response_json = json.dumps(park_data)
+                return Response(request, response_json, content_type="application/json")
+
+            except Exception as e:
+                logger.error(e, f"Error in park API endpoint")
+                error_json = json.dumps({"error": "Failed to get park data"})
+                return Response(request, error_json, content_type="application/json", status=500)
+
+        @self.server.route("/api/rides", [GET])
+        def api_rides(request: Request):
+            """API endpoint to get ride wait times"""
+            import json
+
+            try:
+                # Extract park ID and ride name from query string
+                query_params = str(request.query_params) if request.query_params else ""
+                park_id = None
+                ride_name = None
+
+                # Parse park ID
+                if "park_id=" in query_params:
+                    import re
+                    id_match = re.search(r'park_id=(\d+)', query_params)
+                    if id_match:
+                        park_id = int(id_match.group(1))
+
+                # Parse ride name
+                if "ride=" in query_params:
+                    import re
+                    ride_match = re.search(r'ride=([^&]+)', query_params)
+                    if ride_match:
+                        ride_name = self._url_decode(ride_match.group(1))
+
+                # If no park ID provided, use current park
+                if not park_id and hasattr(self.app, 'theme_park_service'):
+                    if (hasattr(self.app.theme_park_service, 'park_list') and
+                            hasattr(self.app.theme_park_service.park_list, 'current_park')):
+                        park_id = self.app.theme_park_service.park_list.current_park.id
+
+                if not park_id:
+                    error_json = json.dumps({"error": "No park ID provided and no current park set"})
+                    return Response(request, error_json, content_type="application/json", status=400)
+
+                # Get ride data - synchronized approach
+                # Use direct data access to get ride data
+                rides_data = {}
+
+                if hasattr(self.app, 'theme_park_service'):
+                    # Get park from park list
+                    park = None
+                    if hasattr(self.app.theme_park_service, 'park_list'):
+                        park = self.app.theme_park_service.park_list.get_park_by_id(park_id)
+
+                    if park:
+                        # If specific ride requested
+                        if ride_name:
+                            for ride in park.rides:
+                                if ride.name.lower() == ride_name.lower():
+                                    rides_data = {
+                                        "name": ride.name,
+                                        "wait_time": ride.wait_time,
+                                        "is_open": ride.open_flag
+                                    }
+                                    break
+
+                            if not rides_data:
+                                error_json = json.dumps({"error": f"Ride '{ride_name}' not found in park"})
+                                return Response(request, error_json, content_type="application/json", status=404)
+                        else:
+                            # Return all rides
+                            rides_list = []
+                            for ride in park.rides:
+                                rides_list.append({
+                                    "name": ride.name,
+                                    "wait_time": ride.wait_time,
+                                    "is_open": ride.open_flag
+                                })
+                            rides_data = {"rides": rides_list}
+                    else:
+                        error_json = json.dumps({"error": f"Park with ID {park_id} not found"})
+                        return Response(request, error_json, content_type="application/json", status=404)
+                else:
+                    error_json = json.dumps({"error": "Theme park service not available"})
+                    return Response(request, error_json, content_type="application/json", status=500)
+
+                # Return JSON response
+                response_json = json.dumps(rides_data)
+                return Response(request, response_json, content_type="application/json")
+
+            except Exception as e:
+                logger.error(e, f"Error in rides API endpoint")
+                error_json = json.dumps({"error": "Failed to get ride data"})
+                return Response(request, error_json, content_type="application/json", status=500)
+
     def start(self, ip_address):
         """
         Start the web server with improved reliability

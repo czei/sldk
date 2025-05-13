@@ -96,7 +96,7 @@ class MessageQueue:
 
     async def add_rides(self, park_list):
         """
-        Add ride information to the queue
+        Add ride information to the queue based on display mode
         
         Args:
             park_list: The list of parks
@@ -110,18 +110,101 @@ class MessageQueue:
             self.param_queue.append(park.name + " is closed")
             return
 
+        # Get display mode from settings if available
+        display_mode = "all_rides"
+        selected_ride_name = ""
+        
+        try:
+            # Get settings from the app's settings manager
+            if hasattr(self.display, 'settings_manager'):
+                display_mode = self.display.settings_manager.get("display_mode", "all_rides")
+                selected_ride_name = self.display.settings_manager.get("selected_ride_name", "")
+        except Exception as e:
+            logger.error(e, "Error getting display mode settings")
+            display_mode = "all_rides"  # Default to all rides on error
+        
+        # Handle single ride mode
+        if display_mode == "single_ride" and selected_ride_name:
+            await self._add_single_ride(park, selected_ride_name)
+        else:
+            # Default behavior - show all rides
+            await self._add_all_rides(park, park_list.skip_meet, park_list.skip_closed)
+            
+        self.regenerate_flag = False
+        
+    async def _add_single_ride(self, park, ride_name):
+        """
+        Add a single ride to the queue
+        
+        Args:
+            park: The theme park
+            ride_name: The name of the ride to display
+        """
+        # Start with the ride-specific message
+        self.func_queue.append(self.display.show_scroll_message)
+        self.delay_queue.append(self.delay)
+        self.param_queue.append(f"{park.name}: {ride_name} wait time")
+        
+        # Find the selected ride
+        found_ride = False
+        for ride in park.rides:
+            if ride.name == ride_name:
+                found_ride = True
+                
+                # Add just this ride to the queue, repeating 10 times for emphasis
+                for _ in range(10):  # Show the selected ride 10 times
+                    if ride.open_flag is True:
+                        self.func_queue.append(self.display.show_ride_wait_time)
+                        self.param_queue.append(str(ride.wait_time))
+                        self.delay_queue.append(0)
+                    else:
+                        self.func_queue.append(self.display.show_ride_closed)
+                        self.param_queue.append("Closed")
+                        self.delay_queue.append(0)
+                        
+                    self.func_queue.append(self.display.show_ride_name)
+                    self.param_queue.append(ride.name)
+                    
+                    # Vary the delay slightly to make it more interesting
+                    # First few repeats are quick, then gradually increase delay
+                    if _ < 3:
+                        # Quick repeats for the first few iterations
+                        self.delay_queue.append(self.delay * 0.5)
+                    elif _ < 7:
+                        # Standard delay for middle iterations
+                        self.delay_queue.append(self.delay)
+                    else:
+                        # Longer delay for last iterations
+                        self.delay_queue.append(self.delay * 1.5)
+                break
+        
+        if not found_ride:
+            # Ride not found - show error message
+            self.func_queue.append(self.display.show_scroll_message)
+            self.delay_queue.append(self.delay)
+            self.param_queue.append(f"Ride '{ride_name}' not found at {park.name}")
+    
+    async def _add_all_rides(self, park, skip_meet, skip_closed):
+        """
+        Add all rides to the queue
+        
+        Args:
+            park: The theme park
+            skip_meet: Whether to skip meet & greet attractions
+            skip_closed: Whether to skip closed rides
+        """
         # Start with the park name
         self.func_queue.append(self.display.show_scroll_message)
         self.delay_queue.append(self.delay)
         self.param_queue.append(park.name + " wait times...")
-
+        
         for ride in park.rides:
             await asyncio.sleep(0)
-            if "Meet" in ride.name and park_list.skip_meet == True:
+            if "Meet" in ride.name and skip_meet == True:
                 logger.debug(f"Skipping character meet: {ride.name}")
                 continue
 
-            if ride.is_open() is False and park_list.skip_closed == True:
+            if ride.is_open() is False and skip_closed == True:
                 continue
 
             if ride.open_flag is True:
@@ -136,8 +219,6 @@ class MessageQueue:
             self.func_queue.append(self.display.show_ride_name)
             self.param_queue.append(ride.name)
             self.delay_queue.append(self.delay)
-
-            self.regenerate_flag = False
 
     async def show(self):
         """Show the next message in the queue"""

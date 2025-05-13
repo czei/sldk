@@ -34,6 +34,8 @@ class AsyncScrollingDisplay(Display):
         super().__init__(settings_manager)
         self.font = terminalio.FONT
         self.hardware = display_hardware
+        # Make settings available to be used by MessageQueue
+        self.settings_manager = settings_manager
 
         self.main_group = displayio.Group()
         self.hardware.root_group = self.main_group

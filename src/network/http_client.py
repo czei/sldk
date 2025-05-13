@@ -115,11 +115,31 @@ class HttpClient:
 
             # Check if we're getting the park list
             if url == "https://queue-times.com/parks.json":
-                # Return a simplified park list
+                # Return a properly formatted park list for the ThemeParkList class
+                # Note: ThemeParkList expects a specific structure matching queue-times.com API
                 mock_data = """[
-                    {"id": 6, "name": "Disney Magic Kingdom", "country": {"id": 1, "name": "United States"}, "continent": {"id": 2, "name": "North America"}},
-                    {"id": 5, "name": "Epcot", "country": {"id": 1, "name": "United States"}, "continent": {"id": 2, "name": "North America"}},
-                    {"id": 3, "name": "Universal Studios Florida", "country": {"id": 1, "name": "United States"}, "continent": {"id": 2, "name": "North America"}}
+                    {
+                        "name": "Disney Parks",
+                        "parks": [
+                            {"id": 6, "name": "Disney Magic Kingdom", "latitude": 28.4177, "longitude": -81.5812},
+                            {"id": 5, "name": "Disney's EPCOT", "latitude": 28.3747, "longitude": -81.5494},
+                            {"id": 8, "name": "Disney's Hollywood Studios", "latitude": 28.3577, "longitude": -81.5570},
+                            {"id": 7, "name": "Disney's Animal Kingdom", "latitude": 28.3587, "longitude": -81.5917}
+                        ]
+                    },
+                    {
+                        "name": "Universal Parks",
+                        "parks": [
+                            {"id": 3, "name": "Universal Studios Florida", "latitude": 28.4749, "longitude": -81.4664},
+                            {"id": 4, "name": "Islands of Adventure", "latitude": 28.4722, "longitude": -81.4702}
+                        ]
+                    },
+                    {
+                        "name": "SeaWorld Parks",
+                        "parks": [
+                            {"id": 14, "name": "SeaWorld Orlando", "latitude": 28.4115, "longitude": -81.4615}
+                        ]
+                    }
                 ]"""
                 return Response(status_code=200, text=mock_data)
 
@@ -131,26 +151,38 @@ class HttpClient:
                 if park_id_match:
                     park_id = park_id_match.group(1)
 
-                    # Return mock data for Disney Magic Kingdom (ID 6)
+                    # Return proper mock data for each supported park
                     if park_id == "6":
-                        # Try to load from test data file if available
+                        # Disney Magic Kingdom (ID 6)
                         try:
                             import os
-                            test_data_path = os.path.join(os.path.dirname(__file__), "../../test/magic-kingdom.json")
+                            test_data_path = os.path.join(os.path.dirname(__file__), "../../test/fixtures/magic-kingdom.json")
                             if os.path.exists(test_data_path):
                                 with open(test_data_path, "r") as f:
                                     mock_data = f.read()
                                     return Response(status_code=200, text=mock_data)
                         except Exception as e:
-                            logger.error(e, "Error loading test data, using fallback mock data")
+                            logger.error(e, "Error loading Magic Kingdom test data, using fallback mock data")
+                            
+                    elif park_id == "5":
+                        # Disney's EPCOT (ID 5)
+                        try:
+                            import os
+                            test_data_path = os.path.join(os.path.dirname(__file__), "../../test/fixtures/epcot-test-data.json")
+                            if os.path.exists(test_data_path):
+                                with open(test_data_path, "r") as f:
+                                    mock_data = f.read()
+                                    return Response(status_code=200, text=mock_data)
+                        except Exception as e:
+                            logger.error(e, "Error loading EPCOT test data, using fallback mock data")
 
-                        # Fallback mock data
-                        mock_data = """{"lands": [{"id": 1, "name": "Main Street USA", "rides": [
-                            {"id": 101, "name": "Space Mountain", "is_open": true, "wait_time": 45, "last_updated": "2023-04-12T10:30:00Z"},
-                            {"id": 102, "name": "Haunted Mansion", "is_open": true, "wait_time": 30, "last_updated": "2023-04-12T10:35:00Z"},
-                            {"id": 103, "name": "Pirates of the Caribbean", "is_open": true, "wait_time": 20, "last_updated": "2023-04-12T10:40:00Z"}
-                        ]}]}"""
-                        return Response(status_code=200, text=mock_data)
+                    # Fallback mock data for any park
+                    mock_data = """{"lands": [{"id": 1, "name": "Main Street USA", "rides": [
+                        {"id": 101, "name": "Space Mountain", "is_open": true, "wait_time": 45, "last_updated": "2023-04-12T10:30:00Z"},
+                        {"id": 102, "name": "Haunted Mansion", "is_open": true, "wait_time": 30, "last_updated": "2023-04-12T10:35:00Z"},
+                        {"id": 103, "name": "Pirates of the Caribbean", "is_open": true, "wait_time": 20, "last_updated": "2023-04-12T10:40:00Z"}
+                    ]}]}"""
+                    return Response(status_code=200, text=mock_data)
 
             # For any other URL, return empty response
             return Response(status_code=200, text="{}")

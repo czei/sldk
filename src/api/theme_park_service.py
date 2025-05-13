@@ -38,11 +38,32 @@ class ThemeParkService:
         """Initialize the service by fetching park list and setting clock"""
         # Track initialization steps for better error reporting
         steps_completed = []
-        
-        try:
 
-                
-            # Step 2: Fetch the park list
+        try:
+            # Step 1: Load vacation data from settings
+            try:
+                self.vacation.load_settings(self.settings_manager)
+                steps_completed.append("vacation_loaded")
+                logger.info("Vacation data loaded from settings")
+            except Exception as vacation_error:
+                logger.error(vacation_error, "Error loading vacation data")
+
+            # Step 2: Check if park list already exists and load from settings if possible
+            try:
+                if not self.park_list:
+                    # Create a new park list
+                    self.park_list = ThemeParkList()
+                    # Try to load current_park_id from settings
+                    if self.settings_manager and hasattr(self.settings_manager, 'settings'):
+                        park_id = self.settings_manager.settings.get('current_park_id')
+                        if park_id:
+                            self.park_list.current_park_id = park_id
+                            logger.info(f"Loaded current park ID {park_id} from settings")
+                steps_completed.append("park_list_created")
+            except Exception as park_list_error:
+                logger.error(park_list_error, "Error creating park list")
+
+            # Step 3: Fetch the park list
             for attempt in range(3):  # Multiple attempts for park list
                 try:
                     logger.info(f"Attempting to fetch park list (attempt {attempt+1}/3)")
@@ -105,7 +126,7 @@ class ThemeParkService:
                 response = await self.http_client.get(url)
                 
                 if not response or not hasattr(response, 'text'):
-                    logger.error(f"Invalid response when fetching park list (attempt {retry_count + 1})")
+                    logger.error(None, f"Invalid response when fetching park list (attempt {retry_count + 1})")
                     retry_count += 1
                     await asyncio.sleep(1)
                     continue
@@ -114,7 +135,7 @@ class ThemeParkService:
                 try:
                     data = json.loads(response.text)
                     if not data:
-                        logger.error(f"Empty JSON data from park list API (attempt {retry_count + 1})")
+                        logger.error(None, f"Empty JSON data from park list API (attempt {retry_count + 1})")
                         retry_count += 1
                         await asyncio.sleep(1)
                         continue
@@ -124,7 +145,7 @@ class ThemeParkService:
                     
                     # Verify park list has parks
                     if not self.park_list.park_list:
-                        logger.error(f"Park list created but no parks were found (attempt {retry_count + 1})")
+                        logger.error(None, f"Park list created but no parks were found (attempt {retry_count + 1})")
                         retry_count += 1
                         await asyncio.sleep(1)
                         continue
@@ -144,7 +165,7 @@ class ThemeParkService:
                 await asyncio.sleep(1)
         
         # All retries failed
-        logger.error(f"Failed to fetch park list after {max_retries} attempts")
+        logger.error(None, f"Failed to fetch park list after {max_retries} attempts")
         
         # Create empty park list as fallback
         self.park_list = ThemeParkList([])
@@ -153,43 +174,132 @@ class ThemeParkService:
     async def fetch_park_data(self, park_id):
         """
         Fetch data for a specific park
-        
+
         Args:
             park_id: The ID of the park
-            
+
         Returns:
             Park data as a dictionary, or None if fetch failed
         """
-        try:
-            url = ThemeParkList.get_park_url_from_id(park_id)
-            response = await self.http_client.get(url)
-            return json.loads(response.text)
-            
-        except Exception as e:
-            logger.error(e, f"Error fetching park data for park ID {park_id}")
-            return None
+        max_retries = 3
+        retry_count = 0
+
+        while retry_count < max_retries:
+            try:
+                url = ThemeParkList.get_park_url_from_id(park_id)
+                logger.info(f"Fetching data for park ID {park_id} from {url} (attempt {retry_count + 1}/{max_retries})")
+
+                response = await self.http_client.get(url)
+
+                if not response or not hasattr(response, 'text'):
+                    logger.error(None, f"Invalid response when fetching park data (attempt {retry_count + 1})")
+                    retry_count += 1
+                    await asyncio.sleep(1)
+                    continue
+
+                # Try to parse JSON
+                try:
+                    data = json.loads(response.text)
+                    if not data:
+                        logger.error(None, f"Empty JSON data from park API (attempt {retry_count + 1})")
+                        retry_count += 1
+                        await asyncio.sleep(1)
+                        continue
+
+                    logger.info(f"Successfully fetched data for park ID {park_id}")
+                    return data
+
+                except json.JSONDecodeError as json_error:
+                    logger.error(json_error, f"JSON decode error for park data (attempt {retry_count + 1})")
+                    retry_count += 1
+                    await asyncio.sleep(1)
+                    continue
+
+            except Exception as e:
+                logger.error(e, f"Error fetching park data for park ID {park_id} (attempt {retry_count + 1})")
+                retry_count += 1
+                await asyncio.sleep(1)
+
+        # All retries failed
+        logger.error(None, f"Failed to fetch park data for park ID {park_id} after {max_retries} attempts")
+        return None
             
     async def update_current_park(self):
         """
         Update the currently selected park with fresh data
-        
+
         Returns:
             True if successful, False otherwise
         """
         if not self.park_list or not self.park_list.current_park.is_valid():
             logger.debug("No valid current park to update")
             return False
-            
+
         try:
             park_data = await self.fetch_park_data(self.park_list.current_park.id)
             if park_data:
                 self.park_list.current_park.update(park_data)
                 return True
             return False
-            
+
         except Exception as e:
             logger.error(e, "Error updating current park")
             return False
+
+    async def get_ride_wait_times(self, park_id=None, ride_name=None):
+        """
+        Get wait times for rides in a specific park or a specific ride
+
+        Args:
+            park_id: Optional ID of the park (defaults to current park if None)
+            ride_name: Optional name of a specific ride to get wait time for
+
+        Returns:
+            Dictionary of ride names to wait times, or single wait time if ride_name provided
+        """
+        try:
+            # Use current park if no park_id provided
+            if park_id is None and self.park_list and self.park_list.current_park.is_valid():
+                park_id = self.park_list.current_park.id
+
+            if not park_id:
+                logger.error(None, "No valid park ID for getting ride wait times")
+                return None
+
+            # Fetch park data
+            park_data = await self.fetch_park_data(park_id)
+            if not park_data:
+                logger.error(None, f"Failed to fetch park data for wait times (park ID: {park_id})")
+                return None
+
+            # Create temporary park object to parse the data
+            temp_park = ThemePark(park_data)
+
+            # If looking for a specific ride
+            if ride_name:
+                for ride in temp_park.rides:
+                    if ride.name.lower() == ride_name.lower():
+                        return {
+                            "name": ride.name,
+                            "wait_time": ride.wait_time,
+                            "is_open": ride.open_flag
+                        }
+                logger.error(None, f"Ride '{ride_name}' not found in park {park_id}")
+                return None
+
+            # Return all rides
+            wait_times = {}
+            for ride in temp_park.rides:
+                wait_times[ride.name] = {
+                    "wait_time": ride.wait_time,
+                    "is_open": ride.open_flag
+                }
+
+            return wait_times
+
+        except Exception as e:
+            logger.error(e, f"Error getting ride wait times for park {park_id}")
+            return None
             
     def save_settings(self):
         """Save all settings"""
@@ -202,20 +312,100 @@ class ThemeParkService:
     def parse_query_params(self, params):
         """
         Parse query parameters for park and vacation settings
-        
+
         Args:
             params: The query parameter string
         """
         if not self.park_list:
             return
-            
+
         # Check for park parameters
         if "park-id=" in params:
             self.park_list.parse(params)
-            
+
         # Check for vacation parameters
         if "Name=" in params:
             self.vacation.parse(params)
-            
+
         # Save the settings
         self.save_settings()
+
+    async def get_available_parks(self):
+        """
+        Get a list of all available theme parks
+
+        Returns:
+            List of dictionaries with park information (id, name, company)
+        """
+        try:
+            # Make sure park list is initialized
+            if not self.park_list or not self.park_list.park_list:
+                await self.fetch_park_list()
+
+            if not self.park_list or not self.park_list.park_list:
+                logger.error(None, "Failed to fetch park list for available parks")
+                return []
+
+            # Convert park list to a simple dictionary format
+            parks = []
+            for park in self.park_list.park_list:
+                parks.append({
+                    "id": park.id,
+                    "name": park.name,
+                    "latitude": park.latitude,
+                    "longitude": park.longitude
+                })
+
+            return parks
+
+        except Exception as e:
+            logger.error(e, "Error getting available parks")
+            return []
+
+    async def search_parks(self, query):
+        """
+        Search for parks matching a query string
+
+        Args:
+            query: Search term (park name)
+
+        Returns:
+            List of matching parks
+        """
+        try:
+            parks = await self.get_available_parks()
+            if not query:
+                return parks
+
+            # Filter parks by name
+            query = query.lower()
+            matching_parks = [
+                park for park in parks
+                if query in park["name"].lower()
+            ]
+
+            return matching_parks
+
+        except Exception as e:
+            logger.error(e, f"Error searching parks for '{query}'")
+            return []
+            
+    def get_available_rides(self):
+        """
+        Get a list of all available rides for the current park
+        
+        Returns:
+            List of dictionaries with ride information (name, wait_time, is_open)
+        """
+        rides = []
+        try:
+            if self.park_list and self.park_list.current_park.is_valid():
+                for ride in self.park_list.current_park.rides:
+                    rides.append({
+                        "name": ride.name,
+                        "wait_time": ride.wait_time,
+                        "is_open": ride.open_flag
+                    })
+        except Exception as e:
+            logger.error(e, "Error getting available rides")
+        return rides

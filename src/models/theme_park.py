@@ -98,16 +98,17 @@ class ThemePark:
 
             # Some parks dont' have lands, but we also want to avoid
             # double-counting
-            rides_not_in_a_land = json_data["rides"]
-            for ride in rides_not_in_a_land:
-                name = ride["name"]
-                ride_id = ride["id"]
-                wait_time = ride["wait_time"]
-                open_flag = ride["is_open"]
-                this_ride_object = ThemeParkRide(name, ride_id, wait_time, open_flag)
-                if this_ride_object.is_open() is True:
-                    self.is_open = True
-                ride_list.append(this_ride_object)
+            if "rides" in json_data:
+                rides_not_in_a_land = json_data["rides"]
+                for ride in rides_not_in_a_land:
+                    name = ride["name"]
+                    ride_id = ride["id"]
+                    wait_time = ride["wait_time"]
+                    open_flag = ride["is_open"]
+                    this_ride_object = ThemeParkRide(name, ride_id, wait_time, open_flag)
+                    if this_ride_object.is_open() is True:
+                        self.is_open = True
+                    ride_list.append(this_ride_object)
         except (KeyError, TypeError) as e:
             logger.error(e, "Error parsing theme park data")
             
