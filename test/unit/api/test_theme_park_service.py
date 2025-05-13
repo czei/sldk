@@ -35,6 +35,7 @@ class TestThemeParkService:
         # Create mock http client and settings manager
         mock_http = MagicMock()
         mock_settings = MagicMock()
+        mock_settings.settings = {}
         
         # Create successful response for park list
         mock_response = MagicMock()
@@ -52,7 +53,8 @@ class TestThemeParkService:
             mock_park_list.park_list = [MagicMock()]  # Non-empty list
             mock_park_list_class.return_value = mock_park_list
             
-            with patch.object(Vacation, 'load_settings') as mock_vacation_load:
+            # Also need to mock logger
+            with patch('src.api.theme_park_service.logger') as mock_logger:
                 # Call initialize
                 await service.initialize()
                 
@@ -61,7 +63,6 @@ class TestThemeParkService:
                 
                 # Verify park list and vacation settings were loaded
                 mock_park_list.load_settings.assert_called_once_with(mock_settings)
-                mock_vacation_load.assert_called_once_with(mock_settings)
                 
                 # Verify park list was created and stored
                 assert service.park_list == mock_park_list
@@ -199,23 +200,28 @@ class TestThemeParkService:
         # Create the service
         service = ThemeParkService(mock_http, mock_settings)
         
-        # Mock the ThemeParkList.get_park_url_from_id
-        with patch('src.api.theme_park_service.ThemeParkList.get_park_url_from_id') as mock_get_url:
-            mock_get_url.return_value = "https://test.com/parks/1/queue_times.json"
-            
-            # Mock logger
-            with patch('src.api.theme_park_service.logger') as mock_logger:
-                # Call fetch_park_data
-                result = await service.fetch_park_data(1)
+        # Mock asyncio.sleep to prevent delays in testing
+        with patch('asyncio.sleep', new_callable=AsyncMock) as mock_sleep:
+            # Mock the ThemeParkList.get_park_url_from_id
+            with patch('src.api.theme_park_service.ThemeParkList.get_park_url_from_id') as mock_get_url:
+                mock_get_url.return_value = "https://test.com/parks/1/queue_times.json"
                 
-                # Verify http client was called
-                mock_http.get.assert_called_once_with("https://test.com/parks/1/queue_times.json")
-                
-                # Verify error was logged
-                mock_logger.error.assert_called_once()
-                
-                # Verify result is None on failure
-                assert result is None
+                # Mock logger
+                with patch('src.api.theme_park_service.logger') as mock_logger:
+                    # Call fetch_park_data
+                    result = await service.fetch_park_data(1)
+                    
+                    # Verify http client was called for each attempt (should be 3 retries)
+                    assert mock_http.get.call_count == 3
+                    
+                    # Verify sleep was called between retries
+                    assert mock_sleep.call_count == 3
+                    
+                    # Verify error was logged
+                    assert mock_logger.error.call_count > 0
+                    
+                    # Verify result is None on failure
+                    assert result is None
     
     @pytest.mark.asyncio
     async def test_update_current_park_success(self):

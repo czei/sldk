@@ -5,7 +5,13 @@ Copyright 2024 3DUPFitters LLC
 import asyncio
 import sys
 import os
-import platform
+
+# Check if running on CircuitPython
+is_circuitpython = hasattr(sys, 'implementation') and sys.implementation.name == 'circuitpython'
+
+# Only import platform if not running on CircuitPython
+if not is_circuitpython:
+    import platform
 
 from src.config.settings_manager import SettingsManager
 from src.utils.error_handler import ErrorHandler

@@ -38,6 +38,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## CircuitPython Development
 * Support both running on actual hardware and testing in standard Python environment
+* Run all unit tests after every code change.  Iterate until all of the tests pass.
 * Test functionality in isolation before deploying to hardware
 * Ensure tests properly mock CircuitPython-specific modules
 * Separate functionality that could be applied to any CircuitPython project from the specific functionality of this project. The ultimate goal is to refactor into an open source library.

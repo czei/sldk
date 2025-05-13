@@ -3,18 +3,17 @@ Abstract display interface for LED matrix displays.
 This interface allows for different implementations (hardware or simulated).
 Copyright 2024 3DUPFitters LLC
 """
-from abc import ABC, abstractmethod
+# CircuitPython doesn't have the abc module, so we'll use a regular class
+# with NotImplementedError exceptions instead
 
 
-class DisplayInterface(ABC):
+class DisplayInterface:
     """Abstract base class for display implementations"""
     
-    @abstractmethod
     def initialize(self):
         """Initialize the display hardware or simulator"""
         pass
         
-    @abstractmethod
     def set_text(self, text, color=None):
         """
         Set the text to be displayed
@@ -25,7 +24,6 @@ class DisplayInterface(ABC):
         """
         pass
     
-    @abstractmethod
     def scroll(self, frame_delay=0.04):
         """
         Scroll the text across the display
@@ -35,17 +33,14 @@ class DisplayInterface(ABC):
         """
         pass
     
-    @abstractmethod
     def clear(self):
         """Clear the display"""
         pass
     
-    @abstractmethod
     def update(self):
         """Update the display to show latest changes"""
         pass
     
-    @abstractmethod
     def show_image(self, image, x=0, y=0):
         """
         Show an image on the display
@@ -57,7 +52,6 @@ class DisplayInterface(ABC):
         """
         pass
     
-    @abstractmethod
     def set_brightness(self, brightness):
         """
         Set the brightness of the display
@@ -67,7 +61,6 @@ class DisplayInterface(ABC):
         """
         pass
     
-    @abstractmethod
     def set_rotation(self, rotation):
         """
         Set the rotation of the display

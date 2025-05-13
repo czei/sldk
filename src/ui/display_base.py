@@ -28,6 +28,16 @@ class Display:
         if self.settings_manager is None:
             self.settings_manager = SettingsManager("settings.json")
         
+    def initialize(self):
+        """
+        Initialize the display - base implementation just returns True
+        
+        Returns:
+            True if initialization was successful, False otherwise
+        """
+        logger.info("Base display initialize method called")
+        return True
+        
     def set_colors(self, settings):
         """
         Set colors from settings (base implementation does nothing)

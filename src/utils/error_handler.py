@@ -44,12 +44,24 @@ class ErrorHandler:
         # First check if we can directly detect read-only status via storage module
         if STORAGE_AVAILABLE:
             try:
-                self.is_readonly = storage.getmount('/').readonly
+                # Get mount location
+                mount_path = '/'
+                try:
+                    # Try to get the mount path for the file's directory
+                    dir_path = os.path.dirname(file_name)
+                    if dir_path and os.path.exists(dir_path):
+                        mount_path = dir_path
+                except OSError:
+                    pass
+                    
+                # Check if storage shows readonly
+                self.is_readonly = storage.getmount(mount_path).readonly
                 print(f"Filesystem read-only status from storage: {self.is_readonly}")
+                
                 # If storage says it's read-only, trust that and skip the write test
                 if self.is_readonly:
                     print("Filesystem is read-only according to storage module")
-                    print(f"ErrorHandler initialized - read-only filesystem")
+                    print("ErrorHandler initialized - read-only filesystem")  # Exact match for test
                     # Register this instance before returning
                     ErrorHandler._instances[file_name] = self
                     return
@@ -80,7 +92,10 @@ class ErrorHandler:
             print(f"Write test failed: {str(e)}")
 
         # Log system state at initialization based on final determination
-        print(f"ErrorHandler initialized - {'read-only' if self.is_readonly else 'writable'} filesystem")
+        if self.is_readonly:
+            print("ErrorHandler initialized - read-only filesystem")
+        else:
+            print("ErrorHandler initialized - writable filesystem")
 
         # Register this instance
         ErrorHandler._instances[file_name] = self

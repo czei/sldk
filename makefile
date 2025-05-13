@@ -54,10 +54,9 @@ release: $(SRC_DIR)/*.py
 # Copy files to the connected MatrixPortal S3
 copy_to_circuitpy : $(TEST_DIR)
 	cp -f boot.py $(TEST_DIR)
-	cp -f main.py $(TEST_DIR)/code.py
+	cp -f code_entry.py $(TEST_DIR)/code.py
 	cp -f theme_park_main.py $(TEST_DIR)
 	rsync -av --update --progress \
-		--exclude='lib/' \
 		--exclude='images/' \
 		--exclude='fonts/' \
 		--exclude='.DS_STORE' \

@@ -5,7 +5,13 @@ Copyright 2024 3DUPFitters LLC
 """
 import sys
 import os
-import platform
+
+# Check if running on CircuitPython
+is_circuitpython = hasattr(sys, 'implementation') and sys.implementation.name == 'circuitpython'
+
+# Only import platform if not running on CircuitPython
+if not is_circuitpython:
+    import platform
 from src.utils.error_handler import ErrorHandler
 
 # Initialize logger
@@ -53,15 +59,21 @@ def create_display(config=None):
         logger.info("CircuitPython detected, using hardware display")
         # Import the real hardware display
         try:
-            from src.ui.display_impl import Display
-            return Display(config)
+            # Import the MatrixDisplay from hardware_display.py instead of Display from display_impl.py
+            from src.ui.hardware_display import MatrixDisplay
+            return MatrixDisplay(config)
         except ImportError as e:
             logger.error(e, "Error importing hardware display")
-            # Fall back to simulator if hardware display fails
-            from src.ui.simulator_display import SimulatedLEDMatrix
-            return SimulatedLEDMatrix()
+            # On CircuitPython, don't try to fall back to simulator 
+            # since pygame is not available
+            # Instead, provide a minimal display implementation that logs messages
+            from src.ui.display_base import Display
+            return Display(config)
     
     # Not on CircuitPython, use simulator
-    logger.info(f"Desktop platform detected ({platform.system()}), using simulated display")
+    if not is_circuitpython and 'platform' in sys.modules:
+        logger.info(f"Desktop platform detected ({platform.system()}), using simulated display")
+    else:
+        logger.info("Desktop platform detected, using simulated display")
     from src.ui.simulator_display import SimulatedLEDMatrix
     return SimulatedLEDMatrix()
