@@ -42,7 +42,7 @@ install-test-deps:
 
 # Install development dependencies
 install-dev-deps:
-	$(PIP) install pygame pillow
+	$(PIP) install pygame pillow numpy
 
 # Copy all files to the release GIT archive
 release: $(SRC_DIR)/*.py

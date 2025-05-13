@@ -92,12 +92,12 @@ class HttpClient:
     async def get(self, url, headers=None, max_retries=3):
         """
         Make a GET request with retries
-        
+
         Args:
             url: The URL to request
             headers: Optional headers to include
             max_retries: Maximum number of retry attempts
-            
+
         Returns:
             A Response object
         """
@@ -105,13 +105,59 @@ class HttpClient:
             headers = {
                 "User-Agent": "Mozilla/5.0 (CircuitPython)"
             }
-        
+
         retry_count = 0
         last_error = None
-        
+
+        # In development mode, use mock data for queue-times.com API
+        if "queue-times.com" in url and not self.session:
+            logger.info(f"Dev mode - Using mock data for {url}")
+
+            # Check if we're getting the park list
+            if url == "https://queue-times.com/parks.json":
+                # Return a simplified park list
+                mock_data = """[
+                    {"id": 6, "name": "Disney Magic Kingdom", "country": {"id": 1, "name": "United States"}, "continent": {"id": 2, "name": "North America"}},
+                    {"id": 5, "name": "Epcot", "country": {"id": 1, "name": "United States"}, "continent": {"id": 2, "name": "North America"}},
+                    {"id": 3, "name": "Universal Studios Florida", "country": {"id": 1, "name": "United States"}, "continent": {"id": 2, "name": "North America"}}
+                ]"""
+                return Response(status_code=200, text=mock_data)
+
+            # Check if we're getting a specific park
+            elif "/parks/" in url and "/queue_times.json" in url:
+                # Parse park ID from URL
+                import re
+                park_id_match = re.search(r'/parks/(\d+)/', url)
+                if park_id_match:
+                    park_id = park_id_match.group(1)
+
+                    # Return mock data for Disney Magic Kingdom (ID 6)
+                    if park_id == "6":
+                        # Try to load from test data file if available
+                        try:
+                            import os
+                            test_data_path = os.path.join(os.path.dirname(__file__), "../../test/magic-kingdom.json")
+                            if os.path.exists(test_data_path):
+                                with open(test_data_path, "r") as f:
+                                    mock_data = f.read()
+                                    return Response(status_code=200, text=mock_data)
+                        except Exception as e:
+                            logger.error(e, "Error loading test data, using fallback mock data")
+
+                        # Fallback mock data
+                        mock_data = """{"lands": [{"id": 1, "name": "Main Street USA", "rides": [
+                            {"id": 101, "name": "Space Mountain", "is_open": true, "wait_time": 45, "last_updated": "2023-04-12T10:30:00Z"},
+                            {"id": 102, "name": "Haunted Mansion", "is_open": true, "wait_time": 30, "last_updated": "2023-04-12T10:35:00Z"},
+                            {"id": 103, "name": "Pirates of the Caribbean", "is_open": true, "wait_time": 20, "last_updated": "2023-04-12T10:40:00Z"}
+                        ]}]}"""
+                        return Response(status_code=200, text=mock_data)
+
+            # For any other URL, return empty response
+            return Response(status_code=200, text="{}")
+
         while retry_count < max_retries:
             try:
-                if self.using_adafruit:
+                if self.using_adafruit and self.session:
                     # For Adafruit CircuitPython requests
                     try:
                         # Import OutOfRetries exception to explicitly handle it
@@ -122,7 +168,7 @@ class HttpClient:
                             # If import fails, create a generic exception class for type checking
                             class OutOfRetries(Exception): pass
                             out_of_retries_exception = OutOfRetries
-                            
+
                         try:
                             resp = self.session.get(url, headers=headers)
                             return Response(
@@ -173,11 +219,11 @@ class HttpClient:
                         logger.error(urllib_error, f"Error in urllib request (attempt {retry_count+1})")
                         last_error = urllib_error
                         retry_count += 1
-                
+
                 # If execution reaches here, there was an error
                 import asyncio
                 await asyncio.sleep(2 * retry_count)  # Exponential backoff
-                
+
             except Exception as outer_error:
                 # Catch any unexpected exceptions in the retry loop itself
                 logger.error(outer_error, f"Unexpected error in HTTP GET retry loop (attempt {retry_count+1})")
@@ -185,10 +231,10 @@ class HttpClient:
                 retry_count += 1
                 import asyncio
                 await asyncio.sleep(2 * retry_count)  # Exponential backoff
-        
+
         # All retries failed - return empty Response with error status
         error_msg = str(last_error) if last_error else "Unknown error"
-        logger.error(f"All {max_retries} GET attempts to {url} failed: {error_msg}")
+        logger.error(None, f"All {max_retries} GET attempts to {url} failed: {error_msg}")
         return Response(status_code=500, text="{}")
             
     async def post(self, url, data, headers=None):

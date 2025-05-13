@@ -41,6 +41,11 @@ class SimulatedLEDMatrix(DisplayInterface):
         self.window_width = width * (led_size + spacing)
         self.window_height = height * (led_size + spacing)
         
+        # Make window larger for better visibility
+        self.window_scale = 1.5
+        self.window_width = int(self.window_width * self.window_scale)
+        self.window_height = int(self.window_height * self.window_scale)
+        
         # Initialize display attributes
         self.pixels = [[(0, 0, 0) for _ in range(width)] for _ in range(height)]
         self.text = ""
@@ -52,11 +57,13 @@ class SimulatedLEDMatrix(DisplayInterface):
         self.screen = None
         self.font = None
         self.text_surface = None
-        self.current_image = None
         
         # For scrolling animation
         self.scroll_timer = time.time()
         self.frame_delay = 0.04
+        self.scroll_reset_delay = 2.0  # Seconds to pause at end before resetting
+        self.scroll_pause_timer = 0
+        self.scroll_paused = False
         
         logger.info("Initialized Simulated LED Matrix")
     
@@ -64,26 +71,54 @@ class SimulatedLEDMatrix(DisplayInterface):
         """Initialize the Pygame window and components"""
         try:
             pygame.init()
-            pygame.display.set_caption("LED Matrix Simulator")
+            pygame.display.set_caption("Theme Park API - LED Matrix Simulator")
+
+            # Set a reasonable fixed window size that fits most screens
+            # Using 640x320 as a baseline which should fit on most displays
+            self.window_width = 640
+            self.window_height = 320
+            self.window_scale = min(
+                self.window_width / (self.width * (self.led_size + self.spacing)),
+                self.window_height / (self.height * (self.led_size + self.spacing))
+            )
             self.screen = pygame.display.set_mode((self.window_width, self.window_height))
-            
-            # Find a suitable font
+
+            # Find a suitable font from the system for best compatibility
+            system_fonts = pygame.font.get_fonts()
+            preferred_fonts = ["arial", "helvetica", "verdana", "dejavusans"]
+
+            selected_font = None
+            for font in preferred_fonts:
+                if font in system_fonts:
+                    selected_font = font
+                    break
+
             font_path = self._find_font()
-            font_size = max(14, min(self.height // 2, 24))  # Reasonable size based on matrix height
-            
+            # Just use a very large size directly (48pt) for consistent results
+            font_size = 48
+
             try:
-                if font_path:
+                if selected_font:
+                    # Use system font (more reliable)
+                    self.font = pygame.font.SysFont(selected_font, font_size, bold=True)
+                    logger.info(f"Using system font: {selected_font} at {font_size}px")
+                elif font_path:
+                    # Fall back to file font if selected_font not available
                     self.font = pygame.font.Font(font_path, font_size)
+                    logger.info(f"Using file font: {font_path} at {font_size}px")
                 else:
-                    # Fall back to system font
-                    self.font = pygame.font.SysFont("monospace", font_size)
+                    # Last resort
+                    self.font = pygame.font.SysFont("Arial", font_size, bold=True)
+                    logger.info(f"Using fallback font: Arial at {font_size}px")
             except Exception as e:
                 logger.error(e, "Error loading font, falling back to default")
-                self.font = pygame.font.SysFont("monospace", font_size)
+                self.font = pygame.font.SysFont(None, font_size, bold=True)  # Default system font
                 
             # Set up the event handling for window close
             pygame.event.set_allowed([pygame.QUIT, pygame.KEYDOWN])
-                
+            
+            # Print font info for debugging
+            logger.info(f"Using font size: {font_size}px in window size: {self.window_width}x{self.window_height}")
             logger.info("Pygame initialized successfully")
             return True
             
@@ -112,13 +147,13 @@ class SimulatedLEDMatrix(DisplayInterface):
     def set_text(self, text, color=None):
         """
         Set the text to display
-        
+
         Args:
             text: The text to display
             color: RGB color tuple (default: white)
         """
         self.text = text
-        
+
         if color:
             if isinstance(color, int):
                 # Convert hex to RGB tuple
@@ -128,25 +163,62 @@ class SimulatedLEDMatrix(DisplayInterface):
                 self.text_color = (r, g, b)
             else:
                 self.text_color = color
-        
+
         if self.font and text:
             try:
+                # For simulator, render at a higher quality with anti-aliasing
                 self.text_surface = self.font.render(text, True, self.text_color)
+
+                # IMPORTANT FIX: Create a much larger text surface for better visibility
+                # Scale up the text by 3x from what the font normally renders
+                text_width = self.text_surface.get_width()
+                text_height = self.text_surface.get_height()
+
+                # Scale the text based on its length for optimal display
+                # Longer text should be smaller to fit better in the display
+                text_length = len(text)
+
+                # For shorter text (under 20 chars), use larger size (60% of window height)
+                # For longer text, gradually reduce size down to 40% of window height
+                height_percentage = max(0.4, min(0.6, 0.6 - (text_length - 20) * 0.01))
+                desired_height = int(self.window_height * height_percentage)
+
+                # Calculate scale factor and resulting dimensions
+                scale_factor = desired_height / text_height
+                scaled_width = int(text_width * scale_factor)
+                scaled_height = int(text_height * scale_factor)
+
+                # Log text size info
+                logger.info(f"Text length: {text_length}, height %: {height_percentage:.2f}, scale: {scale_factor:.2f}")
+
+                # Create a scaled version of the text surface
+                scaled_surface = pygame.transform.scale(self.text_surface, (scaled_width, scaled_height))
+                self.text_surface = scaled_surface
+
+                # Reset scroll position
                 self.scroll_position = self.window_width
+                logger.info(f"Rendered text at size: {scaled_width}x{scaled_height}")
             except Exception as e:
                 logger.error(e, f"Error rendering text: {text}")
     
     def scroll(self, frame_delay=0.04):
-        """Scroll the text across the display"""
-        self.frame_delay = frame_delay
-        # Actual scrolling happens in update() method
+        """
+        Scroll the text across the display
+        
+        Args:
+            frame_delay: Delay between frame updates in seconds (smaller = faster)
+        """
+        # Use a slightly slower default scroll for better readability in simulator
+        self.frame_delay = max(frame_delay, 0.02)
+        self.scroll_position = self.window_width  # Start from right edge
+        self.scroll_paused = False  # Reset pause state
+        logger.debug(f"Set scroll speed: {self.frame_delay} seconds between frames")
     
     def clear(self):
         """Clear the display"""
         self.pixels = [[(0, 0, 0) for _ in range(self.width)] for _ in range(self.height)]
         self.text = ""
         self.text_surface = None
-        self.current_image = None
     
     def update(self):
         """Update the display state and render to screen"""
@@ -159,37 +231,52 @@ class SimulatedLEDMatrix(DisplayInterface):
         # Clear screen with background color
         self.screen.fill(self.bg_color)
         
-        # Draw LED grid
-        for y in range(self.height):
-            for x in range(self.width):
-                color = self._apply_brightness(self.pixels[y][x])
-                rect = pygame.Rect(
-                    x * (self.led_size + self.spacing),
-                    y * (self.led_size + self.spacing),
-                    self.led_size,
-                    self.led_size
-                )
-                pygame.draw.rect(self.screen, color, rect)
+        # Skip drawing individual LEDs to improve performance
+        # Just draw a border around the display area to indicate boundaries
+        pygame.draw.rect(self.screen, (40, 40, 40),
+                        pygame.Rect(0, 0, self.window_width, self.window_height), 2)
         
-        # Draw image if available
-        if self.current_image:
-            img_surface = pygame.surfarray.make_surface(self.current_image)
-            self.screen.blit(img_surface, (0, 0))
-        
-        # Handle text scrolling
+        # Handle text scrolling with pausing at end
         if self.text_surface:
             current_time = time.time()
-            if current_time - self.scroll_timer > self.frame_delay:
-                self.scroll_timer = current_time
-                self.scroll_position -= 1
-                
-                # Reset position when text scrolls off screen
-                if self.scroll_position < -self.text_surface.get_width():
-                    self.scroll_position = self.window_width
             
-            # Draw text
+            # If we're in the pause state at the end of scrolling
+            if self.scroll_paused:
+                if current_time - self.scroll_pause_timer > self.scroll_reset_delay:
+                    # Resume scrolling from the right edge after pause
+                    self.scroll_paused = False
+                    self.scroll_position = self.window_width
+            # Normal scrolling behavior
+            elif current_time - self.scroll_timer > self.frame_delay:
+                self.scroll_timer = current_time
+
+                # Adjust scroll speed based on text length - ensure full text can be seen
+                # Move at least 3 pixels per frame for faster scrolling
+                speed = max(3, int(self.text_surface.get_width() / 200))
+                self.scroll_position -= speed  # Faster scrolling for longer texts
+                
+                # When text scrolls past the left edge completely
+                if self.scroll_position < -self.text_surface.get_width():
+                    # Enter paused state and record time
+                    self.scroll_paused = True
+                    self.scroll_pause_timer = current_time
+                    # Position text just past the left edge during pause
+                    self.scroll_position = -self.text_surface.get_width()
+            
+            # Draw text - position it in the center of the window vertically
+            # This ensures the text is properly centered regardless of its size
             text_y = (self.window_height - self.text_surface.get_height()) // 2
             self.screen.blit(self.text_surface, (self.scroll_position, text_y))
+
+            # No longer need debug outline for production use
+            
+            # Draw a marker for visual reference (simulation edges)
+            pygame.draw.lines(self.screen, (50, 50, 50), False, [
+                (0, 0), (0, self.window_height), 
+                (self.window_width, self.window_height), 
+                (self.window_width, 0), 
+                (0, 0)
+            ], 2)
         
         # Update the display
         pygame.display.flip()
@@ -205,28 +292,24 @@ class SimulatedLEDMatrix(DisplayInterface):
             y: Y position
         """
         try:
-            # If it's a PIL Image, convert to pygame surface
+            # If it's a PIL Image
             if hasattr(image, 'mode') and image.mode:
                 # Resize to fit matrix if needed
                 width, height = image.size
                 if width > self.width or height > self.height:
                     image = image.resize((self.width, self.height))
                 
-                # Convert PIL Image to pygame surface
-                image_data = image.convert('RGB').tobytes()
+                # Convert PIL Image to pygame surface directly
+                image_data = image.convert('RGB')
                 
-                # Create a 3D array for the pixel data
-                pixel_array = [[[0 for _ in range(3)] for _ in range(image.width)] for _ in range(image.height)]
-                
-                # Fill the array with pixel data
-                for py in range(image.height):
-                    for px in range(image.width):
-                        r, g, b = image.getpixel((px, py))
-                        self.pixels[y + py][x + px] = (r, g, b)
-                
-                # Store the image for rendering
-                self.current_image = pygame.Surface((image.width, image.height))
-                pygame.surfarray.pixels3d(self.current_image)[:] = pixel_array
+                # Fill pixel array directly from image
+                for py in range(min(image.height, self.height)):
+                    for px in range(min(image.width, self.width)):
+                        r, g, b = image_data.getpixel((px, py))
+                        y_pos = y + py
+                        x_pos = x + px
+                        if 0 <= y_pos < self.height and 0 <= x_pos < self.width:
+                            self.pixels[y_pos][x_pos] = (r, g, b)
                 
         except Exception as e:
             logger.error(e, "Error displaying image")
@@ -276,3 +359,95 @@ class SimulatedLEDMatrix(DisplayInterface):
         while self.running:
             self.update()
             await asyncio.sleep(0.01)  # Small delay to prevent CPU hogging
+    
+    # Additional methods required by app.py
+    
+    async def show_splash(self, duration=4):
+        """Show splash screen for specified duration"""
+        logger.info(f"Showing splash screen for {duration} seconds")
+        try:
+            # Try to load splash image from images folder
+            splash_path = os.path.join(os.path.dirname(__file__), "..", "images", "OpeningLEDLogo.bmp")
+            if os.path.exists(splash_path):
+                splash_image = Image.open(splash_path)
+                self.show_image(splash_image)
+            else:
+                # Create a text splash
+                self.clear()
+                self.set_text("Theme Park API", (0, 255, 0))  # Green text
+            
+            await asyncio.sleep(duration)
+        except Exception as e:
+            logger.error(e, "Error showing splash screen")
+    
+    async def show_scroll_message(self, message, duration=None):
+        """
+        Show a scrolling message
+        
+        Args:
+            message: The message to scroll
+            duration: Optional duration to show the message
+        """
+        logger.info(f"Scroll message: {message}")
+        self.clear()
+        self.set_text(message)
+        
+        # Use slower scroll speed for simulator to improve readability
+        # This gives a better experience in the simulator
+        self.scroll(0.03)  # Slightly slower scroll speed for better readability
+        
+        # In simulator, we need to give time for the full text to display
+        # before continuing. If no duration is specified, let it scroll at least
+        # once across the full display width.
+        if not duration:
+            # Calculate a reasonable duration based on text length
+            # This ensures long messages can be read completely
+            estimated_scroll_time = max(3.0, len(message) * 0.15)
+            await asyncio.sleep(estimated_scroll_time)
+        else:
+            await asyncio.sleep(duration)
+    
+    async def show_centered(self, line1, line2=None, duration=2):
+        """Show centered text"""
+        logger.info(f"Centered message: {line1} / {line2 or ''}")
+        self.clear()
+        
+        # Display first line
+        self.set_text(line1)
+        
+        # If there's a second line, we'd handle it here
+        # For simulator just show the first line for now
+        
+        if duration:
+            await asyncio.sleep(duration)
+    
+    def set_colors(self, settings_manager):
+        """Set display colors from settings"""
+        try:
+            # Extract color settings
+            settings = getattr(settings_manager, 'settings', {})
+            
+            # Apply colors if available
+            bg_color = settings.get('background_color', 0x000000)
+            text_color = settings.get('text_color', 0xFFFFFF)
+            
+            # Convert hex to RGB tuples if needed
+            if isinstance(bg_color, int):
+                r = (bg_color >> 16) & 0xFF
+                g = (bg_color >> 8) & 0xFF
+                b = bg_color & 0xFF
+                self.bg_color = (r, g, b)
+            
+            if isinstance(text_color, int):
+                r = (text_color >> 16) & 0xFF
+                g = (text_color >> 8) & 0xFF
+                b = text_color & 0xFF
+                self.text_color = (r, g, b)
+                
+            logger.info(f"Set display colors - bg: {self.bg_color}, text: {self.text_color}")
+            
+        except Exception as e:
+            logger.error(e, "Error setting display colors")
+            # Use default colors
+            self.bg_color = (0, 0, 0)  # Black
+            self.text_color = (255, 255, 255)  # White

@@ -5,9 +5,8 @@ Copyright 2024 3DUPFitters LLC
 import asyncio
 import json
 import gc
-import socketpool
 import time
-import wifi
+import sys
 
 from src.config.settings_manager import SettingsManager
 from src.api.theme_park_service import ThemeParkService
@@ -16,6 +15,7 @@ from src.utils.error_handler import ErrorHandler
 from src.utils.timer import Timer
 from src.network.wifi_manager import WiFiManager
 from src.utils.url_utils import load_credentials
+from src.ui.display_factory import is_dev_mode, is_circuitpython
 
 # Initialize logger
 logger = ErrorHandler("error_log")
@@ -42,7 +42,21 @@ class ThemeParkApp:
         self.message_queue = MessageQueue(display, 4)
         self.update_timer = Timer(300)  # Update every 5 minutes
         self.wifi_manager = WiFiManager(self.settings_manager)
-        self.web_server = socketpool.SocketPool(wifi.radio)
+        
+        # Initialize socket_pool differently based on platform
+        if is_dev_mode():
+            # In dev mode, socket_pool will be created differently
+            self.web_server = None
+            logger.info("Development mode - web server will be initialized differently")
+        else:
+            # In CircuitPython mode
+            try:
+                import socketpool
+                import wifi
+                self.web_server = socketpool.SocketPool(wifi.radio)
+            except ImportError as e:
+                logger.error(e, "Error importing CircuitPython modules")
+                self.web_server = None
 
         # Set up the callback for session updates in the WiFi manager
         self.wifi_manager.update_http_clients = self.update_http_client
@@ -78,6 +92,11 @@ class ThemeParkApp:
         if ssid != "" and password != "":
             return
 
+        # Skip WiFi configuration in dev mode
+        if is_dev_mode():
+            logger.info("Dev mode - skipping WiFi configuration")
+            return
+
         # Have to configure Wi-FI before the network will work
         # Run the Wifi configure GUI and the configure message at the same time
         try:
@@ -97,20 +116,12 @@ class ThemeParkApp:
         except OSError as e:
             logger.error(e,"Exception starting wifi access point and web server: {e}")
 
-        # Now that we've got an ssid and password, time to connect to
-        # the network.
-        # asyncio.run(asyncio.gather(self.try_wifi_until_connected()))
-
     async def _initialize_wifi(self):
         """Initialize network and theme park data in the background"""
         # Show WiFi connection message with actual SSID
         ssid = self.wifi_manager.ssid
         logger.debug(f"Display implementation type: {type(self.display)}")
         await self.display.show_scroll_message(f"Connecting to WiFi {ssid}")
-
-        # Create a display callback for connection status updates
-        # async def update_connection_status(status):
-        # await self.display.show_centered(f"Connecting to WiFi:", f"{ssid} {status}", 0)
 
         # Initialize networking with status updates
         connected = await self.wifi_manager.connect()
@@ -119,10 +130,24 @@ class ThemeParkApp:
         if connected:
             await self.display.show_scroll_message(f"Connected ...")
             # Create HTTP session after WiFi is connected
-            self.socket_pool = socketpool.SocketPool(wifi.radio)
+            if not is_dev_mode():
+                # Only in hardware mode
+                import socketpool
+                import wifi
+                self.socket_pool = socketpool.SocketPool(wifi.radio)
+            else:
+                # In dev mode, create a mock socket pool if needed
+                logger.info("Dev mode - using simulated socket pool")
+                self.socket_pool = "DEV_SOCKET_POOL"  # Placeholder value
+                
             await self._initialize_http_client(self.socket_pool)
         else:
-            await self.display.show_scroll_message("WiFi Failed - Check settings")
+            if is_dev_mode():
+                # In dev mode, proceed anyway
+                await self.display.show_scroll_message("Dev mode - continuing without WiFi")
+                await self._initialize_http_client(None)
+            else:
+                await self.display.show_scroll_message("WiFi Failed - Check settings")
 
     async def run_configure_wifi_message(self):
         while self.is_wifi_password_configured() is False:
@@ -130,11 +155,17 @@ class ThemeParkApp:
             await self.display.show_scroll_message(setup_text)
 
     async def try_wifi_until_connected(self):
+        # Skip in dev mode
+        if is_dev_mode():
+            logger.info("Dev mode - skipping WiFi connection")
+            return
+            
         ssid, password = load_credentials()
 
         # Try to connect 3 times before giving up in
         # case the Wifi is unstable.
         attempts = 1
+        import wifi
         if wifi.radio.connected is True:
             logger.debug(f"Already connected to wifi {ssid}: at {wifi.radio.ipv4_address}")
         else:
@@ -176,6 +207,11 @@ class ThemeParkApp:
         self.update_timer.reset()
 
     async def _initialize_clock(self):
+        # Skip system clock in dev mode
+        if is_dev_mode():
+            logger.info("Dev mode - skipping system clock setup")
+            return
+            
         # Takes too much time
         await self.display.show_scroll_message("Setting time...")
         try:
@@ -267,7 +303,17 @@ class ThemeParkApp:
     async def _initialize_http_client(self, socket_pool):
         """Initialize the HTTP client with a fresh session after WiFi is connected"""
         try:
-            # Import necessary modules
+            if is_dev_mode():
+                # In dev mode, use urllib-based session (no need for socket pool)
+                logger.info("Dev mode - using urllib-based HTTP client")
+                
+                # The HttpClient will automatically use urllib when adafruit_requests is unavailable
+                # We don't need to create a session, the HttpClient will handle it
+                self.update_http_client(None)
+                logger.info("HTTP client successfully initialized in dev mode")
+                return
+                
+            # Import necessary modules for CircuitPython
             import ssl
             import socketpool
             import wifi
@@ -297,11 +343,6 @@ class ThemeParkApp:
             if hasattr(self.http_client, 'session'):
                 self.http_client.session = session
                 logger.info("HTTP client session updated")
-
-                # Also update session in the theme park service
-                # if hasattr(self.theme_park_service, 'http_client'):
-                #     self.theme_park_service.http_client.session = session
-                #     logger.info("Theme park service HTTP client session updated")
 
         except Exception as e:
             logger.error(e, "Error updating HTTP client session")
@@ -358,6 +399,11 @@ class ThemeParkApp:
         Returns:
             The web server instance
         """
+        # Skip web server in dev mode
+        if is_dev_mode():
+            logger.info("Dev mode - web server disabled")
+            return None
+            
         # Apply HTTP response patch to handle client disconnections gracefully
         # try:
         #     from src.network.http_response_patch import apply_http_response_patch
@@ -491,10 +537,11 @@ class ThemeParkApp:
 
         # Start web server if in hardware mode
         web_server = None
-        try:
-            web_server = self.start_web_server(self.socket_pool)
-        except ImportError as e:
-            logger.error(e,"Running without web server in simulation mode")
+        if not is_dev_mode():
+            try:
+                web_server = self.start_web_server(self.socket_pool)
+            except ImportError as e:
+                logger.error(e,"Running without web server in simulation mode")
 
         if web_server:
             # Run display and web server concurrently
@@ -510,6 +557,10 @@ class ThemeParkApp:
 
     @staticmethod
     def is_wifi_password_configured() -> bool:
+        # Always return True in dev mode to skip configuration
+        if is_dev_mode():
+            return True
+            
         ssid, password = load_credentials()
         # logger.debug(f"SSID: {ssid} Password: {password}")
         is_configured = ssid != "" and password != ""

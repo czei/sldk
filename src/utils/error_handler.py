@@ -100,31 +100,42 @@ class ErrorHandler:
     def error(self, e, str_description):
         """
         Log an error with a description and stack trace
-        
+
         Args:
             e: The exception that occurred
             str_description: A description of the error
         """
-        except_str = str_description + ":" + str(e)
-        st = traceback.format_exception(e)
-        st_str = "stack trace:"
-        for line in st:
-            st_str = st_str + line
+        # Handle the case where e is None (no exception but error message)
+        if e is None:
+            except_str = str_description
+            st_str = ""
+        else:
+            except_str = str_description + ":" + str(e)
+            try:
+                st = traceback.format_exception(e)
+                st_str = "stack trace:"
+                for line in st:
+                    st_str = st_str + line
+            except Exception:
+                # Fallback for cases where traceback.format_exception fails
+                st_str = "stack trace unavailable"
 
         # Filter out non-ASCII characters to prevent UnicodeEncodeError
         filtered_except_str = self.filter_non_ascii(except_str)
         filtered_st_str = self.filter_non_ascii(st_str)
-        
+
         # Always print errors to console for visibility
         print(filtered_except_str)
-        print(filtered_st_str)
-        
+        if st_str:
+            print(filtered_st_str)
+
         # Only attempt to write to file if filesystem is writable
         if not self.is_readonly:
             try:
                 with open(self.fileName, 'a') as file:
                     file.write(filtered_except_str + "\n")
-                    file.write(filtered_st_str + "\n")
+                    if st_str:
+                        file.write(filtered_st_str + "\n")
             except OSError:
                 # If write fails unexpectedly, update readonly state
                 self.is_readonly = True

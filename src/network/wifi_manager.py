@@ -3,23 +3,14 @@ WiFi connection management.
 Copyright 2024 3DUPFitters LLC
 """
 import asyncio
+import sys
+import os
+import platform
 
 from src.config.settings_manager import SettingsManager
 from src.utils.error_handler import ErrorHandler
 from src.utils.url_utils import load_credentials
-import socketpool
-import wifi
-import adafruit_httpserver
-from adafruit_httpserver import (
-    Status,
-    REQUEST_HANDLED_RESPONSE_SENT,
-    Request,
-    Response,
-    Headers,
-    GET,
-    POST,
-    Server
-)
+from src.ui.display_factory import is_dev_mode
 
 # Initialize logger
 logger = ErrorHandler("error_log")
@@ -41,8 +32,24 @@ class WiFiManager:
         self.is_connected = False
         self.wifi_client = None
         self.ap_enabled = False
+        self.web_server = None
+
+        # Development mode values
+        self.AP_SSID = "WifiManager_DEV"
+        self.AP_PASSWORD = "password"
 
         try:
+            # Check if in development mode
+            if is_dev_mode():
+                # In dev mode, simulate WiFi capabilities
+                logger.info("Running in development mode, using simulated WiFi")
+                self.wifi = None
+                self.HAS_WIFI = False
+                # Set dummy values for development
+                self.AP_SSID = "WifiManager_DEV"
+                self.AP_PASSWORD = "password"
+                return
+                
             # Try to import CircuitPython specific modules
             import wifi
             self.wifi = wifi
@@ -55,8 +62,6 @@ class WiFiManager:
             self.AP_PASSWORD = "password"
             self.AP_AUTHMODES = [self.wifi.AuthMode.WPA2, self.wifi.AuthMode.PSK]
             
-            self.web_server = None
-
         except ImportError:
             # Mock for non-CircuitPython environments
             self.wifi = None
@@ -66,8 +71,14 @@ class WiFiManager:
     async def reset(self):
         """Reset the microcontroller after delay"""
         await asyncio.sleep(4)
-        import microcontroller
-        microcontroller.reset()
+        if not is_dev_mode():
+            try:
+                import microcontroller
+                microcontroller.reset()
+            except ImportError:
+                logger.debug("Microcontroller module not available, skipping reset")
+                # In non-hardware environments, just simulate a reset
+                os._exit(0)
 
     async def connect(self, display_callback=None):
         """
@@ -79,8 +90,8 @@ class WiFiManager:
         Returns:
             True if connected, False otherwise
         """
-        if not self.HAS_WIFI:
-            logger.debug("WiFi not available, simulating connection")
+        if is_dev_mode() or not self.HAS_WIFI:
+            logger.debug("WiFi not available or in dev mode, simulating connection")
             self.is_connected = True
             return True
             
@@ -141,8 +152,8 @@ class WiFiManager:
         Returns:
             A new adafruit_requests.Session or None if not available
         """
-        if not self.HAS_WIFI or not self.is_connected:
-            logger.debug("Cannot create HTTP session without WiFi connection")
+        if is_dev_mode() or not self.HAS_WIFI or not self.is_connected:
+            logger.debug("Cannot create HTTP session without WiFi connection or in dev mode")
             return None
             
         try:
@@ -181,7 +192,7 @@ class WiFiManager:
             
     async def disconnect(self):
         """Disconnect from WiFi"""
-        if not self.HAS_WIFI or not self.is_connected:
+        if is_dev_mode() or not self.HAS_WIFI or not self.is_connected:
             return
             
         try:
@@ -214,7 +225,7 @@ class WiFiManager:
         Returns:
             True if WiFi is available, False otherwise
         """
-        return self.HAS_WIFI
+        return self.HAS_WIFI or is_dev_mode()
         
     def is_connected(self):
         """
@@ -223,6 +234,10 @@ class WiFiManager:
         Returns:
             True if connected, False otherwise
         """
+        if is_dev_mode():
+            # In dev mode, always report as connected
+            return True
+            
         if not self.HAS_WIFI:
             return self.is_connected
             
@@ -238,6 +253,10 @@ class WiFiManager:
         Returns:
             The IP address as a string, or None if not connected
         """
+        if is_dev_mode():
+            # In dev mode, return a dummy IP
+            return "127.0.0.1"
+            
         if not self.HAS_WIFI or not self.is_connected:
             return None
             
@@ -261,10 +280,11 @@ class WiFiManager:
                 logger.info(f"Saved WiFi credentials to settings manager")
                 
                 # Also try to save to a secrets.py file for CircuitPython
-                try:
-                    self._save_to_secrets_file()
-                except Exception as secrets_err:
-                    logger.error(secrets_err, "Could not save to secrets.py file")
+                if not is_dev_mode():
+                    try:
+                        self._save_to_secrets_file()
+                    except Exception as secrets_err:
+                        logger.error(secrets_err, "Could not save to secrets.py file")
                     
             except Exception as e:
                 logger.error(e, "Failed to save WiFi credentials to settings manager")
@@ -273,6 +293,10 @@ class WiFiManager:
         """
         Save WiFi credentials to secrets.py file
         """
+        if is_dev_mode():
+            logger.debug("Skipping secrets.py file update in dev mode")
+            return
+            
         try:
             # Read existing secrets file if it exists
             secrets_content = ""
@@ -320,6 +344,12 @@ secrets = {
             logger.error(e, "Failed to save WiFi credentials to secrets.py file")
 
     def start_access_point(self,port=80):
+        """Start the WiFi access point"""
+        if is_dev_mode() or not self.HAS_WIFI:
+            logger.debug("Cannot start access point in dev mode or without WiFi hardware")
+            self.ap_enabled = True
+            return
+            
         self.wifi.radio.enabled = True
         if self.ap_enabled is False:
             # to use encrypted AP, use authmode=[wifi.AuthMode.WPA2, wifi.AuthMode.PSK]
@@ -330,7 +360,13 @@ secrets = {
             self.ap_enabled = True
 
     def stop_access_point(self):
-        wifi.radio.stop_ap()
+        """Stop the WiFi access point"""
+        if is_dev_mode() or not self.HAS_WIFI:
+            logger.debug("Cannot stop access point in dev mode or without WiFi hardware")
+            self.ap_enabled = False
+            return
+            
+        self.wifi.radio.stop_ap()
         self.ap_enabled = False
         
     def scan_networks(self):
@@ -340,8 +376,8 @@ secrets = {
         Returns:
             List of network info (SSID, RSSI, channel, security)
         """
-        if not self.HAS_WIFI:
-            logger.debug("WiFi not available, returning mock networks")
+        if is_dev_mode() or not self.HAS_WIFI:
+            logger.debug("WiFi not available or in dev mode, returning mock networks")
             # Return mock data for testing
             return [
                 {"ssid": "HomeNetwork", "rssi": -65, "channel": 6},
@@ -451,9 +487,18 @@ secrets = {
         return html
 
     def start_web_server(self):
+        """Start the web server for WiFi configuration"""
+        if is_dev_mode() or not self.HAS_WIFI:
+            logger.debug("Skipping web server in dev mode or without WiFi hardware")
+            return
+            
         logger.debug("starting web server..")
+        import socketpool
+        import wifi
+        import adafruit_httpserver
+        
         pool = socketpool.SocketPool(wifi.radio)
-        self.web_server = Server(pool, "/www", debug=False)
+        self.web_server = adafruit_httpserver.Server(pool, "/www", debug=False)
         
         # Register routes for WiFi setup
         self.register_routes()
@@ -469,6 +514,12 @@ secrets = {
         Args:
             termination_func: A function that returns True when the server should stop
         """
+        if is_dev_mode() or not self.HAS_WIFI:
+            logger.debug("Skipping web server loop in dev mode or without WiFi hardware")
+            # In dev mode, simulate the termination function return after a few seconds
+            await asyncio.sleep(5)
+            return
+            
         # Don't call termination_func here, just log the function reference
         logger.debug(f"Starting web server loop with termination function")
         
@@ -491,6 +542,20 @@ secrets = {
 
     def register_routes(self):
         """Register HTTP routes for WiFi setup"""
+        if is_dev_mode() or not self.HAS_WIFI:
+            logger.debug("Skipping route registration in dev mode or without WiFi hardware")
+            return
+            
+        from adafruit_httpserver import (
+            Status,
+            REQUEST_HANDLED_RESPONSE_SENT,
+            Request,
+            Response,
+            Headers,
+            GET,
+            POST,
+            Server
+        )
 
         @self.web_server.route("/", [GET])
         def root(request: Request):

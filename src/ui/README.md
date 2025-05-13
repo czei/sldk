@@ -79,6 +79,27 @@ This factory creates the appropriate display based on:
 3. The main application detects the platform and initializes the appropriate display
 4. In development mode, an async task is created to update the simulator display
 
+## Development Mode Features
+
+When running in development mode (`--dev` flag), the application:
+
+1. Uses the Pygame-based simulator instead of hardware display
+2. Skips WiFi configuration and connection steps
+3. Uses mock data for API requests instead of real network calls
+4. Simulates theme parks data with sample parks and ride information
+5. Disables the web server functionality that requires hardware
+6. Allows testing the full application workflow on desktop
+
+## Mock Data
+
+To facilitate testing in development mode, the HTTP client provides mock data for:
+
+1. Theme park list API endpoint
+2. Wait times for Disney Magic Kingdom
+3. Other API endpoints as needed
+
+This allows for full testing of the application features without requiring internet connectivity or the real API.
+
 ## Adding New Features
 
 When adding new display features:
@@ -87,6 +108,15 @@ When adding new display features:
 2. Implement the method in both `SimulatedLEDMatrix` and `MatrixDisplay`
 3. For hardware-specific features, provide a reasonable simulation in `SimulatedLEDMatrix`
 
+## Troubleshooting
+
+If you encounter issues with the simulator:
+
+1. Ensure all development dependencies are installed: `make install-dev-deps`
+2. Check the error_log file for detailed error messages
+3. Make sure Pygame can initialize properly (requires a graphical environment)
+4. Verify that the application code properly handles development mode using `is_dev_mode()` checks
+
 ## Limitations
 
 The simulator has some limitations:
@@ -94,5 +124,6 @@ The simulator has some limitations:
 1. Font rendering is different between Pygame and CircuitPython
 2. Some specialized CircuitPython display features may not be perfectly replicated
 3. Hardware-specific libraries (like MatrixPortal) are mocked rather than fully implemented
+4. Network functionality is simulated with mock data instead of real API calls
 
 Despite these limitations, the simulator provides a much faster development workflow than constantly deploying to hardware.
