@@ -6,39 +6,43 @@ TEST_DIR := /Volumes/CIRCUITPY
 BASE := $(wildcard *.py)
 SRC_DIR := src
 
+# Python interpreter and pip commands
+PYTHON := python
+PIP := python -m pip
+
 .PHONY: test test-all test-unit test-legacy test-coverage install-test-deps dev
 all: test release
 
 # Development mode with simulator
 dev:
-	python theme_park_main.py --dev
+	$(PYTHON) theme_park_main.py --dev
 
 # Testing targets
 test: test-unit
 
 # Run unit tests
 test-unit:
-	python -m pytest test/unit -v
+	$(PYTHON) -m pytest test/unit -v
 
 # Run legacy test suite
 test-legacy:
-	python -m pytest test/test-suite.py -v
+	$(PYTHON) -m pytest test/test-suite.py -v
 
 # Run all tests
 test-all:
-	python -m pytest
+	$(PYTHON) -m pytest
 
 # Run tests with coverage report
 test-coverage:
-	python -m pytest --cov=src --cov-report=term --cov-report=html
+	$(PYTHON) -m pytest --cov=src --cov-report=term --cov-report=html
 
 # Install test dependencies
 install-test-deps:
-	pip install pytest pytest-asyncio pytest-cov
+	$(PIP) install pytest pytest-asyncio pytest-cov
 
 # Install development dependencies
 install-dev-deps:
-	pip install pygame pillow
+	$(PIP) install pygame pillow
 
 # Copy all files to the release GIT archive
 release: $(SRC_DIR)/*.py
