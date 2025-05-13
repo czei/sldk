@@ -14,12 +14,19 @@ class TestErrorHandler:
         """Test basic initialization"""
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             log_path = temp_file.name
-            
+
         try:
-            handler = ErrorHandler(log_path)
-            assert handler.fileName == log_path
-            # In test environment, should default to writable
-            assert not handler.is_readonly
+            # Mock the storage module
+            with patch('src.utils.error_handler.storage') as mock_storage:
+                # Set up the mock to report writable filesystem
+                mock_mount = MagicMock()
+                mock_mount.readonly = False
+                mock_storage.getmount.return_value = mock_mount
+
+                handler = ErrorHandler(log_path)
+                assert handler.fileName == log_path
+                # Should be writable as we mocked it
+                assert not handler.is_readonly
         finally:
             if os.path.exists(log_path):
                 os.remove(log_path)
@@ -46,34 +53,62 @@ class TestErrorHandler:
             if os.path.exists(log_path):
                 os.remove(log_path)
     
-    @with_temp_file()
-    def test_logging_messages(self, file_path):
+    def test_logging_messages(self):
         """Test logging messages to file"""
-        handler = ErrorHandler(file_path)
-        handler.info("Test info message")
-        handler.debug("Test debug message")
-        
-        with open(file_path, 'r') as f:
-            content = f.read()
-            assert "Test info message" in content
-            assert "Test debug message" in content
-    
-    @with_temp_file()
-    def test_error_logging(self, file_path):
-        """Test logging error with stack trace"""
-        handler = ErrorHandler(file_path)
-        
+        # Create temporary file
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            file_path = temp_file.name
+
         try:
-            # Generate a test exception
-            raise ValueError("Test error")
-        except ValueError as e:
-            handler.error(e, "Error description")
-        
-        with open(file_path, 'r') as f:
-            content = f.read()
-            assert "Error description:Test error" in content
-            assert "stack trace:" in content
-            assert "ValueError" in content
+            # Mock the storage module
+            with patch('src.utils.error_handler.storage') as mock_storage:
+                # Set up the mock to report writable filesystem
+                mock_mount = MagicMock()
+                mock_mount.readonly = False
+                mock_storage.getmount.return_value = mock_mount
+
+                handler = ErrorHandler(file_path)
+                handler.info("Test info message")
+                handler.debug("Test debug message")
+
+                with open(file_path, 'r') as f:
+                    content = f.read()
+                    assert "Test info message" in content
+                    assert "Test debug message" in content
+        finally:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+    
+    def test_error_logging(self):
+        """Test logging error with stack trace"""
+        # Create temporary file
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            file_path = temp_file.name
+
+        try:
+            # Mock the storage module
+            with patch('src.utils.error_handler.storage') as mock_storage:
+                # Set up the mock to report writable filesystem
+                mock_mount = MagicMock()
+                mock_mount.readonly = False
+                mock_storage.getmount.return_value = mock_mount
+
+                handler = ErrorHandler(file_path)
+
+                try:
+                    # Generate a test exception
+                    raise ValueError("Test error")
+                except ValueError as e:
+                    handler.error(e, "Error description")
+
+                with open(file_path, 'r') as f:
+                    content = f.read()
+                    assert "Error description:Test error" in content
+                    assert "stack trace:" in content
+                    assert "ValueError" in content
+        finally:
+            if os.path.exists(file_path):
+                os.remove(file_path)
     
     def test_filter_non_ascii(self):
         """Test filtering non-ASCII characters"""

@@ -6,19 +6,44 @@ TEST_DIR := /Volumes/CIRCUITPY
 BASE := $(wildcard *.py)
 SRC_DIR := src
 
-.PHONY: test
+.PHONY: test test-all test-unit test-legacy test-coverage install-test-deps
 all: test release
+
+# Testing targets
+test: test-unit
+
+# Run unit tests
+test-unit:
+	python -m pytest test/unit -v
+
+# Run legacy test suite
+test-legacy:
+	python -m pytest test/test-suite.py -v
+
+# Run all tests
+test-all:
+	python -m pytest
+
+# Run tests with coverage report
+test-coverage:
+	python -m pytest --cov=src --cov-report=term --cov-report=html
+
+# Install test dependencies
+install-test-deps:
+	pip install pytest pytest-asyncio pytest-cov
 
 # Copy all files to the release GIT archive
 release: $(SRC_DIR)/*.py
 	cp -f boot.py $(RELEASE_DESTDIR)
-	cp -f code.py $(RELEASE_DESTDIR)
+	cp -f main.py $(RELEASE_DESTDIR)/code.py
+	cp -f theme_park_main.py $(RELEASE_DESTDIR)
 	cp -rf $(SRC_DIR) $(RELEASE_DESTDIR)
 
 # Copy files to the connected MatrixPortal S3
 copy_to_circuitpy : $(TEST_DIR)
 	cp -f boot.py $(TEST_DIR)
-	cp -f code.py $(TEST_DIR)
+	cp -f main.py $(TEST_DIR)/code.py
+	cp -f theme_park_main.py $(TEST_DIR)
 	rsync -av --update --progress \
 		--exclude='lib/' \
 		--exclude='images/' \

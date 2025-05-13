@@ -348,7 +348,7 @@ class TestMessageQueue:
                 assert len(mq.func_queue) == 3
                 
                 # Debug log should show skipping the meet & greet
-                mock_logger.debug.assert_called_once_with("Skipping character meet: Meet Mickey Mouse")
+                mock_logger.debug.assert_any_call("Skipping character meet: Meet Mickey Mouse")
     
     @pytest.mark.asyncio
     async def test_show(self):

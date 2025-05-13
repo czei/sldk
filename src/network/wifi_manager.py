@@ -63,8 +63,12 @@ class WiFiManager:
             self.HAS_WIFI = False
             logger.debug("WiFi module not available, using mock implementation")
 
+    async def reset(self):
+        """Reset the microcontroller after delay"""
+        await asyncio.sleep(4)
+        import microcontroller
+        microcontroller.reset()
 
-            
     async def connect(self, display_callback=None):
         """
         Connect to WiFi
@@ -613,15 +617,15 @@ secrets = {
                         <link rel="stylesheet" href="/wifi_style.css">
                         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
                         <style>
-                            .connection-box {
+                            .connection-box {{
                                 background: rgba(255, 255, 255, 0.1);
                                 border-radius: 12px;
                                 padding: 20px;
                                 margin: 20px;
-                            }
-                            h2 {
+                            }}
+                            h2 {{
                                 margin-top: 0;
-                            }
+                            }}
                         </style>
                     </head>
                     <body>
@@ -639,7 +643,9 @@ secrets = {
 
                     # Create a task to connect to the new network (after sending response)
                     # This won't block the response
-                    asyncio.create_task(self.connect())
+                    # TODO: Come up with better solution
+                    #asyncio.create_task(self.connect())
+                    asyncio.create_task(self.reset())
 
                     return Response(request, response_html, content_type="text/html")
                 else:

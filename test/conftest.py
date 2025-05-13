@@ -1,24 +1,33 @@
 """
-This file ensures everything is in place to run PyTest based unit tests against
-the adafruit_radio module. It works by using Python's mock library to add
-MagicMock objects to sys.modules for the modules which are not available to
-standard Python because they're CircuitPython only modules.
-
-Such mocking happens as soon as this conftest.py file is imported (so the
-mocked modules exist in sys.modules before the module to be tested is
-imported), and immediately before each test function is evaluated (so changes
-to state remain isolated between tests).
+Configuration and fixtures for pytest.
+This file sets up mocking for CircuitPython modules and provides common test fixtures.
 """
 import sys
+import os
+import json
+import pytest
 from unittest.mock import MagicMock
+
+# Add project root to path to help with imports
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 # Add fully qualified namespace paths to things that are imported, but which
 # should be mocked away. For instance, modules which are available in
 # CircuitPython but not standard Python.
 MOCK_MODULES = [
+    "board",
+    "digitalio",
     "adafruit_ble.BLERadio",
     "adafruit_ble.advertising.adafruit.AdafruitRadio",
     "adafruit_matrixportal.matrixportal",
+    "adafruit_matrixportal.matrix",
+    "terminalio",
+    "displayio",
+    "socketpool",
+    "wifi",
+    "mdns",
+    "storage",
+    "rtc",
 ]
 
 
@@ -50,3 +59,45 @@ def pytest_runtest_setup(item):
 
 # Initial mocking needed to stop ImportError when importing module under test.
 mock_imported_modules()
+
+@pytest.fixture
+def theme_park_list_data():
+    """Fixture that loads theme park list test data"""
+    fixture_path = os.path.join(os.path.dirname(__file__), 'fixtures', 'theme-park-list.json')
+    with open(fixture_path, 'r') as f:
+        return json.load(f)
+
+@pytest.fixture
+def magic_kingdom_data():
+    """Fixture that loads Magic Kingdom test data"""
+    fixture_path = os.path.join(os.path.dirname(__file__), 'fixtures', 'magic-kingdom.json')
+    with open(fixture_path, 'r') as f:
+        return json.load(f)
+
+@pytest.fixture
+def universal_data():
+    """Fixture that loads Universal test data"""
+    fixture_path = os.path.join(os.path.dirname(__file__), 'fixtures', 'universal.json')
+    with open(fixture_path, 'r') as f:
+        return json.load(f)
+
+@pytest.fixture
+def closed_park_data():
+    """Fixture that loads closed park test data"""
+    fixture_path = os.path.join(os.path.dirname(__file__), 'fixtures', 'closed-park.json')
+    with open(fixture_path, 'r') as f:
+        return json.load(f)
+
+@pytest.fixture
+def epcot_data():
+    """Fixture that loads EPCOT test data"""
+    fixture_path = os.path.join(os.path.dirname(__file__), 'fixtures', 'epcot-test-data.json')
+    with open(fixture_path, 'r') as f:
+        return json.load(f)
+
+@pytest.fixture
+def settings_data():
+    """Fixture that loads settings test data"""
+    fixture_path = os.path.join(os.path.dirname(__file__), 'fixtures', 'settings.json')
+    with open(fixture_path, 'r') as f:
+        return json.load(f)

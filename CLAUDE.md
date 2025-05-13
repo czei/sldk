@@ -7,9 +7,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 * `make release` - Copy files to release archive
 
 ## Testing
-* Run all tests: `python -m pytest test/test-suite.py -v`
-* Run single test: `python -m pytest test/test-suite.py::Test::test_method_name -v`
-* Test files are in the `test/` directory with `test_` prefix or `-test` suffix
+* Run all tests: `make test-all` or `python -m pytest`
+* Run unit tests only: `make test-unit` or `python -m pytest test/unit -v`
+* Run legacy tests: `make test-legacy` or `python -m pytest test/test-suite.py -v`
+* Run a single test: `python -m pytest test/unit/path/to/test_file.py::TestClass::test_method_name -v`
+* Generate test coverage report: `make test-coverage` (requires pytest-cov)
+
+### Test Organization
+* Unit tests: `test/unit/` - organized by module (models, network, utils, etc.)
+* Integration tests: `test/integration/` - tests for multiple components
+* Legacy tests: `test/test-suite.py` - original test suite
+* Test fixtures: `test/fixtures/` - test data files
+* Helpers: `test/helpers.py` - testing utilities
+
+### Test Tips
+* Writing tests is difficult because CircuitPython is a subset of MicroPython, and many calls won't work when run on a computer. Also, the code that runs on the board expects hardware to be there.
+* Use MagicMock() to stub out hardware component calls
+* Use the MockHardwareContext from helpers.py when testing code that requires multiple hardware components
+* Test fixtures in conftest.py provide access to common test data
 
 ## Code Style
 * **Imports**: Group by stdlib, third-party (Adafruit), then project modules
