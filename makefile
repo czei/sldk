@@ -6,8 +6,12 @@ TEST_DIR := /Volumes/CIRCUITPY
 BASE := $(wildcard *.py)
 SRC_DIR := src
 
-.PHONY: test test-all test-unit test-legacy test-coverage install-test-deps
+.PHONY: test test-all test-unit test-legacy test-coverage install-test-deps dev
 all: test release
+
+# Development mode with simulator
+dev:
+	python theme_park_main.py --dev
 
 # Testing targets
 test: test-unit
@@ -31,6 +35,10 @@ test-coverage:
 # Install test dependencies
 install-test-deps:
 	pip install pytest pytest-asyncio pytest-cov
+
+# Install development dependencies
+install-dev-deps:
+	pip install pygame pillow
 
 # Copy all files to the release GIT archive
 release: $(SRC_DIR)/*.py
