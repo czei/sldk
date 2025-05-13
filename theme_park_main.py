@@ -3,10 +3,20 @@ ThemeParkAPI - Main entry point
 Copyright 2024 3DUPFitters LLC
 """
 import sys
-sys.path.append('/src/lib')
+
+# Check if running on CircuitPython
+is_circuitpython = hasattr(sys, 'implementation') and sys.implementation.name == 'circuitpython'
+
+# Add src/lib to Python path if running on CircuitPython
+if is_circuitpython and '/src/lib' not in sys.path:
+    sys.path.append('/src/lib')
+
 import asyncio
-import platform
-import argparse
+
+# Platform module is not available in CircuitPython, check environment first
+if not is_circuitpython:
+    import platform
+    import argparse  # argparse is not available in CircuitPython
 
 from src.app import ThemeParkApp
 from src.utils.error_handler import ErrorHandler
@@ -18,6 +28,13 @@ logger = ErrorHandler("error_log")
 # Parse command line arguments
 def parse_args():
     """Parse command line arguments"""
+    # On CircuitPython, argparse is not available, so provide default args
+    if is_circuitpython:
+        class DefaultArgs:
+            dev = False
+        return DefaultArgs()
+    
+    # Standard Python environment with argparse
     parser = argparse.ArgumentParser(description="Theme Park API")
     parser.add_argument('--dev', action='store_true', help='Run in development mode with display simulator')
     return parser.parse_args()
@@ -25,7 +42,14 @@ def parse_args():
 # Initialize ThemeParkApp and run it
 async def main():
     # Parse command line arguments
-    args = parse_args()
+    try:
+        args = parse_args()
+    except Exception as e:
+        # If we can't parse arguments, assume defaults (may happen in CircuitPython)
+        logger.warning(f"Unable to parse command line arguments: {e}")
+        class DefaultArgs:
+            dev = False
+        args = DefaultArgs()
     
     try:
         # Create a settings manager
@@ -33,7 +57,10 @@ async def main():
         settings_manager = SettingsManager("settings.json")
         
         # Create display using the factory (will automatically choose simulator or hardware)
-        logger.info(f"Creating display for platform: {platform.system() if not is_circuitpython() else 'CircuitPython'}")
+        if not is_circuitpython:
+            logger.info(f"Creating display for platform: {platform.system()}")
+        else:
+            logger.info("Creating display for platform: CircuitPython")
         display = create_display({'settings_manager': settings_manager})
         
         # Initialize the display
