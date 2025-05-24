@@ -57,35 +57,102 @@ Scroll message: Choose theme park at http://themeparkwaits.local
 Text length: 48, height %: 0.40, scale: 2.37
 Rendered text at size: 2685x128
 Set scroll speed: 0.03 seconds between frames
+Adding splash message to queue
+Scroll message: Choose theme park at http://themeparkwaits.local
+Text length: 48, height %: 0.40, scale: 2.37
+Rendered text at size: 2685x128
+Set scroll speed: 0.03 seconds between frames
+Adding splash message to queue
+Scroll message: Choose theme park at http://themeparkwaits.local
+Text length: 48, height %: 0.40, scale: 2.37
+Rendered text at size: 2685x128
+Set scroll speed: 0.03 seconds between frames
+Adding splash message to queue
+Scroll message: Choose theme park at http://themeparkwaits.local
+Text length: 48, height %: 0.40, scale: 2.37
+Rendered text at size: 2685x128
+Set scroll speed: 0.03 seconds between frames
+Adding splash message to queue
+Scroll message: Choose theme park at http://themeparkwaits.local
+Text length: 48, height %: 0.40, scale: 2.37
+Rendered text at size: 2685x128
+Set scroll speed: 0.03 seconds between frames
+Adding splash message to queue
+Scroll message: Choose theme park at http://themeparkwaits.local
+Text length: 48, height %: 0.40, scale: 2.37
+Rendered text at size: 2685x128
+Set scroll speed: 0.03 seconds between frames
+Adding splash message to queue
+Scroll message: Choose theme park at http://themeparkwaits.local
+Text length: 48, height %: 0.40, scale: 2.37
+Rendered text at size: 2685x128
+Set scroll speed: 0.03 seconds between frames
+GET request: / with params: 
+Web: "GET / HTTP/1.1" 200 -
+GET request: /style.css with params: 
+Web: "GET /style.css HTTP/1.1" 200 -
+GET request: /gear.png with params: 
+Web: "GET /gear.png HTTP/1.1" 200 -
+GET request: /.well-known/appspecific/com.chrome.devtools.json with params: 
+Web: "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+Adding splash message to queue
+Scroll message: Choose theme park at http://themeparkwaits.local
+Text length: 48, height %: 0.40, scale: 2.37
+Rendered text at size: 2685x128
+Set scroll speed: 0.03 seconds between frames
 GET request: /settings with params: 
 Web: "GET /settings HTTP/1.1" 200 -
 GET request: /style.css with params: 
 Web: "GET /style.css HTTP/1.1" 200 -
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
+GET request: /gear.png with params: 
+Web: "GET /gear.png HTTP/1.1" 200 -
+GET request: /.well-known/appspecific/com.chrome.devtools.json with params: 
+Web: "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
 GET request: /settings with params: domain_name=themeparkwaits&brightness_scale=0.5&scroll_speed=Medium&default_color=0xffff00&ride_name_color=0x0000ff&ride_wait_time_color=0xfdf5e6
 Saving settings settings.json
 Set display colors - bg: (0, 0, 0), text: (255, 255, 255)
-Web: "GET /settings?domain_name=themeparkwaits&brightness_scale=0.5&scroll_speed=Medium&default_color=0xffff00&ride_name_color=0x0000ff&ride_wait_time_color=0xfdf5e6 HTTP/1.1" 200 -
-GET request: /gear.png with params: 
-Web: "GET /gear.png HTTP/1.1" 200 -
+Web: "GET /settings?domain_name=themeparkwaits&brightness_scale=0.5&scroll_speed=Medium&default_color=0xffff00&ride_name_color=0x0000ff&ride_wait_time_color=0xfdf5e6 HTTP/1.1" 302 -
+GET request: /settings with params: 
+Web: "GET /settings HTTP/1.1" 200 -
 GET request: /style.css with params: 
 Web: "GET /style.css HTTP/1.1" 200 -
 GET request: /gear.png with params: 
 Web: "GET /gear.png HTTP/1.1" 200 -
+GET request: /.well-known/appspecific/com.chrome.devtools.json with params: 
+Web: "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
 Adding splash message to queue
 Scroll message: Choose theme park at http://themeparkwaits.local
 Text length: 48, height %: 0.40, scale: 2.37
 Rendered text at size: 2685x128
 Set scroll speed: 0.03 seconds between frames
+GET request: /settings with params: domain_name=themeparkwaits&brightness_scale=0.5&scroll_speed=Medium&default_color=0xffc0cb&ride_name_color=0x0000ff&ride_wait_time_color=0xfdf5e6
+Saving settings settings.json
+Set display colors - bg: (0, 0, 0), text: (255, 255, 255)
+Web: "GET /settings?domain_name=themeparkwaits&brightness_scale=0.5&scroll_speed=Medium&default_color=0xffc0cb&ride_name_color=0x0000ff&ride_wait_time_color=0xfdf5e6 HTTP/1.1" 302 -
+GET request: /settings with params: 
+Web: "GET /settings HTTP/1.1" 200 -
+GET request: /style.css with params: 
+Web: "GET /style.css HTTP/1.1" 200 -
+GET request: /gear.png with params: 
+Web: "GET /gear.png HTTP/1.1" 200 -
+GET request: /.well-known/appspecific/com.chrome.devtools.json with params: 
+Web: "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+GET request: / with params: 
+Web: "GET / HTTP/1.1" 200 -
+GET request: /gear.png with params: 
+Web: "GET /gear.png HTTP/1.1" 200 -
+GET request: /style.css with params: 
+Web: "GET /style.css HTTP/1.1" 200 -
+GET request: /.well-known/appspecific/com.chrome.devtools.json with params: 
+Web: "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
+GET request: /settings with params: 
+Web: "GET /settings HTTP/1.1" 200 -
+GET request: /style.css with params: 
+Web: "GET /style.css HTTP/1.1" 200 -
+GET request: /gear.png with params: 
+Web: "GET /gear.png HTTP/1.1" 200 -
+GET request: /.well-known/appspecific/com.chrome.devtools.json with params: 
+Web: "GET /.well-known/appspecific/com.chrome.devtools.json HTTP/1.1" 404 -
 Adding splash message to queue
 Scroll message: Choose theme park at http://themeparkwaits.local
 Text length: 48, height %: 0.40, scale: 2.37

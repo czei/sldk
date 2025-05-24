@@ -137,6 +137,11 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
             try:
                 self._process_query_params(query_string)
                 success = True
+                # Redirect to /settings without query parameters
+                self.send_response(302)
+                self.send_header("Location", "/settings")
+                self.end_headers()
+                return
             except Exception as e:
                 logger.error(e, f"Error processing settings params: {query_string}")
         
