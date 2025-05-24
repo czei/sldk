@@ -38,6 +38,7 @@ class MessageQueue:
         self.param_queue = []
         self.delay_queue = []
         self.index = 0
+        self.has_completed_cycle = False
 
     async def add_scroll_message(self, the_message, delay=2):
         """
@@ -119,134 +120,18 @@ class MessageQueue:
             self.param_queue.append("No parks selected")
             return
 
-        # Get display mode from settings if available
-        display_mode = "all_rides"
-        selected_ride_name = ""
-        
-        try:
-            # Get settings from the app's settings manager
-            if hasattr(self.display, 'settings_manager'):
-                display_mode = self.display.settings_manager.get("display_mode", "all_rides")
-                selected_ride_name = self.display.settings_manager.get("selected_ride_name", "")
-        except Exception as e:
-            logger.error(e, "Error getting display mode settings")
-            display_mode = "all_rides"  # Default to all rides on error
-        
-        # Handle single ride mode
-        if display_mode == "single_ride" and selected_ride_name:
-            # In single ride mode with multiple parks, show the ride from each park
-            await self.add_single_ride_multi_park(parks_to_display, selected_ride_name)
-        else:
-            # Default behavior - show all rides from all selected parks
-            for park in parks_to_display:
-                if park.is_open is False:
-                    self.func_queue.append(self.display.show_scroll_message)
-                    self.delay_queue.append(self.delay)
-                    self.param_queue.append(park.name + " is closed")
-                else:
-                    await self._add_all_rides(park, park_list.skip_meet, park_list.skip_closed)
+        # Always show all rides from all selected parks (single ride functionality removed)
+        for park in parks_to_display:
+            if park.is_open is False:
+                self.func_queue.append(self.display.show_scroll_message)
+                self.delay_queue.append(self.delay)
+                self.param_queue.append(park.name + " is closed")
+            else:
+                await self._add_all_rides(park, park_list.skip_meet, park_list.skip_closed)
             
         self.regenerate_flag = False
         
-    async def add_single_ride_multi_park(self, parks, ride_name):
-        """
-        Add a single ride from multiple parks to the queue
-        
-        Args:
-            parks: List of theme parks to check
-            ride_name: The name of the ride to display
-        """
-        found_any = False
-        
-        for park in parks:
-            # Skip closed parks
-            if park.is_open is False:
-                continue
-                
-            # Find the ride in this park
-            for ride in park.rides:
-                if ride.name == ride_name:
-                    found_any = True
-                    
-                    # Show park name before ride info
-                    self.func_queue.append(self.display.show_scroll_message)
-                    self.delay_queue.append(self.delay * 0.5)
-                    self.param_queue.append(f"{park.name}:")
-                    
-                    # Show the ride info 3 times for this park
-                    for _ in range(3):
-                        if ride.open_flag is True:
-                            self.func_queue.append(self.display.show_ride_wait_time)
-                            self.param_queue.append(str(ride.wait_time))
-                            self.delay_queue.append(0)
-                        else:
-                            self.func_queue.append(self.display.show_ride_closed)
-                            self.param_queue.append("Closed")
-                            self.delay_queue.append(0)
-                            
-                        self.func_queue.append(self.display.show_ride_name)
-                        self.param_queue.append(ride.name)
-                        self.delay_queue.append(self.delay)
-                    break
-        
-        if not found_any:
-            # Ride not found in any park
-            self.func_queue.append(self.display.show_scroll_message)
-            self.delay_queue.append(self.delay)
-            self.param_queue.append(f"Ride '{ride_name}' not found in selected parks")
     
-    async def add_single_ride(self, park, ride_name):
-        """
-        Add a single ride to the queue
-        
-        Args:
-            park: The theme park
-            ride_name: The name of the ride to display
-        """
-        # Start with the ride-specific message
-        self.func_queue.append(self.display.show_scroll_message)
-        self.delay_queue.append(self.delay)
-        # self.param_queue.append(f"{park.name}: {ride_name} wait time")
-        self.param_queue.append(f"{ride_name}")
-        
-        # Find the selected ride
-        found_ride = False
-        for ride in park.rides:
-            if ride.name == ride_name:
-                found_ride = True
-                
-                # Add just this ride to the queue, repeating 10 times for emphasis
-                for _ in range(10):  # Show the selected ride 10 times
-                    if ride.open_flag is True:
-                        self.func_queue.append(self.display.show_ride_wait_time)
-                        self.param_queue.append(str(ride.wait_time))
-                        self.delay_queue.append(0)
-                    else:
-                        self.func_queue.append(self.display.show_ride_closed)
-                        self.param_queue.append("Closed")
-                        self.delay_queue.append(0)
-                        
-                    self.func_queue.append(self.display.show_ride_name)
-                    self.param_queue.append(ride.name)
-                    
-                    # Vary the delay slightly to make it more interesting
-                    # First few repeats are quick, then gradually increase delay
-                    if _ < 3:
-                        # Quick repeats for the first few iterations
-                        self.delay_queue.append(self.delay * 0.5)
-                    elif _ < 7:
-                        # Standard delay for middle iterations
-                        self.delay_queue.append(self.delay)
-                    else:
-                        # Longer delay for last iterations
-                        self.delay_queue.append(self.delay * 1.5)
-                break
-        
-        if not found_ride:
-            # Ride not found - show error message
-            self.func_queue.append(self.display.show_scroll_message)
-            self.delay_queue.append(self.delay)
-            self.param_queue.append(f"Ride '{ride_name}' not found at {park.name}")
     
     async def _add_all_rides(self, park, skip_meet, skip_closed):
         """
@@ -295,3 +180,4 @@ class MessageQueue:
         self.index += 1
         if self.index >= len(self.func_queue):
             self.index = 0
+            self.has_completed_cycle = True  # Mark that we've shown all messages at least once

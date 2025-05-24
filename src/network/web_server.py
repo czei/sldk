@@ -285,63 +285,62 @@ class ThemeParkWebServer:
         # Track if park was changed
         park_changed = False
 
-        # Parse park-id parameter
-        if "park-id=" in query_params:
+        # Parse park-id-1 through park-id-4 parameters
+        park_ids = []
+        for i in range(1, 5):
+            park_param = f"park-id-{i}="
+            if park_param in query_params:
+                try:
+                    # Extract park ID value
+                    import re
+                    match = re.search(f'park-id-{i}=([^&]+)', query_params)
+                    if match:
+                        park_id = int(match.group(1))
+                        if park_id > 0:  # Only add valid park IDs
+                            park_ids.append(park_id)
+                except (ValueError, TypeError):
+                    pass
+        
+        # Check if parks changed
+        if park_ids or "park-id-" in query_params:
             try:
-                # Check current park ID before updating
-                current_park_id = None
+                # Get current selected parks
+                current_park_ids = []
                 if (hasattr(self.app.theme_park_service, 'park_list') and
-                        hasattr(self.app.theme_park_service.park_list, 'current_park')):
-                    current_park_id = self.app.theme_park_service.park_list.current_park.id
-
-                # Direct access to park_list to update current park
+                        hasattr(self.app.theme_park_service.park_list, 'selected_parks')):
+                    current_park_ids = [p.id for p in self.app.theme_park_service.park_list.selected_parks]
+                
+                # Update selected parks
                 if hasattr(self.app.theme_park_service, 'park_list'):
-                    # Save park list state before update
-                    self.app.theme_park_service.park_list.parse(query_params)
-                    logger.debug(f"Updated park selection from query params")
-
-                    # Check if park ID changed
-                    new_park_id = self.app.theme_park_service.park_list.current_park.id
-                    park_changed = (current_park_id != new_park_id)
+                    # Clear existing selections
+                    self.app.theme_park_service.park_list.selected_parks = []
+                    
+                    # Add new selections
+                    for park_id in park_ids:
+                        park = self.app.theme_park_service.park_list.get_park_by_id(park_id)
+                        if park:
+                            self.app.theme_park_service.park_list.selected_parks.append(park)
+                    
+                    # Check if parks changed
+                    new_park_ids = [p.id for p in self.app.theme_park_service.park_list.selected_parks]
+                    park_changed = (sorted(current_park_ids) != sorted(new_park_ids))
+                    
                     if park_changed:
-                        logger.info(f"Park changed from ID {current_park_id} to {new_park_id}")
-                        # Reset selected ride when park changes
-                        self.app.settings_manager.settings["selected_ride_name"] = ""
+                        logger.info(f"Parks changed from {current_park_ids} to {new_park_ids}")
                         
-                        # Fetch ride data for the newly selected park
                         # Set flag to trigger update in the main loop
                         if hasattr(self.app.theme_park_service, 'update_needed'):
                             self.app.theme_park_service.update_needed = True
                         else:
                             # Add the attribute if it doesn't exist
                             self.app.theme_park_service.update_needed = True
-                        logger.info(f"Park changed to {new_park_id}, triggering data update")
+                        logger.info(f"Parks changed, triggering data update")
             except Exception as e:
                 logger.error(e, "Error updating park selection")
         
-        # Process display mode parameter
+        # Always use all_rides display mode (single ride functionality removed)
         settings_changed = False
-        import re
-        display_mode_match = re.search(r'display_mode=([^&]+)', query_params)
-        if display_mode_match:
-            old_display_mode = self.app.settings_manager.settings.get("display_mode", "all_rides")
-            new_display_mode = display_mode_match.group(1)
-            
-            if old_display_mode != new_display_mode:
-                self.app.settings_manager.settings["display_mode"] = new_display_mode
-                settings_changed = True
-                logger.info(f"Display mode changed to: {new_display_mode}")
-        
-        # Process selected ride name
-        selected_ride_match = re.search(r'selected_ride_name=([^&]+)', query_params)
-        if selected_ride_match:
-            old_selected_ride = self.app.settings_manager.settings.get("selected_ride_name", "")
-            new_selected_ride = self._url_decode(selected_ride_match.group(1))
-            
-            if old_selected_ride != new_selected_ride:
-                self.app.settings_manager.settings["selected_ride_name"] = new_selected_ride
-                settings_changed = True
-                logger.info(f"Selected ride changed to: {new_selected_ride}")
+        self.app.settings_manager.settings["display_mode"] = "all_rides"
 
         # Always set checkbox values (they'll be missing from query_params if unchecked)
         if hasattr(self.app.theme_park_service, 'park_list'):
@@ -607,32 +606,29 @@ class ThemeParkWebServer:
 
     def generate_main_page(self):
         """
-        Generate the main HTML page
+        Generate the main HTML page optimized for performance
         
         Returns:
             HTML content for the main page
-            
-        Note:
-            This method uses direct access to app data to avoid asyncio conflicts
         """
-        page = "<!DOCTYPE html><html><head>"
-        page += "<title>Theme Park Waits</title>"
-        page += "<link rel=\"stylesheet\" href=\"/style.css\">"
-        page += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
-        page += "</head>"
-        page += "<body>"
-
-        page += "<div class=\"navbar\">"
-        page += "<a href=\"/\">Theme Park Wait Times</a>"
-        # Add gear icon using image for better sizing control
-        page += "<div class=\"gear-icon\">"
-        page += "<a href=\"/settings\"><img src=\"gear.png\" alt=\"Settings\"></a>"
-        page += "</div>"
-        page += "</div>"
-
-        # Main content
-        page += "<div class=\"main-content\">"
-        page += "<h2>Theme Park Selection</h2>"
+        # Use list for efficient string building
+        page_parts = []
+        
+        # Pre-build static header
+        page_parts.extend([
+            "<!DOCTYPE html><html><head>",
+            "<title>Theme Park Waits</title>",
+            "<link rel=\"stylesheet\" href=\"/style.css\">",
+            "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">",
+            "</head><body>",
+            "<div class=\"navbar\">",
+            "<a href=\"/\">Theme Park Wait Times</a>",
+            "<div class=\"gear-icon\">",
+            "<a href=\"/settings\"><img src=\"gear.png\" alt=\"Settings\"></a>",
+            "</div></div>",
+            "<div class=\"main-content\">",
+            "<h2>Theme Park Selection</h2>"
+        ])
 
         # Get parks from app - without using asyncio.run()
         try:
@@ -698,7 +694,7 @@ class ThemeParkWebServer:
                 response_data["settings"] = self.app.settings_manager.settings
 
         if "parks" in response_data:
-            page += "<form action=\"/\" method=\"get\">"
+            page_parts.append("<form action=\"/\" method=\"get\">")
             
             # Get currently selected parks
             selected_park_ids = []
@@ -706,21 +702,21 @@ class ThemeParkWebServer:
                 selected_park_ids = [p.id for p in self.app.theme_park_service.park_list.selected_parks]
             
             # Create 4 park dropdowns
-            page += "<div class=\"park-selection\">"
-            page += "<h3>Select Parks (up to 4)</h3>"
+            page_parts.append("<div class=\"park-selection\">")
+            page_parts.append("<h3>Select Parks (up to 4)</h3>")
             
             parks = response_data.get("parks", [])
             
             for i in range(1, 5):  # 1 through 4
-                page += f"<div class=\"park-dropdown\">"
-                page += f"<label for=\"park-id-{i}\">Park {i}:</label>"
-                page += f"<select name=\"park-id-{i}\" id=\"park-select-{i}\">"
+                page_parts.append(f"<div class=\"park-dropdown\">")
+                page_parts.append(f"<label for=\"park-id-{i}\">Park {i}:</label>")
+                page_parts.append(f"<select name=\"park-id-{i}\" id=\"park-select-{i}\">")
                 
                 # Default option
-                page += f"<option value=\"0\">Select Park {i}</option>"
+                page_parts.append(f"<option value=\"0\">Select Park {i}</option>")
                 
                 if not parks:
-                    page += "<option value=\"0\">No parks available - check connection</option>"
+                    page_parts.append("<option value=\"0\">No parks available - check connection</option>")
                 else:
                     # Get the park ID for this position
                     current_selection = selected_park_ids[i-1] if i <= len(selected_park_ids) else None
@@ -729,339 +725,170 @@ class ThemeParkWebServer:
                         park_id = park.get("id", "")
                         park_name = park.get("name", "Unknown Park")
                         selected = "selected" if park_id == current_selection else ""
-                        page += f"<option value=\"{park_id}\" {selected}>{park_name}</option>"
+                        page_parts.append(f"<option value=\"{park_id}\" {selected}>{park_name}</option>")
                 
-                page += "</select>"
-                page += "</div>"
+                page_parts.append("</select>")
+                page_parts.append("</div>")
             
-            page += "</div>"
+            page_parts.append("</div>")
             # Safe access to settings
             settings = response_data.get("settings", {})
             if not isinstance(settings, dict):
                 settings = {}
 
             # Create options div with better formatting
-            page += "<div class=\"options\">"
-            page += "<h3 style=\"margin-top: 0; margin-bottom: 10px; text-align: left; padding-left: 20px;\">Display Options</h3>"
+            page_parts.append("<div class=\"options\">")
+            page_parts.append("<h3 style=\"margin-top: 0; margin-bottom: 10px; text-align: left; padding-left: 20px;\">Display Options</h3>")
 
-            # Display Mode Selection
-            page += "<div class=\"form-group\">"
-            # page += "<h3 style=\"margin-top: 0; margin-bottom: 10px; text-align: left; padding-left: 20px;\">Display Mode</h3>"
+            # Display Mode - Always show all rides (single ride functionality removed)
+            page_parts.append("<div class=\"form-group\">")
+            page_parts.append("<input type=\"hidden\" name=\"display_mode\" value=\"all_rides\">")
             
-            display_mode = settings.get("display_mode", "all_rides")
             
-            # All Rides option
-            all_rides_checked = "checked" if display_mode == "all_rides" else ""
-            page += f"<div class=\"radio-group\"><input type=\"radio\" id=\"all_rides\" name=\"display_mode\" value=\"all_rides\" {all_rides_checked}>"
-            page += "<label for=\"all_rides\">Show All Rides</label></div>"
             
-            # Single Ride option - disabled until a park is selected
-            single_ride_checked = "checked" if display_mode == "single_ride" else ""
-            # Check if we have any parks selected
-            has_selected_parks = False
-            if hasattr(self.app.theme_park_service.park_list, 'selected_parks'):
-                has_selected_parks = len(self.app.theme_park_service.park_list.selected_parks) > 0
-            has_current_park = ("current_park" in response_data and response_data["current_park"]) or has_selected_parks
-            disabled_attr = "" if has_current_park else "disabled"
-            page += f"<div class=\"radio-group\"><input type=\"radio\" id=\"single_ride\" name=\"display_mode\" value=\"single_ride\" {single_ride_checked} {disabled_attr}>"
-            page += "<label for=\"single_ride\">Show Single Ride"
-            if not has_current_park:
-                page += " (select a park first)"
-            page += "</label></div>"
-            
-            # Ride Selection Dropdown
-            selected_ride = settings.get("selected_ride_name", "")
-            ride_selector_style = "display: " + ("block" if display_mode == "single_ride" else "none")
-            
-            page += f"<div id=\"ride-selector\" style=\"{ride_selector_style}; margin-top: 10px; margin-bottom: 15px;\">"
-            page += "<label for=\"selected_ride_name\">Select Ride:</label>"
-            page += "<select name=\"selected_ride_name\" id=\"selected_ride_name\">"
-            
-            # Get available rides from all selected parks
-            all_park_rides = []
-            try:
-                if hasattr(self.app.theme_park_service.park_list, 'selected_parks'):
-                    for park in self.app.theme_park_service.park_list.selected_parks:
-                        if park and hasattr(park, 'rides'):
-                            # Add park name as a group header
-                            all_park_rides.append({"type": "group", "name": park.name})
-                            # Add rides from this park
-                            for ride in park.rides:
-                                if isinstance(ride, dict):
-                                    all_park_rides.append({"type": "ride", "name": ride.get("name", ""), "park": park.name})
-            except Exception as e:
-                logger.error(e, "Error getting rides for selector")
-            
-            # Add rides to dropdown grouped by park
-            if all_park_rides:
-                current_group = None
-                for item in all_park_rides:
-                    if item["type"] == "group":
-                        # Add optgroup for park
-                        if current_group:
-                            page += "</optgroup>"
-                        page += f"<optgroup label=\"{item['name']}\">"
-                        current_group = item["name"]
-                    else:
-                        # Add ride option
-                        ride_name = item["name"]
-                        is_selected = "selected" if ride_name == selected_ride else ""
-                        page += f"<option value=\"{ride_name}\" {is_selected}>{ride_name}</option>"
-                
-                if current_group:
-                    page += "</optgroup>"
-            else:
-                page += "<option value=\"\">No rides available</option>"
-                
-            page += "</select>"
-            page += "</div>"
-            
-            # Add JavaScript for toggling ride selector and updating rides when park changes
-            page += """
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    var radios = document.querySelectorAll('input[name="display_mode"]');
-                    var rideSelector = document.getElementById('ride-selector');
-                    var parkSelects = [
-                        document.getElementById('park-select-1'),
-                        document.getElementById('park-select-2'),
-                        document.getElementById('park-select-3'),
-                        document.getElementById('park-select-4')
-                    ];
-                    var rideSelect = document.getElementById('selected_ride_name');
-                    var singleRideRadio = document.getElementById('single_ride');
-                    var singleRideLabel = singleRideRadio.nextElementSibling;
-                    
-                    // Toggle ride selector visibility
-                    radios.forEach(function(radio) {
-                        radio.addEventListener('change', function() {
-                            rideSelector.style.display = (radio.value === 'single_ride') ? 'block' : 'none';
-                        });
-                    });
-                    
-                    // Function to update rides when parks change
-                    function updateRidesList() {
-                        // Get all selected park IDs
-                        var selectedParks = [];
-                        parkSelects.forEach(function(select) {
-                            var value = parseInt(select.value);
-                            if (value > 0) {
-                                selectedParks.push(value);
-                            }
-                        });
-                        
-                        if (selectedParks.length === 0) {
-                            // No parks selected
-                            singleRideRadio.disabled = true;
-                            singleRideLabel.textContent = 'Show Single Ride (select a park first)';
-                            rideSelect.innerHTML = '<option value="">No parks selected</option>';
-                            return;
-                        }
-                        
-                        // Clear and disable ride selector, show updating message
-                        rideSelect.innerHTML = '<option value="">Loading rides...</option>';
-                        rideSelect.disabled = true;
-                        
-                        // Disable Single Ride option temporarily
-                        singleRideRadio.disabled = true;
-                        singleRideLabel.textContent = 'Show Single Ride (loading rides...)';
-                        
-                        // If Single Ride was selected, keep it selected but show loading
-                        if (singleRideRadio.checked) {
-                            rideSelector.style.display = 'block';
-                        }
-                        
-                        // Fetch park data for all selected parks
-                        var fetchPromises = selectedParks.map(function(parkId) {
-                            return fetch('/api/park?id=' + parkId)
-                                .then(function(response) {
-                                    if (!response.ok) {
-                                        throw new Error('Failed to fetch park data for park ' + parkId);
-                                    }
-                                    return response.json();
-                                })
-                                .then(function(data) {
-                                    return {
-                                        parkId: parkId,
-                                        parkName: data.name || 'Park ' + parkId,
-                                        rides: data.rides || []
-                                    };
-                                })
-                                .catch(function(error) {
-                                    console.error('Error fetching park data:', error);
-                                    return {
-                                        parkId: parkId,
-                                        parkName: 'Park ' + parkId,
-                                        rides: []
-                                    };
-                                });
-                        });
-                        
-                        // Wait for all park data to be fetched
-                        Promise.all(fetchPromises)
-                            .then(function(parkDataArray) {
-                                // Clear the ride selector
-                                rideSelect.innerHTML = '';
-                                
-                                var hasRides = false;
-                                
-                                // Add rides grouped by park
-                                parkDataArray.forEach(function(parkData) {
-                                    if (parkData.rides.length > 0) {
-                                        hasRides = true;
-                                        
-                                        // Create optgroup for this park
-                                        var optgroup = document.createElement('optgroup');
-                                        optgroup.label = parkData.parkName;
-                                        
-                                        // Add rides to optgroup
-                                        parkData.rides.forEach(function(ride) {
-                                            var option = document.createElement('option');
-                                            option.value = ride.name;
-                                            option.textContent = ride.name;
-                                            optgroup.appendChild(option);
-                                        });
-                                        
-                                        rideSelect.appendChild(optgroup);
-                                    }
-                                });
-                                
-                                if (hasRides) {
-                                    // Enable the ride selector and Single Ride option
-                                    rideSelect.disabled = false;
-                                    singleRideRadio.disabled = false;
-                                    singleRideLabel.textContent = 'Show Single Ride';
-                                } else {
-                                    // No rides available
-                                    rideSelect.innerHTML = '<option value="">No rides available</option>';
-                                    singleRideRadio.disabled = true;
-                                    singleRideLabel.textContent = 'Show Single Ride (no rides available)';
-                                    
-                                    // If Single Ride was selected, switch to All Rides
-                                    if (singleRideRadio.checked) {
-                                        document.getElementById('all_rides').checked = true;
-                                        rideSelector.style.display = 'none';
-                                    }
-                                }
-                            })
-                            .catch(function(error) {
-                                console.error('Error updating rides list:', error);
-                                rideSelect.innerHTML = '<option value="">Error loading rides</option>';
-                                singleRideRadio.disabled = true;
-                                singleRideLabel.textContent = 'Show Single Ride (error loading rides)';
-                            });
-                    }
-                    
-                    // Add change listeners to all park selects
-                    parkSelects.forEach(function(select) {
-                        select.addEventListener('change', updateRidesList);
-                    });
-                });
-            </script>
-            """
-            
-            page += "</div>"
+            page_parts.append("</div>")
             
             # Skip Rides Section
-            page += "<div class=\"display-options\">"
+            page_parts.append("<div class=\"display-options\">")
             # page += "<h3 style=\"margin-top: 10px; margin-bottom: 10px; text-align: left; padding-left: 20px;\">Display Options</h3>"
             
             # Skip Closed Rides option - Fixed alignment with label
-            page += "<div class=\"form-group checkbox-group\">"
+            page_parts.append("<div class=\"form-group checkbox-group\">")
 
-            # Get skip_closed value with safe fallback
+            # Get skip_closed value from park_list with safe fallback
             skip_closed = False
             try:
-                skip_closed = bool(settings.get("skip_closed", False))
-            except (TypeError, ValueError):
+                if hasattr(self.app.theme_park_service, 'park_list') and hasattr(self.app.theme_park_service.park_list, 'skip_closed'):
+                    skip_closed = bool(self.app.theme_park_service.park_list.skip_closed)
+                else:
+                    skip_closed = bool(settings.get("skip_closed", False))
+            except (TypeError, ValueError, AttributeError):
                 skip_closed = False
 
             checked = "checked" if skip_closed else ""
             # Keep checkbox and label together in a tight layout
-            page += f"<input type=\"checkbox\" id=\"skip_closed\" name=\"skip_closed\" {checked}>"
-            page += "<label for=\"skip_closed\">Skip Closed Rides</label>"
-            page += "</div>"
+            page_parts.append(f"<input type=\"checkbox\" id=\"skip_closed\" name=\"skip_closed\" {checked}>")
+            page_parts.append("<label for=\"skip_closed\">Skip Closed Rides</label>")
+            page_parts.append("</div>")
 
             # Skip Meet & Greets option - Fixed alignment with label
-            page += "<div class=\"form-group checkbox-group\">"
+            page_parts.append("<div class=\"form-group checkbox-group\">")
 
-            # Get skip_meet value with safe fallback
+            # Get skip_meet value from park_list with safe fallback
             skip_meet = False
             try:
-                skip_meet = bool(settings.get("skip_meet", False))
-            except (TypeError, ValueError):
+                if hasattr(self.app.theme_park_service, 'park_list') and hasattr(self.app.theme_park_service.park_list, 'skip_meet'):
+                    skip_meet = bool(self.app.theme_park_service.park_list.skip_meet)
+                else:
+                    skip_meet = bool(settings.get("skip_meet", False))
+            except (TypeError, ValueError, AttributeError):
                 skip_meet = False
 
             checked = "checked" if skip_meet else ""
             # Keep checkbox and label together in a tight layout
-            page += f"<input type=\"checkbox\" id=\"skip_meet\" name=\"skip_meet\" {checked}>"
-            page += "<label for=\"skip_meet\">Skip Meet & Greets</label>"
-            page += "</div>"
+            page_parts.append(f"<input type=\"checkbox\" id=\"skip_meet\" name=\"skip_meet\" {checked}>")
+            page_parts.append("<label for=\"skip_meet\">Skip Meet & Greets</label>")
+            page_parts.append("</div>")
 
-            page += "</div>"
+            page_parts.append("</div>")
 
         else:
-            page += "<p>No theme parks available.</p>"
+            page_parts.append("<p>No theme parks available.</p>")
 
 
         vacation_date = Vacation()
         vacation_date.load_settings(self.app.settings_manager)
-        page += "<h2>Configure Countdown</h2>"
-        page += "<div class=\"countdown-section\">"
-        page += "<p>"
-        page += "<label for=\"Name\">Event:</label>"
-        page += f"<input type=\"text\" name=\"Name\" value=\"{vacation_date.name}\">"
-        page += "</p>"
+        page_parts.append("<h2>Configure Countdown</h2>")
+        page_parts.append("<div class=\"countdown-section\">")
+        page_parts.append("<p>")
+        page_parts.append("<label for=\"Name\">Event:</label>")
+        page_parts.append(f"<input type=\"text\" name=\"Name\" value=\"{vacation_date.name}\">")
+        page_parts.append("</p>")
 
-        page += "<p>"
-        page += "<label for=\"Date\">Date:</label>"
-        page += "<div class=\"date-selectors\">"
+        page_parts.append("<p>")
+        page_parts.append("<label for=\"Date\">Date:</label>")
+        page_parts.append("<div class=\"date-selectors\">")
         
         # Year dropdown
-        page += "<select id=\"Year\" name=\"Year\">"
+        page_parts.append("<select id=\"Year\" name=\"Year\">")
         year_now = datetime.now().year
-        for year in range(year_now, 2044):
+        for year_idx, year in enumerate(range(year_now, 2044)):
+            # Yield control every 5 years to allow LED scrolling
+
             if vacation_date.is_set() is True and year == vacation_date.year:
-                page += f"<option value=\"{year}\" selected>{year}</option>\n"
+                page_parts.append(f"<option value=\"{year}\" selected>{year}</option>\n")
             else:
-                page += f"<option value=\"{year}\">{year}</option>\n"
-        page += "</select>"
+                page_parts.append(f"<option value=\"{year}\">{year}</option>\n")
+        page_parts.append("</select>")
 
         # Month dropdown with names
         month_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-        page += "<select id=\"Month\" name=\"Month\">"
+        page_parts.append("<select id=\"Month\" name=\"Month\">")
+
         for month in range(1, 13):
             if vacation_date.is_set() is True and month == vacation_date.month:
-                page += f"<option value=\"{month}\" selected>{month_names[month-1]}</option>\n"
+                page_parts.append(f"<option value=\"{month}\" selected>{month_names[month-1]}</option>\n")
             else:
-                page += f"<option value=\"{month}\">{month_names[month-1]}</option>\n"
-        page += "</select>"
+                page_parts.append(f"<option value=\"{month}\">{month_names[month-1]}</option>\n")
+        page_parts.append("</select>")
 
         # Day dropdown
-        page += "<select id=\"Day\" name=\"Day\">"
+        page_parts.append("<select id=\"Day\" name=\"Day\">")
+        # Yield control before processing days
+
         for day in range(1, 32):
             if vacation_date.is_set() is True and day == vacation_date.day:
-                page += f"<option value=\"{day}\" selected>{day}</option>\n"
+                page_parts.append(f"<option value=\"{day}\" selected>{day}</option>\n")
             else:
-                page += f"<option value=\"{day}\">{day}</option>\n"
-        page += "</select>"
-        page += "</div>" # end date-selectors
-        page += "</p>"
+                page_parts.append(f"<option value=\"{day}\">{day}</option>\n")
+        page_parts.append("</select>")
+        page_parts.append("</div>") # end date-selectors
+        page_parts.append("</p>")
 
         # If vacation is set, show countdown
         if vacation_date.is_set():
             days_until = vacation_date.get_days_until()
             if days_until > 0:
-                page += f"<p style=\"text-align: center; font-weight: bold; margin-top: 10px;\">"
-                page += f"Days until {vacation_date.name}: {days_until}"
-                page += "</p>"
+                page_parts.append(f"<p style=\"text-align: center; font-weight: bold; margin-top: 10px;\">")
+                page_parts.append(f"Days until {vacation_date.name}: {days_until}")
+                page_parts.append("</p>")
         
-        page += "</div>" # end countdown-section
+        page_parts.append("</div>") # end countdown-section
 
-        page += "<button type=\"submit\">Update</button>"
-        page += "</form>"
+        page_parts.append("<button type=\"submit\">Update</button>")
+        page_parts.append("</form>")
 
+        page_parts.append("</div></body></html>")
+        return ''.join(page_parts)
+    
+    def _generate_main_page_sync(self):
+        """
+        Synchronous fallback for generate_main_page when async is not available
+        
+        Returns:
+            HTML content for the main page
+        """
+        # This is a simplified synchronous version for fallback
+        # Remove all async/await calls and yield points
+        page = "<!DOCTYPE html><html><head>"
+        page += "<title>Theme Park Waits</title>"
+        page += "<link rel=\"stylesheet\" href=\"/style.css\">"
+        page += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
+        page += "</head>"
+        page += "<body>"
+        
+        page += "<div class=\"navbar\">"
+        page += "<a href=\"/\">Theme Park Wait Times</a>"
+        page += "<div class=\"gear-icon\">"
+        page += "<a href=\"/settings\"><img src=\"gear.png\" alt=\"Settings\"></a>"
+        page += "</div>"
+        page += "</div>"
+        
+        page += "<div class=\"main-content\">"
+        page += "<h2>Loading...</h2>"
+        page += "<p>Page generation in progress. Please refresh in a moment.</p>"
         page += "</div></body></html>"
+        
         return page
 
     def generate_settings_page(self, success=False):
@@ -1124,9 +951,10 @@ class ThemeParkWebServer:
 
         # Hostname/domain name
         page += "<div class=\"form-group\">"
-        page += "<label for=\"domain_name\">Hostname (.local):</label>"
+        page += "<label for=\"domain_name\">Hostname:</label>"
         domain_name = settings.get("domain_name", "themeparkwaits")
         page += f"<input type=\"text\" id=\"domain_name\" name=\"domain_name\" value=\"{domain_name}\">"
+        page += "<label for=\"domain_name\">.local</label>"
         page += "<br><small>Hostname change requires a device restart</small>"
         page += "</div>"
 

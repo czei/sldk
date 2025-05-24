@@ -261,7 +261,17 @@ class ThemeParkApp:
             self.theme_park_service.update_needed = False
 
         # Check if update is needed
-        if not self.update_timer.finished() and not ignore_timer and not force_update:
+        timer_ready = self.update_timer.finished()
+        cycle_complete = self.message_queue.has_completed_cycle
+        
+        # Don't update unless: timer is ready AND (cycle is complete OR we're forcing/ignoring timer)
+        if not timer_ready and not ignore_timer and not force_update:
+            return
+        
+        # Even if timer is ready, wait for message queue to complete at least one cycle
+        # (unless we're forcing the update or ignoring timer)
+        if timer_ready and not cycle_complete and not ignore_timer and not force_update:
+            logger.debug("Timer ready but waiting for message queue to complete cycle")
             return
 
         logger.info("Updating theme park data")

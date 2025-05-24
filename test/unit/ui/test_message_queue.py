@@ -27,6 +27,7 @@ class TestMessageQueue:
         assert mq.param_queue == []
         assert mq.delay_queue == []
         assert mq.index == 0
+        assert mq.has_completed_cycle is False  # Should start as False
         
         # Test custom parameters
         mq = MessageQueue(mock_display, delay_param=2, regen_flag=True)
@@ -391,6 +392,7 @@ class TestMessageQueue:
                 mock_display.show_scroll_message.assert_called_once_with("Test message")
                 mock_sleep.assert_called_once_with(1)
                 assert mq.index == 0  # Should wrap back to the beginning
+                assert mq.has_completed_cycle is True  # Should mark cycle as complete
                 
         # Test empty queue
         mq.func_queue = []

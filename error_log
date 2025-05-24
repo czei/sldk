@@ -68,70 +68,198 @@ Scroll message: Choose theme park at http://themeparkwaits.local
 Text length: 48, height %: 0.40, scale: 2.37
 Rendered text at size: 2685x128
 Set scroll speed: 0.03 seconds between frames
-GET request: /api/park with params: id=8
-Park Animal Kingdom has no rides, attempting to fetch from API
-Fetching ride data from https://queue-times.com/parks/8/queue_times.json
-Ride = Festival of the Lion King
-Ride = Gorilla Falls Exploration Trail
-Ride = Kilimanjaro Safaris
-Ride = Wildlife Express Train
-Ride = Expedition Everest - Legend of the Forbidden Mountain
-Ride = Expedition Everest - Legend of the Forbidden Mountain Single Rider
-Ride = Feathered Friends in Flight!
-Ride = Kali River Rapids
-Ride = Dino-Sue
-Ride = DINOSAUR
-Ride = Finding Nemo: The Big Blue... and Beyond!
-Ride = The Boneyard
-Ride = Discovery Island Trails
-Ride = Meet Favorite Disney Pals at Adventurers Outpost
-Ride = Meet Moana at Character Landing
-Ride = Tree of Life
-Ride = Avatar Flight of Passage
-Ride = Na'vi River Journey
-Ride = Affection Section
-Ride = Conservation Station
-Ride = The Animation Experience at Conservation Station
-Ride = The Oasis Exhibits
-Ride = Wilderness Explorers
-Successfully fetched 23 rides for park ID 8
-Web: "GET /api/park?id=8 HTTP/1.1" 200 -
-GET request: / with params: park-id-1=8&park-id-2=0&park-id-3=0&park-id-4=0&display_mode=all_rides&selected_ride_name=Festival of the Lion King&skip_closed=on&Year=2025&Month=1&Day=1
-Parks changed from [] to [8]
-Starting sequential update of 1 selected parks
-Updating park 1/1: Animal Kingdom (ID: 8)
-Fetching data for park ID 8 from https://queue-times.com/parks/8/queue_times.json (attempt 1/3)
-Successfully fetched data for park ID 8
-Ride = Festival of the Lion King
-Ride = Gorilla Falls Exploration Trail
-Ride = Kilimanjaro Safaris
-Ride = Wildlife Express Train
-Ride = Expedition Everest - Legend of the Forbidden Mountain
-Ride = Expedition Everest - Legend of the Forbidden Mountain Single Rider
-Ride = Feathered Friends in Flight!
-Ride = Kali River Rapids
-Ride = Dino-Sue
-Ride = DINOSAUR
-Ride = Finding Nemo: The Big Blue... and Beyond!
-Ride = The Boneyard
-Ride = Discovery Island Trails
-Ride = Meet Favorite Disney Pals at Adventurers Outpost
-Ride = Meet Moana at Character Landing
-Ride = Tree of Life
-Ride = Avatar Flight of Passage
-Ride = Na'vi River Journey
-Ride = Affection Section
-Ride = Conservation Station
-Ride = The Animation Experience at Conservation Station
-Ride = The Oasis Exhibits
-Ride = Wilderness Explorers
-Successfully updated park: Animal Kingdom
-Updated 1/1 selected parks
-Fetched ride data for parks [8]
-Selected ride changed to: Festival of the Lion King
+Adding splash message to queue
+Scroll message: Choose theme park at http://themeparkwaits.local
+Text length: 48, height %: 0.40, scale: 2.37
+Rendered text at size: 2685x128
+Set scroll speed: 0.03 seconds between frames
+Adding splash message to queue
+Scroll message: Choose theme park at http://themeparkwaits.local
+Text length: 48, height %: 0.40, scale: 2.37
+Rendered text at size: 2685x128
+Set scroll speed: 0.03 seconds between frames
+Adding splash message to queue
+Scroll message: Choose theme park at http://themeparkwaits.local
+Text length: 48, height %: 0.40, scale: 2.37
+Rendered text at size: 2685x128
+Set scroll speed: 0.03 seconds between frames
+GET request: / with params: park-id-1=17&park-id-2=7&park-id-3=6&park-id-4=16&display_mode=all_rides&skip_closed=on&skip_meet=on&Year=2025&Month=1&Day=1
+Parks changed from [] to [17, 7, 6, 16]
+Starting sequential update of 4 selected parks
+Updating park 1/4: Disney California Adventure (ID: 17)
+Fetching data for park ID 17 from https://queue-times.com/parks/17/queue_times.json (attempt 1/3)
+Successfully fetched data for park ID 17
+Ride = Guardians of the Galaxy - Mission: BREAKOUT!
+Ride = WEB SLINGERS: A Spider-Man Adventure
+Ride = WEB SLINGERS: A Spider-Man Adventure Single Rider
+Ride = Luigi's Rollickin' Roadsters
+Ride = Mater's Junkyard Jamboree
+Ride = Radiator Springs Racers
+Ride = Radiator Springs Racers Single Rider
+Ride = Grizzly River Run
+Ride = Redwood Creek Challenge Trail
+Ride = Soarin' Around the World
+Ride = Animation Academy
+Ride = Mickey's PhilharMagic
+Ride = Monsters, Inc. Mike & Sulley to the Rescue!
+Ride = Sorcerer's Workshop
+Ride = Turtle Talk with Crush
+Ride = Golden Zephyr
+Ride = Goofy's Sky School
+Ride = Silly Symphony Swings
+Ride = Silly Symphony Swings Single Rider
+Ride = The Little Mermaid - Ariel's Undersea Adventure
+Ride = World of Color  ONE
+Ride = Games of Pixar Pier
+Ride = Incredicoaster
+Ride = Incredicoaster Single Rider
+Ride = Inside Out Emotional Whirlwind
+Ride = Jessie's Critter Carousel
+Ride = Jumpin' Jellyfish
+Ride = Pixar Pal-A-Round - Swinging
+Ride = Pixar Pal-A-Round  Non-Swinging
+Ride = Toy Story Midway Mania!
+Ride = The Bakery Tour
+Successfully updated park: Disney California Adventure
+Updating park 2/4: Disney Hollywood Studios (ID: 7)
+Fetching data for park ID 7 from https://queue-times.com/parks/7/queue_times.json (attempt 1/3)
+Successfully fetched data for park ID 7
+Ride = Disney Jr. Play and Dance!
+Ride = Meet Ariel at Walt Disney Presents
+Ride = Star Wars Launch Bay
+Ride = Star Wars Launch Bay Theater
+Ride = Star Wars Launch Bay: Meet Chewbacca
+Ride = Walt Disney Presents
+Ride = Meet Disney Stars at Red Carpet Dreams
+Ride = For the First Time in Forever: A Frozen Sing-Along Celebration
+Ride = Indiana Jones Epic Stunt Spectacular!
+Ride = Meet Olaf at Celebrity Spotlight
+Ride = Star Tours  The Adventures Continue
+Ride = Vacation Fun - An Original Animated Short with Mickey & Minnie
+Ride = Mickey & Minnie's Runaway Railway
+Ride = Muppet*Vision 3D
+Ride = Meet Edna Mode at the Edna Mode Experience
+Ride = Toy Story Mania!
+Ride = Millennium Falcon: Smugglers Run
+Ride = Millennium Falcon: Smugglers Run Single Rider
+Ride = Star Wars: Rise of the Resistance
+Ride = Star Wars: Rise of the Resistance Single Rider
+Ride = Beauty and the Beast  Live on Stage
+Ride = Rock 'n' Roller Coaster Starring Aerosmith
+Ride = Rock 'n' Roller Coaster Starring Aerosmith Single Rider
+Ride = The Twilight Zone Tower of Terror
+Ride = Alien Swirling Saucers
+Ride = Slinky Dog Dash
+Successfully updated park: Disney Hollywood Studios
+Updating park 3/4: Disney Magic Kingdom (ID: 6)
+Fetching data for park ID 6 from https://queue-times.com/parks/6/queue_times.json (attempt 1/3)
+Successfully fetched data for park ID 6
+Ride = A Pirate's Adventure ~ Treasures of the Seven Seas
+Ride = Jungle Cruise
+Ride = Pirates of the Caribbean
+Ride = Swiss Family Treehouse
+Ride = The Magic Carpets of Aladdin
+Ride = Walt Disney's Enchanted Tiki Room
+Ride = "it's a small world"
+Ride = Casey Jr. Splash 'N' Soak Station
+Ride = Cinderella Castle
+Ride = Dumbo the Flying Elephant
+Ride = Enchanted Tales with Belle
+Ride = Mad Tea Party
+Ride = Meet Ariel at Her Grotto
+Ride = Meet Cinderella and a Visiting Princess at Princess Fairytale Hall
+Ride = Meet Daring Disney Pals as Circus Stars at Pete's Silly Sideshow
+Ride = Meet Dashing Disney Pals as Circus Stars at Pete's Silly Sideshow
+Ride = Meet Princess Tiana and a Visiting Princess at Princess Fairytale Hall
+Ride = Mickey's PhilharMagic
+Ride = Peter Pan's Flight
+Ride = Prince Charming Regal Carrousel
+Ride = Seven Dwarfs Mine Train
+Ride = The Barnstormer
+Ride = The Many Adventures of Winnie the Pooh
+Ride = Under the Sea - Journey of The Little Mermaid
+Ride = Walt Disney World Railroad - Fantasyland
+Ride = Big Thunder Mountain Railroad
+Ride = Country Bear Musical Jamboree
+Ride = Tiana's Bayou Adventure
+Ride = Tom Sawyer Island
+Ride = Walt Disney World Railroad - Frontierland
+Ride = Haunted Mansion
+Ride = Liberty Square Riverboat
+Ride = The Hall of Presidents
+Ride = Main Street Vehicles
+Ride = Meet Mickey at Town Square Theater
+Ride = Walt Disney World Railroad - Main Street, U.S.A.
+Ride = Astro Orbiter
+Ride = Buzz Lightyear's Space Ranger Spin
+Ride = Monsters Inc. Laugh Floor
+Ride = Space Mountain
+Ride = Tomorrowland Speedway
+Ride = Tomorrowland Transit Authority PeopleMover
+Ride = TRON Lightcycle / Run
+Ride = Walt Disney's Carousel of Progress
+Successfully updated park: Disney Magic Kingdom
+Updating park 4/4: Disneyland (ID: 16)
+Fetching data for park ID 16 from https://queue-times.com/parks/16/queue_times.json (attempt 1/3)
+Successfully fetched data for park ID 16
+Ride = Adventureland Treehouse inspired by Walt Disneys Swiss Family Robinson
+Ride = Indiana Jones Adventure
+Ride = Jungle Cruise
+Ride = Walt Disney's Enchanted Tiki Room
+Ride = Davy Crockett's Explorer Canoes
+Ride = The Many Adventures of Winnie the Pooh
+Ride = Tiana's Bayou Adventure
+Ride = Tiana's Bayou Adventure Single Rider
+Ride = "it's a small world"
+Ride = Alice in Wonderland
+Ride = Casey Jr. Circus Train
+Ride = Dumbo the Flying Elephant
+Ride = King Arthur Carrousel
+Ride = Mad Tea Party
+Ride = Matterhorn Bobsleds
+Ride = Meet Disney Princesses at Royal Hall
+Ride = Mr. Toad's Wild Ride
+Ride = Peter Pan's Flight
+Ride = Pinocchio's Daring Journey
+Ride = Sleeping Beauty Castle Walkthrough
+Ride = Snow White's Enchanted Wish
+Ride = Storybook Land Canal Boats
+Ride = Big Thunder Mountain Railroad
+Ride = Frontierland Shootin' Exposition
+Ride = Mark Twain Riverboat
+Ride = Pirate's Lair on Tom Sawyer Island
+Ride = Sailing Ship Columbia
+Ride = Disneyland Railroad
+Ride = Main Street Cinema
+Ride = Main Street Vehicles
+Ride = The Disney Gallery
+Ride = The Disneyland Story presenting Great Moments with Mr. Lincoln
+Ride = Chip 'n' Dale's GADGETcoaster
+Ride = Donald's Duck Pond
+Ride = Goofy's How-to-Play Yard
+Ride = Mickey & Minnie's Runaway Railway
+Ride = Mickey's House and Meet Mickey Mouse
+Ride = Mickey's House and Meet Mickey Mouse
+Ride = Minnie's House
+Ride = Roger Rabbit's Car Toon Spin
+Ride = Haunted Mansion
+Ride = Pirates of the Caribbean
+Ride = Millennium Falcon: Smugglers Run
+Ride = Millennium Falcon: Smugglers Run Single Rider
+Ride = Star Wars: Rise of the Resistance
+Ride = Astro Orbitor
+Ride = Autopia
+Ride = Buzz Lightyear Astro Blasters
+Ride = Disneyland Monorail
+Ride = Finding Nemo Submarine Voyage
+Ride = Space Mountain
+Ride = Star Tours - The Adventures Continue
+Successfully updated park: Disneyland
+Updated 4/4 selected parks
+Fetched ride data for parks [17, 7, 6, 16]
 Saving settings settings.json
 Set display colors - bg: (0, 0, 0), text: (255, 255, 255)
-Web: "GET /?park-id-1=8&park-id-2=0&park-id-3=0&park-id-4=0&display_mode=all_rides&selected_ride_name=Festival+of+the+Lion+King&skip_closed=on&Name=&Year=2025&Month=1&Day=1 HTTP/1.1" 302 -
+Web: "GET /?park-id-1=17&park-id-2=7&park-id-3=6&park-id-4=16&display_mode=all_rides&skip_closed=on&skip_meet=on&Name=&Year=2025&Month=1&Day=1 HTTP/1.1" 302 -
 GET request: / with params: 
 Web: "GET / HTTP/1.1" 200 -
 GET request: /style.css with params: 
@@ -139,120 +267,7 @@ Web: "GET /style.css HTTP/1.1" 200 -
 GET request: /gear.png with params: 
 Web: "GET /gear.png HTTP/1.1" 200 -
 Updating theme park data
-Scroll message: Updating Animal Kingdom wait times from queue-times.com...
-Text length: 58, height %: 0.40, scale: 2.37
-Rendered text at size: 3342x128
-Set scroll speed: 0.03 seconds between frames
-Starting sequential update of 1 selected parks
-Updating park 1/1: Animal Kingdom (ID: 8)
-Fetching data for park ID 8 from https://queue-times.com/parks/8/queue_times.json (attempt 1/3)
-Successfully fetched data for park ID 8
-Ride = Festival of the Lion King
-Ride = Gorilla Falls Exploration Trail
-Ride = Kilimanjaro Safaris
-Ride = Wildlife Express Train
-Ride = Expedition Everest - Legend of the Forbidden Mountain
-Ride = Expedition Everest - Legend of the Forbidden Mountain Single Rider
-Ride = Feathered Friends in Flight!
-Ride = Kali River Rapids
-Ride = Dino-Sue
-Ride = DINOSAUR
-Ride = Finding Nemo: The Big Blue... and Beyond!
-Ride = The Boneyard
-Ride = Discovery Island Trails
-Ride = Meet Favorite Disney Pals at Adventurers Outpost
-Ride = Meet Moana at Character Landing
-Ride = Tree of Life
-Ride = Avatar Flight of Passage
-Ride = Na'vi River Journey
-Ride = Affection Section
-Ride = Conservation Station
-Ride = The Animation Experience at Conservation Station
-Ride = The Oasis Exhibits
-Ride = Wilderness Explorers
-Successfully updated park: Animal Kingdom
-Updated 1/1 selected parks
-Adding splash message to queue
-MessageQueue.add_rides() called for 1 selected parks
-Showing splash screen for 4 seconds
-Scroll message: Configure at http://themeparkwaits.local
+Scroll message: Updating 4 parks from queue-times.com...
 Text length: 40, height %: 0.40, scale: 2.37
-Rendered text at size: 2164x128
+Rendered text at size: 2266x128
 Set scroll speed: 0.03 seconds between frames
-Scroll message: Animal Kingdom wait times...
-Text length: 28, height %: 0.52, scale: 3.07
-Rendered text at size: 2041x166
-Set scroll speed: 0.03 seconds between frames
-Showing ride wait time: 25
-Text length: 2, height %: 0.60, scale: 3.56
-Rendered text at size: 192x192
-Showing ride name: Kilimanjaro Safaris
-Dual zone display: 'Kilimanjaro Safaris' (scrolling top) + '25' (static bottom)
-Showing ride wait time: 25
-Text length: 2, height %: 0.60, scale: 3.56
-Rendered text at size: 192x192
-Showing ride name: Expedition Everest - Legend of the Forbidden Mountain
-Dual zone display: 'Expedition Everest - Legend of the Forbidden Mountain' (scrolling top) + '25' (static bottom)
-Showing ride wait time: 40
-Text length: 2, height %: 0.60, scale: 3.56
-Rendered text at size: 192x192
-Showing ride name: Kali River Rapids
-Dual zone display: 'Kali River Rapids' (scrolling top) + '40' (static bottom)
-Showing ride wait time: 30
-Text length: 2, height %: 0.60, scale: 3.56
-Rendered text at size: 192x192
-Showing ride name: DINOSAUR
-Dual zone display: 'DINOSAUR' (scrolling top) + '30' (static bottom)
-Showing ride wait time: 30
-Text length: 2, height %: 0.60, scale: 3.56
-Rendered text at size: 192x192
-Showing ride name: Meet Favorite Disney Pals at Adventurers Outpost
-Dual zone display: 'Meet Favorite Disney Pals at Adventurers Outpost' (scrolling top) + '30' (static bottom)
-Showing ride wait time: 70
-Text length: 2, height %: 0.60, scale: 3.56
-Rendered text at size: 192x192
-Showing ride name: Avatar Flight of Passage
-Dual zone display: 'Avatar Flight of Passage' (scrolling top) + '70' (static bottom)
-Showing ride wait time: 70
-Text length: 2, height %: 0.60, scale: 3.56
-Rendered text at size: 192x192
-Showing ride name: Na'vi River Journey
-Dual zone display: 'Na'vi River Journey' (scrolling top) + '70' (static bottom)
-Scroll message: Wait times for Animal Kingdom provided by queue-times.com
-Text length: 57, height %: 0.40, scale: 2.37
-Rendered text at size: 3313x128
-Set scroll speed: 0.03 seconds between frames
-Showing splash screen for 4 seconds
-Scroll message: Configure at http://themeparkwaits.local
-Text length: 40, height %: 0.40, scale: 2.37
-Rendered text at size: 2164x128
-Set scroll speed: 0.03 seconds between frames
-Scroll message: Animal Kingdom wait times...
-Text length: 28, height %: 0.52, scale: 3.07
-Rendered text at size: 2041x166
-Set scroll speed: 0.03 seconds between frames
-Showing ride wait time: 25
-Text length: 2, height %: 0.60, scale: 3.56
-Rendered text at size: 192x192
-Showing ride name: Kilimanjaro Safaris
-Dual zone display: 'Kilimanjaro Safaris' (scrolling top) + '25' (static bottom)
-Showing ride wait time: 25
-Text length: 2, height %: 0.60, scale: 3.56
-Rendered text at size: 192x192
-Showing ride name: Expedition Everest - Legend of the Forbidden Mountain
-Dual zone display: 'Expedition Everest - Legend of the Forbidden Mountain' (scrolling top) + '25' (static bottom)
-Showing ride wait time: 40
-Text length: 2, height %: 0.60, scale: 3.56
-Rendered text at size: 192x192
-Showing ride name: Kali River Rapids
-Dual zone display: 'Kali River Rapids' (scrolling top) + '40' (static bottom)
-Showing ride wait time: 30
-Text length: 2, height %: 0.60, scale: 3.56
-Rendered text at size: 192x192
-Showing ride name: DINOSAUR
-Dual zone display: 'DINOSAUR' (scrolling top) + '30' (static bottom)
-Showing ride wait time: 30
-Text length: 2, height %: 0.60, scale: 3.56
-Rendered text at size: 192x192
-Showing ride name: Meet Favorite Disney Pals at Adventurers Outpost
-Dual zone display: 'Meet Favorite Disney Pals at Adventurers Outpost' (scrolling top) + '30' (static bottom)
