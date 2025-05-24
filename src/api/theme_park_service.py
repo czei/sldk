@@ -235,6 +235,43 @@ class ThemeParkService:
         except Exception as e:
             logger.error(e, "Error updating current park")
             return False
+            
+    async def update_selected_parks(self):
+        """
+        Update all selected parks with fresh data (sequential fetching)
+        
+        Returns:
+            Number of parks successfully updated
+        """
+        if not self.park_list or not self.park_list.selected_parks:
+            logger.debug("No selected parks to update")
+            return 0
+            
+        updated_count = 0
+        total_parks = len(self.park_list.selected_parks)
+        
+        logger.info(f"Starting sequential update of {total_parks} selected parks")
+        
+        for idx, park in enumerate(self.park_list.selected_parks):
+            try:
+                logger.debug(f"Updating park {idx+1}/{total_parks}: {park.name} (ID: {park.id})")
+                park_data = await self.fetch_park_data(park.id)
+                if park_data:
+                    park.update(park_data)
+                    updated_count += 1
+                    logger.debug(f"Successfully updated park: {park.name}")
+                else:
+                    logger.error(None, f"Failed to fetch data for park: {park.name}")
+                    
+                # Small delay between requests to be respectful of the API
+                if idx < total_parks - 1:  # Don't delay after the last park
+                    await asyncio.sleep(0.5)
+                    
+            except Exception as e:
+                logger.error(e, f"Error updating park: {park.name}")
+                
+        logger.info(f"Updated {updated_count}/{total_parks} selected parks")
+        return updated_count
 
     async def get_ride_wait_times(self, park_id=None, ride_name=None):
         """

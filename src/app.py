@@ -238,8 +238,13 @@ class ThemeParkApp:
     async def update_data(self, ignore_timer):
         """Update theme park data from the API"""
         # Check if there's a valid park selected
-        if not self.theme_park_service.park_list or not self.theme_park_service.park_list.current_park.is_valid():
-            # No valid park selected, no need to update data
+        has_selected_parks = (hasattr(self.theme_park_service.park_list, 'selected_parks') and 
+                             self.theme_park_service.park_list.selected_parks)
+        has_current_park = (self.theme_park_service.park_list and 
+                           self.theme_park_service.park_list.current_park.is_valid())
+        
+        if not has_selected_parks and not has_current_park:
+            # No parks selected, no need to update data
             # Just regenerate message queue to show prompt to select park
             self.message_queue.init()
             # No park selected - show message to choose a park
@@ -262,14 +267,25 @@ class ThemeParkApp:
         logger.info("Updating theme park data")
 
         # Show scrolling message that data is being updated
-        park_name = self.theme_park_service.park_list.current_park.name
-        await self.display.show_scroll_message(f"Updating {park_name} wait times from queue-times.com...")
+        if has_selected_parks:
+            num_parks = len(self.theme_park_service.park_list.selected_parks)
+            if num_parks == 1:
+                park_name = self.theme_park_service.park_list.selected_parks[0].name
+                await self.display.show_scroll_message(f"Updating {park_name} wait times from queue-times.com...")
+            else:
+                await self.display.show_scroll_message(f"Updating {num_parks} parks from queue-times.com...")
+        else:
+            park_name = self.theme_park_service.park_list.current_park.name
+            await self.display.show_scroll_message(f"Updating {park_name} wait times from queue-times.com...")
 
         # Reset the timer immediately to prevent multiple updates
         self.update_timer.reset()
 
-        # Update current park data
-        await self.theme_park_service.update_current_park()
+        # Update park data
+        if has_selected_parks:
+            await self.theme_park_service.update_selected_parks()
+        else:
+            await self.theme_park_service.update_current_park()
 
         # Regenerate the message queue
         self.message_queue.init()
@@ -290,8 +306,13 @@ class ThemeParkApp:
         # Get domain name for configuration URL
         domain_name = self.settings_manager.get("domain_name", "themeparkwaits")
         
-        # Check if a park is selected
-        if not self.theme_park_service.park_list or not self.theme_park_service.park_list.current_park.is_valid():
+        # Check if parks are selected
+        has_selected_parks = (hasattr(self.theme_park_service.park_list, 'selected_parks') and 
+                             self.theme_park_service.park_list.selected_parks)
+        has_current_park = (self.theme_park_service.park_list and 
+                           self.theme_park_service.park_list.current_park.is_valid())
+        
+        if not has_selected_parks and not has_current_park:
             return
         
         # Park is selected - show regular configuration message
@@ -303,9 +324,14 @@ class ThemeParkApp:
         # Add park data
         await self.message_queue.add_rides(self.theme_park_service.park_list)
 
-        # Add attribution message
-        await self.message_queue.add_required_message(
-            self.theme_park_service.park_list.current_park.name)
+        # Add attribution message(s)
+        if has_selected_parks:
+            # Add attribution for each selected park
+            for park in self.theme_park_service.park_list.selected_parks:
+                await self.message_queue.add_required_message(park.name)
+        else:
+            await self.message_queue.add_required_message(
+                self.theme_park_service.park_list.current_park.name)
 
     async def _initialize_http_client(self, socket_pool):
         """Initialize the HTTP client with a fresh session after WiFi is connected"""

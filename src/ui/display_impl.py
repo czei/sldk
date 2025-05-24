@@ -233,6 +233,14 @@ class AsyncScrollingDisplay(Display):
             dummy: Unused parameter for API consistency
         """
         await super().show_ride_closed(dummy)
+        # Hide other displays but keep ride name visible if already shown
+        self.scrolling_group.hidden = True
+        self.wait_time_group.hidden = True
+        self.splash_group.hidden = True
+        self.update_group.hidden = True
+        self.required_group.hidden = True
+        self.centered_group.hidden = True
+        
         self.closed_group.hidden = False
 
     async def show_ride_wait_time(self, ride_wait_time):
@@ -243,6 +251,14 @@ class AsyncScrollingDisplay(Display):
             ride_wait_time: The wait time to display
         """
         await super().show_ride_wait_time(ride_wait_time)
+        # Hide other displays but keep ride name visible if already shown
+        self.scrolling_group.hidden = True
+        self.closed_group.hidden = True
+        self.splash_group.hidden = True
+        self.update_group.hidden = True
+        self.required_group.hidden = True
+        self.centered_group.hidden = True
+        
         self.wait_time.text = ride_wait_time
         self.center_time(self.wait_time)
         self.wait_time_group.hidden = False
@@ -342,6 +358,14 @@ class AsyncScrollingDisplay(Display):
             ride_name: The name of the ride to display
         """
         await super().show_ride_name(ride_name)
+        # Hide other displays but keep wait time visible if already shown
+        self.scrolling_group.hidden = True
+        self.splash_group.hidden = True
+        self.update_group.hidden = True
+        self.required_group.hidden = True
+        self.centered_group.hidden = True
+        # Don't hide closed_group here since it might be showing "Closed" status
+        
         await asyncio.sleep(.5)
         self.wait_time_name.text = ride_name
         self.wait_time_name_group.hidden = False

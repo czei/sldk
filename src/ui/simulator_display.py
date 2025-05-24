@@ -66,6 +66,17 @@ class SimulatedLEDMatrix(DisplayInterface):
         self.scroll_pause_timer = 0
         self.scroll_paused = False
         
+        # For combined ride display (name + wait time)
+        self._current_ride_name = ""
+        self._current_ride_name_color = (100, 150, 255)
+        self._current_wait_time = ""
+        self._current_wait_time_color = (255, 255, 0)
+        
+        # Separate surfaces for dual-zone display
+        self._wait_time_surface = None  # Static surface for wait time
+        self._ride_name_surface = None  # Scrolling surface for ride name
+        self._is_dual_zone = False      # Flag to indicate dual-zone mode
+        
         logger.info("Initialized Simulated LED Matrix")
     
     def initialize(self):
@@ -264,10 +275,25 @@ class SimulatedLEDMatrix(DisplayInterface):
                     # Position text just past the left edge during pause
                     self.scroll_position = -self.text_surface.get_width()
             
-            # Draw text - position it in the center of the window vertically
-            # This ensures the text is properly centered regardless of its size
-            text_y = (self.window_height - self.text_surface.get_height()) // 2
-            self.screen.blit(self.text_surface, (self.scroll_position, text_y))
+            # Handle dual-zone display or normal scrolling text
+            if self._is_dual_zone and self._wait_time_surface and self._ride_name_surface:
+                # Dual zone mode: scrolling ride name on top, static wait time on bottom
+                top_zone_height = self.window_height // 3
+                bottom_zone_height = self.window_height - top_zone_height
+                
+                # Draw scrolling ride name in top zone
+                name_y = (top_zone_height - self._ride_name_surface.get_height()) // 2
+                self.screen.blit(self._ride_name_surface, (self.scroll_position, name_y))
+                
+                # Draw static wait time in bottom zone (centered)
+                time_x = (self.window_width - self._wait_time_surface.get_width()) // 2
+                time_y = top_zone_height + (bottom_zone_height - self._wait_time_surface.get_height()) // 2
+                self.screen.blit(self._wait_time_surface, (time_x, time_y))
+                
+            else:
+                # Normal single text scrolling mode
+                text_y = (self.window_height - self.text_surface.get_height()) // 2
+                self.screen.blit(self.text_surface, (self.scroll_position, text_y))
 
             # No longer need debug outline for production use
             
@@ -367,6 +393,9 @@ class SimulatedLEDMatrix(DisplayInterface):
         """Show splash screen for specified duration"""
         logger.info(f"Showing splash screen for {duration} seconds")
         try:
+            # Clear ride display when showing splash
+            self.clear_ride_display()
+            
             # Try to load splash image from images folder
             splash_path = os.path.join(os.path.dirname(__file__), "..", "images", "OpeningLEDLogo.bmp")
             if os.path.exists(splash_path):
@@ -374,7 +403,6 @@ class SimulatedLEDMatrix(DisplayInterface):
                 self.show_image(splash_image)
             else:
                 # Create a text splash
-                self.clear()
                 self.set_text("Theme Park API", (0, 255, 0))  # Green text
             
             await asyncio.sleep(duration)
@@ -390,7 +418,8 @@ class SimulatedLEDMatrix(DisplayInterface):
             duration: Optional duration to show the message
         """
         logger.info(f"Scroll message: {message}")
-        self.clear()
+        # Clear ride display when showing a scroll message
+        self.clear_ride_display()
         self.set_text(message)
         
         # Use slower scroll speed for simulator to improve readability
@@ -427,11 +456,14 @@ class SimulatedLEDMatrix(DisplayInterface):
         Show a ride's wait time
         
         Args:
-            wait_time: The wait time to display (as string)
+            wait_time: The wait_time to display (as string)
         """
         logger.info(f"Showing ride wait time: {wait_time}")
-        self.clear()
-        self.set_text(wait_time, (255, 255, 0))  # Yellow color for wait time
+        # Clear previous ride name when starting a new ride
+        self._current_ride_name = ""
+        self._current_wait_time = wait_time
+        self._current_wait_time_color = (255, 255, 0)  # Yellow color for wait time
+        self._update_combined_display()
         
     async def show_ride_closed(self, message):
         """
@@ -441,8 +473,11 @@ class SimulatedLEDMatrix(DisplayInterface):
             message: The message to display (usually "Closed")
         """
         logger.info(f"Showing ride closed: {message}")
-        self.clear()
-        self.set_text(message, (255, 0, 0))  # Red color for closed rides
+        # Clear previous ride name when starting a new ride
+        self._current_ride_name = ""
+        self._current_wait_time = message
+        self._current_wait_time_color = (255, 0, 0)  # Red color for closed rides
+        self._update_combined_display()
         
     async def show_ride_name(self, ride_name):
         """
@@ -452,8 +487,10 @@ class SimulatedLEDMatrix(DisplayInterface):
             ride_name: The name of the ride to display
         """
         logger.info(f"Showing ride name: {ride_name}")
-        self.clear()
-        self.set_text(ride_name)
+        # Store ride name for combined display
+        self._current_ride_name = ride_name
+        self._current_ride_name_color = (100, 150, 255)  # Light blue color for ride names
+        self._update_combined_display()
         # Simulate scrolling time for longer ride names
         await asyncio.sleep(len(ride_name) * 0.1)
     
@@ -490,3 +527,94 @@ class SimulatedLEDMatrix(DisplayInterface):
             # Use default colors
             self.bg_color = (0, 0, 0)  # Black
             self.text_color = (255, 255, 255)  # White
+    
+    def _update_combined_display(self):
+        """Update the display to show both ride name and wait time simultaneously"""
+        try:
+            # Clear the display
+            self.clear()
+            
+            # If we have both ride name and wait time, display them in dual zones
+            if self._current_ride_name and self._current_wait_time:
+                self._render_dual_zone_display(self._current_ride_name, self._current_wait_time)
+            elif self._current_ride_name:
+                # Only ride name - exit dual zone mode and use normal text display
+                self._is_dual_zone = False
+                self._wait_time_surface = None
+                self._ride_name_surface = None
+                self.set_text(self._current_ride_name, self._current_ride_name_color)
+            elif self._current_wait_time:
+                # Only wait time - exit dual zone mode and use normal text display
+                self._is_dual_zone = False
+                self._wait_time_surface = None
+                self._ride_name_surface = None
+                self.set_text(self._current_wait_time, self._current_wait_time_color)
+            
+        except Exception as e:
+            logger.error(e, "Error updating combined display")
+    
+    def _render_dual_zone_display(self, ride_name, wait_time):
+        """Render ride name on top (scrolling) and wait time on bottom (static)"""
+        try:
+            if not self.font:
+                return
+            
+            # Set dual-zone mode
+            self._is_dual_zone = True
+            
+            # Calculate zones: top 1/3 for ride name, bottom 2/3 for wait time
+            top_zone_height = self.window_height // 3
+            bottom_zone_height = self.window_height - top_zone_height
+            
+            # Create ride name surface (for scrolling in top zone)
+            ride_name_surface = self.font.render(ride_name, True, self._current_ride_name_color)
+            # Scale ride name to fit top zone height
+            name_scale = (top_zone_height * 0.7) / ride_name_surface.get_height()
+            scaled_name_width = int(ride_name_surface.get_width() * name_scale)
+            scaled_name_height = int(ride_name_surface.get_height() * name_scale)
+            self._ride_name_surface = pygame.transform.scale(ride_name_surface, 
+                                                           (scaled_name_width, scaled_name_height))
+            
+            # Create wait time surface (static in bottom zone)  
+            wait_time_surface = self.font.render(wait_time, True, self._current_wait_time_color)
+            # Scale wait time to fit bottom zone (make it nice and large)
+            time_scale = min(
+                (bottom_zone_height * 0.8) / wait_time_surface.get_height(),
+                (self.window_width * 0.6) / wait_time_surface.get_width()
+            )
+            scaled_time_width = int(wait_time_surface.get_width() * time_scale)
+            scaled_time_height = int(wait_time_surface.get_height() * time_scale)
+            self._wait_time_surface = pygame.transform.scale(wait_time_surface, 
+                                                           (scaled_time_width, scaled_time_height))
+            
+            # Store text for scrolling logic
+            self.text = ride_name
+            self.text_surface = self._ride_name_surface  # Use ride name for scrolling
+            
+            # Reset scroll position for new ride name
+            self.scroll_position = self.window_width
+            self.scroll_paused = False
+            
+            logger.info(f"Dual zone display: '{ride_name}' (scrolling top) + '{wait_time}' (static bottom)")
+            
+        except Exception as e:
+            logger.error(e, "Error rendering dual zone display")
+    
+    def clear_ride_display(self):
+        """Clear both ride name and wait time"""
+        self._current_ride_name = ""
+        self._current_wait_time = ""
+        self._is_dual_zone = False
+        self._wait_time_surface = None
+        self._ride_name_surface = None
+        self.clear()
+    
+    def clear_wait_time(self):
+        """Clear only the wait time, keep ride name"""
+        self._current_wait_time = ""
+        self._update_combined_display()
+    
+    def clear_ride_name(self):
+        """Clear only the ride name, keep wait time"""
+        self._current_ride_name = ""
+        self._update_combined_display()

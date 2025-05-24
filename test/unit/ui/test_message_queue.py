@@ -204,8 +204,8 @@ class TestMessageQueue:
             # Add rides for the closed park
             await mq.add_rides(mock_park_list)
             
-            # Verify the debug log
-            mock_logger.debug.assert_called_once_with("MessageQueue.add_rides() called for: Closed Park:1")
+            # Verify the debug log - updated to match new message format
+            mock_logger.debug.assert_called_once_with("MessageQueue.add_rides() called for single park: Closed Park:1")
             
             # Verify a closed message was added to the queue
             assert len(mq.func_queue) == 1

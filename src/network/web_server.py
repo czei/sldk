@@ -699,31 +699,42 @@ class ThemeParkWebServer:
 
         if "parks" in response_data:
             page += "<form action=\"/\" method=\"get\">"
-            page += "<select name=\"park-id\" id=\"park-select\">"
-
-            # Check if we have parks and provide a message if empty
+            
+            # Get currently selected parks
+            selected_park_ids = []
+            if hasattr(self.app.theme_park_service.park_list, 'selected_parks'):
+                selected_park_ids = [p.id for p in self.app.theme_park_service.park_list.selected_parks]
+            
+            # Create 4 park dropdowns
+            page += "<div class=\"park-selection\">"
+            page += "<h3>Select Parks (up to 4)</h3>"
+            
             parks = response_data.get("parks", [])
-            if not parks:
-                page += "<option value=\"\">No parks available - check connection</option>"
-                logger.error(None, "No parks available for dropdown - empty park list")
-            else:
-                logger.debug(f"Generating dropdown with {len(parks)} parks")
-
-                current_park_id = None
-                if "current_park" in response_data:
-                    current_park_id = response_data["current_park"]["id"]
+            
+            for i in range(1, 5):  # 1 through 4
+                page += f"<div class=\"park-dropdown\">"
+                page += f"<label for=\"park-id-{i}\">Park {i}:</label>"
+                page += f"<select name=\"park-id-{i}\" id=\"park-select-{i}\">"
                 
-                # Add "Select Park" as first option
-                select_park_selected = "selected" if current_park_id is None else ""
-                page += f"<option value=\"\" {select_park_selected}>Select Park</option>"
-
-                for park in parks:
-                    selected = "selected" if park["id"] == current_park_id else ""
-                    park_name = park.get("name", "Unknown Park")
-                    park_id = park.get("id", "")
-                    page += f"<option value=\"{park_id}\" {selected}>{park_name}</option>"
-
-            page += "</select>"
+                # Default option
+                page += f"<option value=\"0\">Select Park {i}</option>"
+                
+                if not parks:
+                    page += "<option value=\"0\">No parks available - check connection</option>"
+                else:
+                    # Get the park ID for this position
+                    current_selection = selected_park_ids[i-1] if i <= len(selected_park_ids) else None
+                    
+                    for park in parks:
+                        park_id = park.get("id", "")
+                        park_name = park.get("name", "Unknown Park")
+                        selected = "selected" if park_id == current_selection else ""
+                        page += f"<option value=\"{park_id}\" {selected}>{park_name}</option>"
+                
+                page += "</select>"
+                page += "</div>"
+            
+            page += "</div>"
             # Safe access to settings
             settings = response_data.get("settings", {})
             if not isinstance(settings, dict):
@@ -746,8 +757,11 @@ class ThemeParkWebServer:
             
             # Single Ride option - disabled until a park is selected
             single_ride_checked = "checked" if display_mode == "single_ride" else ""
-            # Check if we have a current park selected
-            has_current_park = "current_park" in response_data and response_data["current_park"]
+            # Check if we have any parks selected
+            has_selected_parks = False
+            if hasattr(self.app.theme_park_service.park_list, 'selected_parks'):
+                has_selected_parks = len(self.app.theme_park_service.park_list.selected_parks) > 0
+            has_current_park = ("current_park" in response_data and response_data["current_park"]) or has_selected_parks
             disabled_attr = "" if has_current_park else "disabled"
             page += f"<div class=\"radio-group\"><input type=\"radio\" id=\"single_ride\" name=\"display_mode\" value=\"single_ride\" {single_ride_checked} {disabled_attr}>"
             page += "<label for=\"single_ride\">Show Single Ride"
@@ -763,27 +777,39 @@ class ThemeParkWebServer:
             page += "<label for=\"selected_ride_name\">Select Ride:</label>"
             page += "<select name=\"selected_ride_name\" id=\"selected_ride_name\">"
             
-            # Get available rides for the current park
-            current_park_rides = []
+            # Get available rides from all selected parks
+            all_park_rides = []
             try:
-                if hasattr(self.app, 'theme_park_service') and current_park_id:
-                    # Get rides for the specific park
-                    if hasattr(self.app.theme_park_service, 'get_available_rides'):
-                        current_park_rides = self.app.theme_park_service.get_available_rides(current_park_id)
-                    elif hasattr(self.app.theme_park_service, 'park_list'):
-                        # Fallback: get rides from park object
-                        park = self.app.theme_park_service.park_list.get_park_by_id(current_park_id)
+                if hasattr(self.app.theme_park_service.park_list, 'selected_parks'):
+                    for park in self.app.theme_park_service.park_list.selected_parks:
                         if park and hasattr(park, 'rides'):
-                            current_park_rides = park.rides
+                            # Add park name as a group header
+                            all_park_rides.append({"type": "group", "name": park.name})
+                            # Add rides from this park
+                            for ride in park.rides:
+                                if isinstance(ride, dict):
+                                    all_park_rides.append({"type": "ride", "name": ride.get("name", ""), "park": park.name})
             except Exception as e:
                 logger.error(e, "Error getting rides for selector")
             
-            # Add rides to dropdown
-            if current_park_rides:
-                for ride in current_park_rides:
-                    ride_name = ride.get("name", "")
-                    is_selected = "selected" if ride_name == selected_ride else ""
-                    page += f"<option value=\"{ride_name}\" {is_selected}>{ride_name}</option>"
+            # Add rides to dropdown grouped by park
+            if all_park_rides:
+                current_group = None
+                for item in all_park_rides:
+                    if item["type"] == "group":
+                        # Add optgroup for park
+                        if current_group:
+                            page += "</optgroup>"
+                        page += f"<optgroup label=\"{item['name']}\">"
+                        current_group = item["name"]
+                    else:
+                        # Add ride option
+                        ride_name = item["name"]
+                        is_selected = "selected" if ride_name == selected_ride else ""
+                        page += f"<option value=\"{ride_name}\" {is_selected}>{ride_name}</option>"
+                
+                if current_group:
+                    page += "</optgroup>"
             else:
                 page += "<option value=\"\">No rides available</option>"
                 
@@ -796,7 +822,12 @@ class ThemeParkWebServer:
                 document.addEventListener('DOMContentLoaded', function() {
                     var radios = document.querySelectorAll('input[name="display_mode"]');
                     var rideSelector = document.getElementById('ride-selector');
-                    var parkSelect = document.getElementById('park-select');
+                    var parkSelects = [
+                        document.getElementById('park-select-1'),
+                        document.getElementById('park-select-2'),
+                        document.getElementById('park-select-3'),
+                        document.getElementById('park-select-4')
+                    ];
                     var rideSelect = document.getElementById('selected_ride_name');
                     var singleRideRadio = document.getElementById('single_ride');
                     var singleRideLabel = singleRideRadio.nextElementSibling;
@@ -808,19 +839,27 @@ class ThemeParkWebServer:
                         });
                     });
                     
-                    // Fetch rides when park changes
-                    parkSelect.addEventListener('change', function() {
-                        var parkId = parkSelect.value;
+                    // Function to update rides when parks change
+                    function updateRidesList() {
+                        // Get all selected park IDs
+                        var selectedParks = [];
+                        parkSelects.forEach(function(select) {
+                            var value = parseInt(select.value);
+                            if (value > 0) {
+                                selectedParks.push(value);
+                            }
+                        });
                         
-                        if (!parkId) {
-                            // No park selected
+                        if (selectedParks.length === 0) {
+                            // No parks selected
                             singleRideRadio.disabled = true;
                             singleRideLabel.textContent = 'Show Single Ride (select a park first)';
+                            rideSelect.innerHTML = '<option value="">No parks selected</option>';
                             return;
                         }
                         
                         // Clear and disable ride selector, show updating message
-                        rideSelect.innerHTML = '<option value="">Updating...</option>';
+                        rideSelect.innerHTML = '<option value="">Loading rides...</option>';
                         rideSelect.disabled = true;
                         
                         // Disable Single Ride option temporarily
@@ -832,27 +871,62 @@ class ThemeParkWebServer:
                             rideSelector.style.display = 'block';
                         }
                         
-                        // Fetch park data asynchronously
-                        fetch('/api/park?id=' + parkId)
-                            .then(function(response) {
-                                if (!response.ok) {
-                                    throw new Error('Failed to fetch park data');
-                                }
-                                return response.json();
-                            })
-                            .then(function(data) {
+                        // Fetch park data for all selected parks
+                        var fetchPromises = selectedParks.map(function(parkId) {
+                            return fetch('/api/park?id=' + parkId)
+                                .then(function(response) {
+                                    if (!response.ok) {
+                                        throw new Error('Failed to fetch park data for park ' + parkId);
+                                    }
+                                    return response.json();
+                                })
+                                .then(function(data) {
+                                    return {
+                                        parkId: parkId,
+                                        parkName: data.name || 'Park ' + parkId,
+                                        rides: data.rides || []
+                                    };
+                                })
+                                .catch(function(error) {
+                                    console.error('Error fetching park data:', error);
+                                    return {
+                                        parkId: parkId,
+                                        parkName: 'Park ' + parkId,
+                                        rides: []
+                                    };
+                                });
+                        });
+                        
+                        // Wait for all park data to be fetched
+                        Promise.all(fetchPromises)
+                            .then(function(parkDataArray) {
                                 // Clear the ride selector
                                 rideSelect.innerHTML = '';
                                 
-                                if (data.rides && data.rides.length > 0) {
-                                    // Add rides to dropdown
-                                    data.rides.forEach(function(ride) {
-                                        var option = document.createElement('option');
-                                        option.value = ride.name;
-                                        option.textContent = ride.name;
-                                        rideSelect.appendChild(option);
-                                    });
-                                    
+                                var hasRides = false;
+                                
+                                // Add rides grouped by park
+                                parkDataArray.forEach(function(parkData) {
+                                    if (parkData.rides.length > 0) {
+                                        hasRides = true;
+                                        
+                                        // Create optgroup for this park
+                                        var optgroup = document.createElement('optgroup');
+                                        optgroup.label = parkData.parkName;
+                                        
+                                        // Add rides to optgroup
+                                        parkData.rides.forEach(function(ride) {
+                                            var option = document.createElement('option');
+                                            option.value = ride.name;
+                                            option.textContent = ride.name;
+                                            optgroup.appendChild(option);
+                                        });
+                                        
+                                        rideSelect.appendChild(optgroup);
+                                    }
+                                });
+                                
+                                if (hasRides) {
                                     // Enable the ride selector and Single Ride option
                                     rideSelect.disabled = false;
                                     singleRideRadio.disabled = false;
@@ -871,17 +945,16 @@ class ThemeParkWebServer:
                                 }
                             })
                             .catch(function(error) {
-                                console.error('Error fetching park data:', error);
+                                console.error('Error updating rides list:', error);
                                 rideSelect.innerHTML = '<option value="">Error loading rides</option>';
                                 singleRideRadio.disabled = true;
                                 singleRideLabel.textContent = 'Show Single Ride (error loading rides)';
-                                
-                                // If Single Ride was selected, switch to All Rides
-                                if (singleRideRadio.checked) {
-                                    document.getElementById('all_rides').checked = true;
-                                    rideSelector.style.display = 'none';
-                                }
                             });
+                    }
+                    
+                    // Add change listeners to all park selects
+                    parkSelects.forEach(function(select) {
+                        select.addEventListener('change', updateRidesList);
                     });
                 });
             </script>

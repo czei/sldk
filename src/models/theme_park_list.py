@@ -25,7 +25,8 @@ class ThemeParkList:
             json_response: JSON data containing theme parks
         """
         self.park_list = []
-        self.current_park = ThemePark()
+        self.current_park = ThemePark()  # Keep for backward compatibility
+        self.selected_parks = []  # New: list of up to 4 selected parks
         self.skip_meet = False
         self.skip_closed = False
         
@@ -106,11 +107,25 @@ class ThemeParkList:
         """
         keys = sm.settings.keys()
 
-        if "current_park_id" in keys:
+        # Load multiple selected parks
+        if "selected_park_ids" in keys:
+            park_ids = sm.settings["selected_park_ids"]
+            self.selected_parks = []
+            for park_id in park_ids:
+                park = self.get_park_by_id(park_id)
+                if park:
+                    self.selected_parks.append(park)
+            # Set current_park to first selected park for backward compatibility
+            if self.selected_parks:
+                self.current_park = self.selected_parks[0]
+        # Fallback to legacy single park setting
+        elif "current_park_id" in keys:
             park_id = sm.settings["current_park_id"]
             park = self.get_park_by_id(park_id)
             if park:
                 self.current_park = park
+                self.selected_parks = [park]
+                
         if "skip_meet" in keys:
             self.skip_meet = sm.settings["skip_meet"]
         if "skip_closed" in keys:
@@ -195,9 +210,27 @@ class ThemeParkList:
         # logger.debug(f"Params = {params}")
         self.skip_meet = False
         self.skip_closed = False
+        
+        # Reset selected parks for new selection
+        new_selected_parks = []
+        
         for param in params:
             name_value = param.split("=")
-            if name_value[0] == "park-id":
+            
+            # Handle multiple park selections (park-id-1, park-id-2, etc.)
+            if name_value[0].startswith("park-id-"):
+                try:
+                    park_id = int(name_value[1])
+                    if park_id > 0:  # Valid park ID
+                        park = self.get_park_by_id(park_id)
+                        if park:
+                            new_selected_parks.append(park)
+                            logger.debug(f"Selected park {len(new_selected_parks)}: {park.name} (ID: {park.id})")
+                except (ValueError, IndexError):
+                    pass
+                    
+            # Legacy single park selection
+            elif name_value[0] == "park-id":
                 park = self.get_park_by_id(int(name_value[1]))
                 if park:
                     self.current_park = park
@@ -205,12 +238,20 @@ class ThemeParkList:
                     logger.debug(f"New park id = {self.current_park.id}")
                     logger.debug(f"New park latitude = {self.current_park.latitude}")
                     logger.debug(f"New park longitude = {self.current_park.longitude}")
+                    
             if name_value[0] == "skip_closed":
                 logger.debug("Skip closed is True")
                 self.skip_closed = True
             if name_value[0] == "skip_meet":
                 logger.debug("Skip meet is True")
                 self.skip_meet = True
+                
+        # Update selected parks if any were found
+        if new_selected_parks:
+            self.selected_parks = new_selected_parks
+            # Set current_park to first selected park for backward compatibility
+            self.current_park = self.selected_parks[0]
+            logger.debug(f"Total selected parks: {len(self.selected_parks)}")
 
     def store_settings(self, sm):
         """
@@ -219,7 +260,17 @@ class ThemeParkList:
         Args:
             sm: The settings manager
         """
-        sm.settings["current_park_name"] = self.current_park.name
-        sm.settings["current_park_id"] = self.current_park.id
+        # Store multiple selected parks
+        if self.selected_parks:
+            sm.settings["selected_park_ids"] = [park.id for park in self.selected_parks]
+            sm.settings["selected_park_names"] = [park.name for park in self.selected_parks]
+            # Keep backward compatibility
+            sm.settings["current_park_name"] = self.selected_parks[0].name
+            sm.settings["current_park_id"] = self.selected_parks[0].id
+        else:
+            # Fallback to current_park if no selected parks
+            sm.settings["current_park_name"] = self.current_park.name
+            sm.settings["current_park_id"] = self.current_park.id
+            
         sm.settings["skip_meet"] = self.skip_meet
         sm.settings["skip_closed"] = self.skip_closed
