@@ -1,0 +1,14 @@
+Testing real API calls in development mode...
+Testing real API with HTTP client configured for live data
+Fetching park list from queue-times.com...
+SUCCESS: Got 17 park groups from real API
+First park group: Cedar Fair Entertainment Company
+First park in group: California's Great America
+
+Fetching ride data for Magic Kingdom (park ID 6)...
+SUCCESS: Got 6 lands with 44 total rides
+Sample ride: A Pirate's Adventure ~ Treasures of the Seven Seas
+  Wait time: 0 minutes
+  Is open: False
+  Last updated: 2025-05-17T23:00:56.000Z
+Real API test complete.

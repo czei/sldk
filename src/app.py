@@ -76,11 +76,18 @@ class ThemeParkApp:
         # TODO: Figure out how to make the initialization process async to talk to an event-drive display to update users.
         # init_task = asyncio.create_task(self._initialize_background_data())
 
+        logger.info("Starting initialization sequence...")
         await self._initialize_wifi_password()
+        logger.info("WiFi password initialized")
         await self._initialize_wifi()
+        logger.info("WiFi initialized")
         await self._initialize_clock()
+        logger.info("Clock initialized")
         await self._initialize_park_list()
+        logger.info("Park list initialized")
         await self._initialize_wait_times()
+        logger.info("Wait times initialized")
+        logger.info("All initialization complete")
 
     async def _initialize_wifi_password(self):
         # Load Current Wifi Password

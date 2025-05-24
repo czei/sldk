@@ -125,14 +125,14 @@ class MessageQueue:
         
         # Handle single ride mode
         if display_mode == "single_ride" and selected_ride_name:
-            await self._add_single_ride(park, selected_ride_name)
+            await self.add_single_ride(park, selected_ride_name)
         else:
             # Default behavior - show all rides
             await self._add_all_rides(park, park_list.skip_meet, park_list.skip_closed)
             
         self.regenerate_flag = False
         
-    async def _add_single_ride(self, park, ride_name):
+    async def add_single_ride(self, park, ride_name):
         """
         Add a single ride to the queue
         
@@ -143,7 +143,8 @@ class MessageQueue:
         # Start with the ride-specific message
         self.func_queue.append(self.display.show_scroll_message)
         self.delay_queue.append(self.delay)
-        self.param_queue.append(f"{park.name}: {ride_name} wait time")
+        # self.param_queue.append(f"{park.name}: {ride_name} wait time")
+        self.param_queue.append(f"{ride_name}")
         
         # Find the selected ride
         found_ride = False

@@ -86,7 +86,7 @@ class ThemePark:
                 # logger.debug(f"Land = {land}")
                 rides = land["rides"]
                 for ride in rides:
-                    name = ride["name"]
+                    name = self.remove_non_ascii(ride["name"])
                     logger.debug(f"Ride = {name}")
                     ride_id = ride["id"]
                     wait_time = ride["wait_time"]
@@ -101,7 +101,7 @@ class ThemePark:
             if "rides" in json_data:
                 rides_not_in_a_land = json_data["rides"]
                 for ride in rides_not_in_a_land:
-                    name = ride["name"]
+                    name = self.remove_non_ascii(ride["name"])
                     ride_id = ride["id"]
                     wait_time = ride["wait_time"]
                     open_flag = ride["is_open"]

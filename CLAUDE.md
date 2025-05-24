@@ -27,6 +27,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 * Test fixtures in conftest.py provide access to common test data
 
 ## Code Style
+* Think hard about how to find the root cause of problems. DO NOT cover up issues such as the lack of data.
+* **Unit Tests**: Run all unit tests after each change.
 * **Imports**: Group by stdlib, third-party (Adafruit), then project modules
 * **Classes**: PascalCase (e.g., `ThemeParkList`)
 * **Functions/Variables**: snake_case (e.g., `get_park_by_id`, `park_list`)
@@ -37,6 +39,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 * **Hardware Abstraction**: Include fallbacks when hardware components aren't available
 
 ## CircuitPython Development
+* Instructions for the wait times API are at:  https://queue-times.com/pages/api
+* All changes should be made to work on both the MatrixPortal S3 hardware and in the simulated dev environment. 
+* The UI for the MatrixPortal hardware is in web_server.py and the UI for the development simulation is in dev_web_server.py.  Changes should always be made to both files. 
+* Remember that CircuitPython 3.x is a fork of MicroPython, and the standard libraries either aren't available or have versions specific to CircuitPython
+* CircuitPython devices are very slow and have use cooperative multitasking using asyncio, not multithreading. This is made more difficult because the CircuitPython HTTP library is synchronous, so background tasks like scrolling stop when HTTP calls are made. 
 * Support both running on actual hardware and testing in standard Python environment
 * Run all unit tests after every code change.  Iterate until all of the tests pass.
 * Test functionality in isolation before deploying to hardware

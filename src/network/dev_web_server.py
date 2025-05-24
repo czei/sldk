@@ -57,6 +57,12 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
                 self.serve_main_page(query_params, query_string)
             elif path == "/settings":
                 self.serve_settings_page(query_params, query_string)
+            elif path == "/api/park":
+                self.serve_api_park(query_params)
+            elif path == "/api/parks":
+                self.serve_api_parks(query_params)
+            elif path == "/api/rides":
+                self.serve_api_rides(query_params)
             else:
                 # Try to serve it as a static file
                 success = self.serve_static_file(path, "text/html")
@@ -107,6 +113,13 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
                 self._process_query_params(query_string)
             except Exception as e:
                 logger.error(e, f"Error processing query params: {query_string}")
+            
+            # Redirect to base URL without query parameters
+            # This ensures a clean URL and proper page state
+            self.send_response(302)
+            self.send_header("Location", "/")
+            self.end_headers()
+            return
         
         # Generate and serve the main page
         page = self.generate_main_page()
@@ -165,6 +178,19 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
                         # Reset selected ride when park changes
                         app.settings_manager.settings["selected_ride_name"] = ""
                         settings_changed = True
+                        
+                        # Fetch ride data for the newly selected park
+                        if hasattr(app.theme_park_service, 'update_current_park'):
+                            import asyncio
+                            loop = asyncio.new_event_loop()
+                            asyncio.set_event_loop(loop)
+                            try:
+                                loop.run_until_complete(app.theme_park_service.update_current_park())
+                                logger.info(f"Fetched ride data for park {new_park_id}")
+                            except Exception as e:
+                                logger.error(e, f"Error fetching ride data for park {new_park_id}")
+                            finally:
+                                loop.close()
             except Exception as e:
                 logger.error(e, "Error updating park selection")
         
@@ -274,10 +300,9 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         
         page += "<div class=\"navbar\">"
         page += "<a href=\"/\">Theme Park Wait Times (Development Mode)</a>"
-        page += "</div>"
-        
         page += "<div class=\"gear-icon\">"
         page += "<a href=\"/settings\"><img src=\"gear.png\" alt=\"Settings\"></a>"
+        page += "</div>"
         page += "</div>"
         
         page += "<div class=\"main-content\">"
@@ -342,7 +367,7 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         
         # Display Mode Selection
         page += "<div class=\"form-group\">"
-        page += "<h3 style=\"margin-top: 0; margin-bottom: 10px; text-align: left; padding-left: 20px;\">Display Mode</h3>"
+        # page += "<h3 style=\"margin-top: 0; margin-bottom: 10px; text-align: left; padding-left: 20px;\">Display Mode</h3>"
         
         display_mode = settings.get("display_mode", "all_rides")
         
@@ -351,10 +376,16 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         page += f"<div class=\"radio-group\"><input type=\"radio\" id=\"all_rides\" name=\"display_mode\" value=\"all_rides\" {all_rides_checked}>"
         page += "<label for=\"all_rides\">Show All Rides</label></div>"
         
-        # Single Ride option  
+        # Single Ride option - disabled until a park is selected
         single_ride_checked = "checked" if display_mode == "single_ride" else ""
-        page += f"<div class=\"radio-group\"><input type=\"radio\" id=\"single_ride\" name=\"display_mode\" value=\"single_ride\" {single_ride_checked}>"
-        page += "<label for=\"single_ride\">Show Single Ride</label></div>"
+        # Check if we have a current park selected
+        has_current_park = current_park_id is not None
+        disabled_attr = "" if has_current_park else "disabled"
+        page += f"<div class=\"radio-group\"><input type=\"radio\" id=\"single_ride\" name=\"display_mode\" value=\"single_ride\" {single_ride_checked} {disabled_attr}>"
+        page += "<label for=\"single_ride\">Show Single Ride"
+        if not has_current_park:
+            page += " (select a park first)"
+        page += "</label></div>"
         
         # Ride Selection Dropdown
         selected_ride = settings.get("selected_ride_name", "")
@@ -364,11 +395,18 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         page += "<label for=\"selected_ride_name\">Select Ride:</label>"
         page += "<select name=\"selected_ride_name\" id=\"selected_ride_name\">"
         
-        # Get available rides
+        # Get available rides for the current park
         current_park_rides = []
         try:
-            if app.theme_park_service and hasattr(app.theme_park_service, 'get_available_rides'):
-                current_park_rides = app.theme_park_service.get_available_rides()
+            if app.theme_park_service and current_park_id:
+                # Get rides for the specific park
+                if hasattr(app.theme_park_service, 'get_available_rides'):
+                    current_park_rides = app.theme_park_service.get_available_rides(current_park_id)
+                elif hasattr(app.theme_park_service, 'park_list'):
+                    # Fallback: get rides from park object
+                    park = app.theme_park_service.park_list.get_park_by_id(current_park_id)
+                    if park and hasattr(park, 'rides'):
+                        current_park_rides = park.rides
         except Exception as e:
             logger.error(e, "Error getting rides for selector")
         
@@ -384,17 +422,38 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         page += "</select>"
         page += "</div>"
         
-        # Add JavaScript for toggling ride selector
+        # Add JavaScript for toggling ride selector and updating rides when park changes
         page += """
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 var radios = document.querySelectorAll('input[name="display_mode"]');
                 var rideSelector = document.getElementById('ride-selector');
+                var parkSelect = document.getElementById('park-select');
+                var rideSelect = document.getElementById('selected_ride_name');
                 
+                // Toggle ride selector visibility
                 radios.forEach(function(radio) {
                     radio.addEventListener('change', function() {
                         rideSelector.style.display = (radio.value === 'single_ride') ? 'block' : 'none';
                     });
+                });
+                
+                // Disable Single Ride option when park changes
+                parkSelect.addEventListener('change', function() {
+                    var singleRideRadio = document.getElementById('single_ride');
+                    var singleRideLabel = singleRideRadio.nextElementSibling;
+                    
+                    // Disable the Single Ride option
+                    singleRideRadio.disabled = true;
+                    
+                    // Update the label to indicate user needs to click Update
+                    singleRideLabel.textContent = 'Show Single Ride (click Update to enable)';
+                    
+                    // If Single Ride was selected, switch to All Rides
+                    if (singleRideRadio.checked) {
+                        document.getElementById('all_rides').checked = true;
+                        rideSelector.style.display = 'none';
+                    }
                 });
             });
         </script>
@@ -404,7 +463,7 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         
         # Skip Closed Rides option
         page += "<div class=\"display-options\">"
-        page += "<h3 style=\"margin-top: 10px; margin-bottom: 10px; text-align: left; padding-left: 20px;\">Display Options</h3>"
+        # page += "<h3 style=\"margin-top: 10px; margin-bottom: 10px; text-align: left; padding-left: 20px;\">Display Options</h3>"
         
         page += "<div class=\"form-group checkbox-group\">"
         skip_closed = False
@@ -502,6 +561,115 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         page += "</div></body></html>"
         return page
     
+    def serve_api_park(self, query_params):
+        """API endpoint to get data for a specific park"""
+        import json
+        
+        try:
+            # Extract park ID from query parameters
+            park_id = None
+            if "id" in query_params:
+                park_id = int(query_params["id"][0])
+            
+            app = self.app_instance
+            
+            # If no park ID provided, use current park
+            if not park_id and hasattr(app, 'theme_park_service'):
+                if (hasattr(app.theme_park_service, 'park_list') and
+                    hasattr(app.theme_park_service.park_list, 'current_park')):
+                    park_id = app.theme_park_service.park_list.current_park.id
+            
+            if not park_id:
+                error_json = json.dumps({"error": "No park ID provided and no current park set"})
+                self.send_response(400)
+                self.send_header("Content-type", "application/json")
+                self.end_headers()
+                self.wfile.write(error_json.encode("utf-8"))
+                return
+            
+            # Get park data
+            park_data = {}
+            
+            if hasattr(app, 'theme_park_service'):
+                # Get park from park list
+                park = None
+                if hasattr(app.theme_park_service, 'park_list'):
+                    park = app.theme_park_service.park_list.get_park_by_id(park_id)
+                
+                if park:
+                    # Build park data response
+                    rides = []
+                    # If park has no rides, try to fetch them from the API
+                    if not park.rides:
+                        logger.info(f"Park {park.name} has no rides, attempting to fetch from API")
+                        # Use asyncio to run the async method
+                        if hasattr(app.theme_park_service, 'get_rides_for_park_async'):
+                            loop = asyncio.new_event_loop()
+                            asyncio.set_event_loop(loop)
+                            try:
+                                rides = loop.run_until_complete(app.theme_park_service.get_rides_for_park_async(park_id))
+                            finally:
+                                loop.close()
+                        else:
+                            available_rides = app.theme_park_service.get_available_rides(park_id)
+                            for ride_info in available_rides:
+                                rides.append(ride_info)
+                    else:
+                        for ride in park.rides:
+                            rides.append({
+                                "name": ride.name,
+                                "wait_time": ride.wait_time,
+                                "is_open": ride.open_flag
+                            })
+                    
+                    park_data = {
+                        "id": park.id,
+                        "name": park.name,
+                        "is_open": park.is_open,
+                        "rides": rides,
+                        "latitude": park.latitude,
+                        "longitude": park.longitude
+                    }
+                else:
+                    error_json = json.dumps({"error": f"Park with ID {park_id} not found"})
+                    self.send_response(404)
+                    self.send_header("Content-type", "application/json")
+                    self.end_headers()
+                    self.wfile.write(error_json.encode("utf-8"))
+                    return
+            else:
+                error_json = json.dumps({"error": "Theme park service not available"})
+                self.send_response(500)
+                self.send_header("Content-type", "application/json")
+                self.end_headers()
+                self.wfile.write(error_json.encode("utf-8"))
+                return
+            
+            # Return JSON response
+            response_json = json.dumps(park_data)
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(response_json.encode("utf-8"))
+            
+        except Exception as e:
+            logger.error(e, f"Error in park API endpoint")
+            error_json = json.dumps({"error": "Failed to get park data"})
+            self.send_response(500)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            self.wfile.write(error_json.encode("utf-8"))
+    
+    def serve_api_parks(self, query_params):
+        """API endpoint to get list of parks"""
+        # Implementation not needed for this fix
+        pass
+    
+    def serve_api_rides(self, query_params):
+        """API endpoint to get rides"""
+        # Implementation not needed for this fix
+        pass
+    
     def generate_settings_page(self, success=False):
         """Generate the settings HTML page"""
         app = self.app_instance
@@ -522,10 +690,9 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         
         page += "<div class=\"navbar\">"
         page += "<a href=\"/\">Theme Park Wait Times (Development Mode)</a>"
-        page += "</div>"
-        
         page += "<div class=\"gear-icon\">"
         page += "<a href=\"/settings\"><img src=\"gear.png\" alt=\"Settings\"></a>"
+        page += "</div>"
         page += "</div>"
         
         page += "<div class=\"main-content\">"
@@ -545,9 +712,10 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         
         # Hostname/domain name
         page += "<div class=\"form-group\">"
-        page += "<label for=\"domain_name\">Hostname (.local):</label>"
+        page += "<label for=\"domain_name\">Hostname:</label>"
         domain_name = settings.get("domain_name", "themeparkwaits")
         page += f"<input type=\"text\" id=\"domain_name\" name=\"domain_name\" value=\"{domain_name}\">"
+        page += "<label for=\"domain_name\">.local</label>"
         page += "<br><small>Hostname change requires a device restart</small>"
         page += "</div>"
         
@@ -623,16 +791,39 @@ class DevThemeParkWebServer:
             ip_address: Optional IP address to bind to (ignored in dev mode, always uses localhost)
         """
         if self.is_running:
-            return
+            logger.info("Server already running, skipping start")
+            return True
         
         try:
+            logger.info(f"Attempting to start dev server on localhost:{self.port}")
+            
             # Create the server on localhost
             self.server = HTTPServer(('localhost', self.port), DevThemeParkWebHandler)
+            logger.info("HTTPServer instance created")
             
             # Start server in a separate thread
             self.server_thread = threading.Thread(target=self.server.serve_forever)
             self.server_thread.daemon = True  # Allow the thread to exit when the program does
             self.server_thread.start()
+            logger.info("Server thread started")
+            
+            # Give server time to start
+            time.sleep(0.5)
+            
+            # Verify server is running
+            try:
+                import socket
+                test_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                test_sock.settimeout(1)
+                result = test_sock.connect_ex(('localhost', self.port))
+                test_sock.close()
+                
+                if result == 0:
+                    logger.info(f"Server verified accessible at localhost:{self.port}")
+                else:
+                    logger.info(f"Warning: Server started but not accessible, result: {result}")
+            except Exception as verify_error:
+                logger.error(verify_error, "Error verifying server")
             
             self.is_running = True
             logger.info(f"Development web server started at http://localhost:{self.port}")

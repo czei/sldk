@@ -75,6 +75,7 @@ class HttpClient:
             session: The underlying session to use for requests
         """
         self.session = session
+        self.use_live_data = True  # Flag to force live data in dev mode
         
         try:
             # Try to import adafruit_requests for CircuitPython
@@ -82,12 +83,18 @@ class HttpClient:
             self.adafruit_requests = adafruit_requests
             self.using_adafruit = True
         except ImportError:
-            # Fall back to stdlib for non-CircuitPython
+            self.using_adafruit = False
+            
+        # Always set up urllib as fallback, even if adafruit is available
+        try:
             import urllib.request
             from urllib.error import URLError
             self.urllib = urllib.request
             self.URLError = URLError
-            self.using_adafruit = False
+        except ImportError:
+            # urllib might not be available in CircuitPython
+            self.urllib = None
+            self.URLError = None
             
     async def get(self, url, headers=None, max_retries=3):
         """
@@ -109,8 +116,8 @@ class HttpClient:
         retry_count = 0
         last_error = None
 
-        # In development mode, use mock data for queue-times.com API
-        if "queue-times.com" in url and not self.session:
+        # In development mode, check if we should use mock data for queue-times.com API
+        if "queue-times.com" in url and not self.session and not self.use_live_data:
             logger.info(f"Dev mode - Using mock data for {url}")
 
             # Check if we're getting the park list
@@ -315,3 +322,13 @@ class HttpClient:
         except Exception as e:
             logger.error(e, f"Error making POST request to {url}")
             return Response(status_code=500, text=str(e))
+    
+    def set_use_live_data(self, use_live_data):
+        """
+        Set whether to use live data or mock data in development mode
+        
+        Args:
+            use_live_data: Boolean flag to use live data
+        """
+        self.use_live_data = use_live_data
+        logger.info(f"HTTP client configured to use {'live' if use_live_data else 'mock'} data")

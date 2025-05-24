@@ -7,7 +7,7 @@ body {
 }
 
 .navbar {
-    background-color: #1e90ff;
+    background-color: #faa538;
     color: white;
     padding: 1rem;
     display: flex;
@@ -24,13 +24,19 @@ body {
 
 .gear-icon {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
+    top: 50%;
+    right: .5rem;
+    transform: translateY(-50%);
 }
 
 .gear-icon img {
-    width: 24px;
-    height: 24px;
+    /* Increased size for better visibility */
+    height: 2.5rem;
+    width: auto;
+}
+
+.gear-icon img:hover {
+    opacity: 1;
 }
 
 .main-content {
@@ -40,7 +46,7 @@ body {
 }
 
 h2 {
-    color: #1e90ff;
+    color: #faa538;
     border-bottom: 1px solid #ddd;
     padding-bottom: 0.5rem;
     margin-top: 1.5rem;
@@ -52,18 +58,19 @@ h3 {
 }
 
 button {
-    background-color: #1e90ff;
+    background-color: #faa538;
     border: none;
     border-radius: 4px;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 2rem;
     color: white;
     font-weight: bold;
+    font-size: 1.1rem;
     cursor: pointer;
     margin-top: 1rem;
 }
 
 button:hover {
-    background-color: #0078d7;
+    background-color: #e89400;
 }
 
 input, select {
@@ -111,6 +118,24 @@ select {
     gap: 0.5rem;
 }
 
+.date-selectors select {
+    min-width: auto;
+    width: auto;
+}
+
+/* Specific width for each date selector */
+.date-selectors select#Year {
+    width: 80px;
+}
+
+.date-selectors select#Month {
+    width: 70px;
+}
+
+.date-selectors select#Day {
+    width: 60px;
+}
+
 .settings-section {
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -135,4 +160,32 @@ body.dev-mode button {
 body.dev-mode button:hover {
     background-color: #e05050;
 }
-EOF < /dev/null
+
+/* Radio button group styling */
+.radio-group {
+    display: flex;
+    align-items: center;
+    margin: 0.5rem 0;
+}
+
+.radio-group input[type="radio"] {
+    margin-right: 0.5rem;
+}
+
+.radio-group label {
+    margin-right: 1rem;
+}
+
+/* Add some spacing around the sections */
+.display-options {
+    margin-top: 1rem;
+}
+
+/* Center the update button */
+form {
+    text-align: center;
+}
+
+form > * {
+    text-align: left;
+}

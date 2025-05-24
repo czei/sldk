@@ -6,7 +6,7 @@ import asyncio
 import time
 
 from adafruit_datetime import datetime
-from adafruit_httpserver import Server
+from adafruit_httpserver import Server, Redirect
 from adafruit_httpserver import Request
 from adafruit_httpserver import Response
 from adafruit_httpserver.methods import GET, POST
@@ -57,10 +57,12 @@ class ThemeParkWebServer:
                 except Exception as e:
                     logger.error(e, f"Error processing query params: {query_params}")
 
-                # Generate response page with updated settings
-                # No redirect - return the updated page directly
-                page = self.generate_main_page()
-                return Response(request, page, content_type="text/html")
+                # Redirect to base URL without query parameters
+                # This ensures a clean URL and proper page state
+                # response = Response(request, "", content_type="text/html", headers={"Location": "/"})
+                # response.status_code = 302
+                response = Redirect(request, "/")
+                return response
 
             # Generate main page (no query params)
             page = self.generate_main_page()
@@ -106,6 +108,7 @@ class ThemeParkWebServer:
                 try:
                     self._process_query_params(query_params)
                     logger.info(f"Processed settings form params: {query_params}")
+                    return Redirect(request, "/")
                 except Exception as e:
                     logger.error(e, f"Error processing settings query params: {query_params}")
 
@@ -117,106 +120,65 @@ class ThemeParkWebServer:
                 page = self.generate_settings_page()
             return Response(request, page, content_type="text/html")
 
-        @self.server.route("/api/parks", [GET])
-        def api_parks(request: Request):
-            """API endpoint to get list of parks"""
-            import json
-
-            try:
-                # Extract query parameters
-                query_params = str(request.query_params) if request.query_params else ""
-                query = ""
-
-                # Extract search query if present
-                if "q=" in query_params:
-                    import re
-                    query_match = re.search(r'q=([^&]+)', query_params)
-                    if query_match:
-                        query = self._url_decode(query_match.group(1))
-
-                # Get parks data - synchronized approach
-                parks = []
-
-                # Use direct data access
-                if hasattr(self.app, 'theme_park_service') and hasattr(self.app.theme_park_service, 'park_list'):
-                    park_list = self.app.theme_park_service.park_list
-
-                    # Filter parks if query is provided
-                    if query:
-                        query = query.lower()
-                        for park in park_list.park_list:
-                            if query in park.name.lower():
-                                parks.append({
-                                    "id": park.id,
-                                    "name": park.name,
-                                    "latitude": park.latitude,
-                                    "longitude": park.longitude
-                                })
-                    else:
-                        # Get all parks
-                        for park in park_list.park_list:
-                            parks.append({
-                                "id": park.id,
-                                "name": park.name,
-                                "latitude": park.latitude,
-                                "longitude": park.longitude
-                            })
-
-                # Return JSON response
-                response_json = json.dumps({"parks": parks})
-                return Response(request, response_json, content_type="application/json")
-
-            except Exception as e:
-                logger.error(e, "Error in parks API endpoint")
-                error_json = json.dumps({"error": "Failed to get parks data"})
-                return Response(request, error_json, content_type="application/json", status=500)
-
         @self.server.route("/api/park", [GET])
         def api_park(request: Request):
             """API endpoint to get data for a specific park"""
             import json
-
+            
             try:
-                # Extract park ID from query string
-                query_params = str(request.query_params) if request.query_params else ""
+                # Extract park ID from query parameters
                 park_id = None
-
-                if "id=" in query_params:
-                    import re
-                    id_match = re.search(r'id=(\d+)', query_params)
-                    if id_match:
-                        park_id = int(id_match.group(1))
-
+                if request.query_params and "id" in request.query_params:
+                    park_id = int(request.query_params["id"])
+                
                 # If no park ID provided, use current park
                 if not park_id and hasattr(self.app, 'theme_park_service'):
                     if (hasattr(self.app.theme_park_service, 'park_list') and
-                            hasattr(self.app.theme_park_service.park_list, 'current_park')):
+                        hasattr(self.app.theme_park_service.park_list, 'current_park')):
                         park_id = self.app.theme_park_service.park_list.current_park.id
-
+                
                 if not park_id:
                     error_json = json.dumps({"error": "No park ID provided and no current park set"})
-                    return Response(request, error_json, content_type="application/json", status=400)
-
-                # Get park data - synchronized approach
-                # Use direct data access to get current park data
+                    response = Response(request, error_json, content_type="application/json")
+                    response.status_code = 400
+                    return response
+                
+                # Get park data
                 park_data = {}
-
+                
                 if hasattr(self.app, 'theme_park_service'):
                     # Get park from park list
                     park = None
                     if hasattr(self.app.theme_park_service, 'park_list'):
                         park = self.app.theme_park_service.park_list.get_park_by_id(park_id)
-
+                    
                     if park:
                         # Build park data response
                         rides = []
-                        for ride in park.rides:
-                            rides.append({
-                                "name": ride.name,
-                                "wait_time": ride.wait_time,
-                                "is_open": ride.open_flag
-                            })
-
+                        # If park has no rides, try to fetch them from the API
+                        if not park.rides:
+                            logger.info(f"Park {park.name} has no rides, attempting to fetch from API")
+                            # Use asyncio to run the async method
+                            if hasattr(self.app.theme_park_service, 'get_rides_for_park_async'):
+                                import asyncio
+                                loop = asyncio.new_event_loop()
+                                asyncio.set_event_loop(loop)
+                                try:
+                                    rides = loop.run_until_complete(self.app.theme_park_service.get_rides_for_park_async(park_id))
+                                finally:
+                                    loop.close()
+                            else:
+                                available_rides = self.app.theme_park_service.get_available_rides(park_id)
+                                for ride_info in available_rides:
+                                    rides.append(ride_info)
+                        else:
+                            for ride in park.rides:
+                                rides.append({
+                                    "name": ride.name,
+                                    "wait_time": ride.wait_time,
+                                    "is_open": ride.open_flag
+                                })
+                        
                         park_data = {
                             "id": park.id,
                             "name": park.name,
@@ -227,105 +189,25 @@ class ThemeParkWebServer:
                         }
                     else:
                         error_json = json.dumps({"error": f"Park with ID {park_id} not found"})
-                        return Response(request, error_json, content_type="application/json", status=404)
+                        response = Response(request, error_json, content_type="application/json")
+                        response.status_code = 404
+                        return response
                 else:
                     error_json = json.dumps({"error": "Theme park service not available"})
-                    return Response(request, error_json, content_type="application/json", status=500)
-
+                    response = Response(request, error_json, content_type="application/json")
+                    response.status_code = 500
+                    return response
+                
                 # Return JSON response
                 response_json = json.dumps(park_data)
                 return Response(request, response_json, content_type="application/json")
-
+                
             except Exception as e:
                 logger.error(e, f"Error in park API endpoint")
                 error_json = json.dumps({"error": "Failed to get park data"})
-                return Response(request, error_json, content_type="application/json", status=500)
-
-        @self.server.route("/api/rides", [GET])
-        def api_rides(request: Request):
-            """API endpoint to get ride wait times"""
-            import json
-
-            try:
-                # Extract park ID and ride name from query string
-                query_params = str(request.query_params) if request.query_params else ""
-                park_id = None
-                ride_name = None
-
-                # Parse park ID
-                if "park_id=" in query_params:
-                    import re
-                    id_match = re.search(r'park_id=(\d+)', query_params)
-                    if id_match:
-                        park_id = int(id_match.group(1))
-
-                # Parse ride name
-                if "ride=" in query_params:
-                    import re
-                    ride_match = re.search(r'ride=([^&]+)', query_params)
-                    if ride_match:
-                        ride_name = self._url_decode(ride_match.group(1))
-
-                # If no park ID provided, use current park
-                if not park_id and hasattr(self.app, 'theme_park_service'):
-                    if (hasattr(self.app.theme_park_service, 'park_list') and
-                            hasattr(self.app.theme_park_service.park_list, 'current_park')):
-                        park_id = self.app.theme_park_service.park_list.current_park.id
-
-                if not park_id:
-                    error_json = json.dumps({"error": "No park ID provided and no current park set"})
-                    return Response(request, error_json, content_type="application/json", status=400)
-
-                # Get ride data - synchronized approach
-                # Use direct data access to get ride data
-                rides_data = {}
-
-                if hasattr(self.app, 'theme_park_service'):
-                    # Get park from park list
-                    park = None
-                    if hasattr(self.app.theme_park_service, 'park_list'):
-                        park = self.app.theme_park_service.park_list.get_park_by_id(park_id)
-
-                    if park:
-                        # If specific ride requested
-                        if ride_name:
-                            for ride in park.rides:
-                                if ride.name.lower() == ride_name.lower():
-                                    rides_data = {
-                                        "name": ride.name,
-                                        "wait_time": ride.wait_time,
-                                        "is_open": ride.open_flag
-                                    }
-                                    break
-
-                            if not rides_data:
-                                error_json = json.dumps({"error": f"Ride '{ride_name}' not found in park"})
-                                return Response(request, error_json, content_type="application/json", status=404)
-                        else:
-                            # Return all rides
-                            rides_list = []
-                            for ride in park.rides:
-                                rides_list.append({
-                                    "name": ride.name,
-                                    "wait_time": ride.wait_time,
-                                    "is_open": ride.open_flag
-                                })
-                            rides_data = {"rides": rides_list}
-                    else:
-                        error_json = json.dumps({"error": f"Park with ID {park_id} not found"})
-                        return Response(request, error_json, content_type="application/json", status=404)
-                else:
-                    error_json = json.dumps({"error": "Theme park service not available"})
-                    return Response(request, error_json, content_type="application/json", status=500)
-
-                # Return JSON response
-                response_json = json.dumps(rides_data)
-                return Response(request, response_json, content_type="application/json")
-
-            except Exception as e:
-                logger.error(e, f"Error in rides API endpoint")
-                error_json = json.dumps({"error": "Failed to get ride data"})
-                return Response(request, error_json, content_type="application/json", status=500)
+                response = Response(request, error_json, content_type="application/json")
+                response.status_code = 500
+                return response
 
     def start(self, ip_address):
         """
@@ -337,37 +219,6 @@ class ThemeParkWebServer:
         try:
             # Make sure to convert IP to string and specify port 80
             logger.debug(f"Starting server on {ip_address}:80")
-
-            # Try to stop any existing server first
-            # try:
-            #     self.server.stop()
-            #     # Add a delay to ensure socket is properly released
-            #     import time
-            #     time.sleep(1)
-            # except Exception as stop_error:
-            #     logger.error(stop_error, "Error stopping existing server - continuing anyway")
-                
-            # Before starting, check if port is in use - CircuitPython doesn't have socket.SO_REUSEADDR
-            # so we need to ensure the port is free
-            # try:
-            #     import socket
-            #     test_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            #     test_socket.bind(("0.0.0.0", 80))
-            #     test_socket.close()
-            #     # Port is available
-            # except OSError as sock_error:
-            #     # Port is still in use, try to forcefully clear it
-            #     logger.error(sock_error, "Port 80 is still in use. Attempting to reset networking...")
-            #     try:
-            #         # Reset the network interface to clear all sockets
-            #         import wifi
-            #         self.is_running = False
-            #         # Wait for any in-flight connections to complete
-            #         time.sleep(2)
-            #     except Exception as reset_error:
-            #         logger.error(reset_error, "Failed to reset networking")
-            #         self.is_running = False
-            #         return
 
             # Start the server with "0.0.0.0" to listen on all interfaces
             # This is important for ensuring the server responds to all incoming connections
@@ -454,8 +305,43 @@ class ThemeParkWebServer:
                     park_changed = (current_park_id != new_park_id)
                     if park_changed:
                         logger.info(f"Park changed from ID {current_park_id} to {new_park_id}")
+                        # Reset selected ride when park changes
+                        self.app.settings_manager.settings["selected_ride_name"] = ""
+                        
+                        # Fetch ride data for the newly selected park
+                        # Set flag to trigger update in the main loop
+                        if hasattr(self.app.theme_park_service, 'update_needed'):
+                            self.app.theme_park_service.update_needed = True
+                        else:
+                            # Add the attribute if it doesn't exist
+                            self.app.theme_park_service.update_needed = True
+                        logger.info(f"Park changed to {new_park_id}, triggering data update")
             except Exception as e:
                 logger.error(e, "Error updating park selection")
+        
+        # Process display mode parameter
+        settings_changed = False
+        import re
+        display_mode_match = re.search(r'display_mode=([^&]+)', query_params)
+        if display_mode_match:
+            old_display_mode = self.app.settings_manager.settings.get("display_mode", "all_rides")
+            new_display_mode = display_mode_match.group(1)
+            
+            if old_display_mode != new_display_mode:
+                self.app.settings_manager.settings["display_mode"] = new_display_mode
+                settings_changed = True
+                logger.info(f"Display mode changed to: {new_display_mode}")
+        
+        # Process selected ride name
+        selected_ride_match = re.search(r'selected_ride_name=([^&]+)', query_params)
+        if selected_ride_match:
+            old_selected_ride = self.app.settings_manager.settings.get("selected_ride_name", "")
+            new_selected_ride = self._url_decode(selected_ride_match.group(1))
+            
+            if old_selected_ride != new_selected_ride:
+                self.app.settings_manager.settings["selected_ride_name"] = new_selected_ride
+                settings_changed = True
+                logger.info(f"Selected ride changed to: {new_selected_ride}")
 
         # Always set checkbox values (they'll be missing from query_params if unchecked)
         if hasattr(self.app.theme_park_service, 'park_list'):
@@ -545,6 +431,15 @@ class ThemeParkWebServer:
         # Trigger park update if needed
         if park_changed:
             self._trigger_park_update()
+            # When park changes, we need to ensure the new park's data is fetched
+            # Set the update timer to expire immediately
+            if hasattr(self.app, 'update_timer'):
+                self.app.update_timer.reset(expired=True)
+                logger.info("Forced immediate park data update after park change")
+                
+        if settings_changed and hasattr(self.app, 'message_queue'):
+            self.app.display.set_colors(self.app.settings_manager)
+            logger.debug("Reset message queue after display mode/ride change")
 
         return park_changed
 
@@ -687,16 +582,10 @@ class ThemeParkWebServer:
             import socketpool
             import wifi
             
-            # Try to clear port 80 if it's still in use
-            try:
-                import socket
-                test_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                test_socket.bind(("0.0.0.0", 80))
-                test_socket.close()
-            except OSError as sock_error:
-                logger.error(sock_error, "Port 80 still in use during restart, may fail")
-                # Continue anyway as we'll catch the error on start
-                await asyncio.sleep(2)  # Additional wait time
+            # In CircuitPython, we can't test if port is in use with socket module
+            # Just wait to ensure previous connections are closed
+            logger.debug("Waiting for port to be released before restart")
+            await asyncio.sleep(2)  # Wait for connections to close
                 
             # Start the server fresh
             try:
@@ -735,10 +624,10 @@ class ThemeParkWebServer:
 
         page += "<div class=\"navbar\">"
         page += "<a href=\"/\">Theme Park Wait Times</a>"
-        page += "</div>"
         # Add gear icon using image for better sizing control
         page += "<div class=\"gear-icon\">"
         page += "<a href=\"/settings\"><img src=\"gear.png\" alt=\"Settings\"></a>"
+        page += "</div>"
         page += "</div>"
 
         # Main content
@@ -793,7 +682,6 @@ class ThemeParkWebServer:
 
                 # Update response data with parks
                 response_data["parks"] = parks
-                logger.debug(f"Using direct access for parks data - found {len(parks)} parks")
 
             except Exception as data_error:
                 logger.error(data_error, "Error accessing theme park data")
@@ -845,6 +733,166 @@ class ThemeParkWebServer:
             page += "<div class=\"options\">"
             page += "<h3 style=\"margin-top: 0; margin-bottom: 10px; text-align: left; padding-left: 20px;\">Display Options</h3>"
 
+            # Display Mode Selection
+            page += "<div class=\"form-group\">"
+            # page += "<h3 style=\"margin-top: 0; margin-bottom: 10px; text-align: left; padding-left: 20px;\">Display Mode</h3>"
+            
+            display_mode = settings.get("display_mode", "all_rides")
+            
+            # All Rides option
+            all_rides_checked = "checked" if display_mode == "all_rides" else ""
+            page += f"<div class=\"radio-group\"><input type=\"radio\" id=\"all_rides\" name=\"display_mode\" value=\"all_rides\" {all_rides_checked}>"
+            page += "<label for=\"all_rides\">Show All Rides</label></div>"
+            
+            # Single Ride option - disabled until a park is selected
+            single_ride_checked = "checked" if display_mode == "single_ride" else ""
+            # Check if we have a current park selected
+            has_current_park = "current_park" in response_data and response_data["current_park"]
+            disabled_attr = "" if has_current_park else "disabled"
+            page += f"<div class=\"radio-group\"><input type=\"radio\" id=\"single_ride\" name=\"display_mode\" value=\"single_ride\" {single_ride_checked} {disabled_attr}>"
+            page += "<label for=\"single_ride\">Show Single Ride"
+            if not has_current_park:
+                page += " (select a park first)"
+            page += "</label></div>"
+            
+            # Ride Selection Dropdown
+            selected_ride = settings.get("selected_ride_name", "")
+            ride_selector_style = "display: " + ("block" if display_mode == "single_ride" else "none")
+            
+            page += f"<div id=\"ride-selector\" style=\"{ride_selector_style}; margin-top: 10px; margin-bottom: 15px;\">"
+            page += "<label for=\"selected_ride_name\">Select Ride:</label>"
+            page += "<select name=\"selected_ride_name\" id=\"selected_ride_name\">"
+            
+            # Get available rides for the current park
+            current_park_rides = []
+            try:
+                if hasattr(self.app, 'theme_park_service') and current_park_id:
+                    # Get rides for the specific park
+                    if hasattr(self.app.theme_park_service, 'get_available_rides'):
+                        current_park_rides = self.app.theme_park_service.get_available_rides(current_park_id)
+                    elif hasattr(self.app.theme_park_service, 'park_list'):
+                        # Fallback: get rides from park object
+                        park = self.app.theme_park_service.park_list.get_park_by_id(current_park_id)
+                        if park and hasattr(park, 'rides'):
+                            current_park_rides = park.rides
+            except Exception as e:
+                logger.error(e, "Error getting rides for selector")
+            
+            # Add rides to dropdown
+            if current_park_rides:
+                for ride in current_park_rides:
+                    ride_name = ride.get("name", "")
+                    is_selected = "selected" if ride_name == selected_ride else ""
+                    page += f"<option value=\"{ride_name}\" {is_selected}>{ride_name}</option>"
+            else:
+                page += "<option value=\"\">No rides available</option>"
+                
+            page += "</select>"
+            page += "</div>"
+            
+            # Add JavaScript for toggling ride selector and updating rides when park changes
+            page += """
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var radios = document.querySelectorAll('input[name="display_mode"]');
+                    var rideSelector = document.getElementById('ride-selector');
+                    var parkSelect = document.getElementById('park-select');
+                    var rideSelect = document.getElementById('selected_ride_name');
+                    var singleRideRadio = document.getElementById('single_ride');
+                    var singleRideLabel = singleRideRadio.nextElementSibling;
+                    
+                    // Toggle ride selector visibility
+                    radios.forEach(function(radio) {
+                        radio.addEventListener('change', function() {
+                            rideSelector.style.display = (radio.value === 'single_ride') ? 'block' : 'none';
+                        });
+                    });
+                    
+                    // Fetch rides when park changes
+                    parkSelect.addEventListener('change', function() {
+                        var parkId = parkSelect.value;
+                        
+                        if (!parkId) {
+                            // No park selected
+                            singleRideRadio.disabled = true;
+                            singleRideLabel.textContent = 'Show Single Ride (select a park first)';
+                            return;
+                        }
+                        
+                        // Clear and disable ride selector, show updating message
+                        rideSelect.innerHTML = '<option value="">Updating...</option>';
+                        rideSelect.disabled = true;
+                        
+                        // Disable Single Ride option temporarily
+                        singleRideRadio.disabled = true;
+                        singleRideLabel.textContent = 'Show Single Ride (loading rides...)';
+                        
+                        // If Single Ride was selected, keep it selected but show loading
+                        if (singleRideRadio.checked) {
+                            rideSelector.style.display = 'block';
+                        }
+                        
+                        // Fetch park data asynchronously
+                        fetch('/api/park?id=' + parkId)
+                            .then(function(response) {
+                                if (!response.ok) {
+                                    throw new Error('Failed to fetch park data');
+                                }
+                                return response.json();
+                            })
+                            .then(function(data) {
+                                // Clear the ride selector
+                                rideSelect.innerHTML = '';
+                                
+                                if (data.rides && data.rides.length > 0) {
+                                    // Add rides to dropdown
+                                    data.rides.forEach(function(ride) {
+                                        var option = document.createElement('option');
+                                        option.value = ride.name;
+                                        option.textContent = ride.name;
+                                        rideSelect.appendChild(option);
+                                    });
+                                    
+                                    // Enable the ride selector and Single Ride option
+                                    rideSelect.disabled = false;
+                                    singleRideRadio.disabled = false;
+                                    singleRideLabel.textContent = 'Show Single Ride';
+                                } else {
+                                    // No rides available
+                                    rideSelect.innerHTML = '<option value="">No rides available</option>';
+                                    singleRideRadio.disabled = true;
+                                    singleRideLabel.textContent = 'Show Single Ride (no rides available)';
+                                    
+                                    // If Single Ride was selected, switch to All Rides
+                                    if (singleRideRadio.checked) {
+                                        document.getElementById('all_rides').checked = true;
+                                        rideSelector.style.display = 'none';
+                                    }
+                                }
+                            })
+                            .catch(function(error) {
+                                console.error('Error fetching park data:', error);
+                                rideSelect.innerHTML = '<option value="">Error loading rides</option>';
+                                singleRideRadio.disabled = true;
+                                singleRideLabel.textContent = 'Show Single Ride (error loading rides)';
+                                
+                                // If Single Ride was selected, switch to All Rides
+                                if (singleRideRadio.checked) {
+                                    document.getElementById('all_rides').checked = true;
+                                    rideSelector.style.display = 'none';
+                                }
+                            });
+                    });
+                });
+            </script>
+            """
+            
+            page += "</div>"
+            
+            # Skip Rides Section
+            page += "<div class=\"display-options\">"
+            # page += "<h3 style=\"margin-top: 10px; margin-bottom: 10px; text-align: left; padding-left: 20px;\">Display Options</h3>"
+            
             # Skip Closed Rides option - Fixed alignment with label
             page += "<div class=\"form-group checkbox-group\">"
 
@@ -961,7 +1009,6 @@ class ThemeParkWebServer:
             # This is more reliable in CircuitPython environment
             if hasattr(self.app, 'settings_manager') and hasattr(self.app.settings_manager, 'settings'):
                 response_data = {"settings": self.app.settings_manager.settings}
-                logger.debug("Using direct settings access - skipping event loop")
             else:
                 logger.error(None, "Settings manager not available")
                 response_data = {"settings": {}}
@@ -981,10 +1028,10 @@ class ThemeParkWebServer:
 
         page += "<div class=\"navbar\">"
         page += "<a href=\"/\">Theme Park Wait Times</a>"
-        page += "</div>"
         # Add gear icon using image for consistent styling with main page
         page += "<div class=\"gear-icon\">"
         page += "<a href=\"/settings\"><img src=\"gear.png\" alt=\"Settings\"></a>"
+        page += "</div>"
         page += "</div>"
 
         page += "<div class=\"main-content\">"
@@ -1069,7 +1116,6 @@ class ThemeParkWebServer:
         Decodes a percent-encoded string (e.g., 'Hello%20World') and plus signs ('+') to spaces,
         replicating urllib.parse.unquote's basic functionality compatible with CircuitPython.
         """
-        import binascii
         res = []
         i = 0
         length = len(encoded_str)
