@@ -119,6 +119,48 @@ class ThemeParkWebServer:
             else:
                 page = self.generate_settings_page()
             return Response(request, page, content_type="text/html")
+        
+        @self.server.route("/update", [POST])
+        def handle_update(request: Request):
+            """Handle OTA update request"""
+            try:
+                logger.info("OTA update requested via web interface")
+                
+                # Schedule update for next boot
+                self.app.ota_updater.check_for_update_to_install_during_next_reboot()
+                
+                # Create a simple response page
+                page = "<!DOCTYPE html><html><head>"
+                page += "<title>Update Started - Theme Park Waits</title>"
+                page += "<meta http-equiv='refresh' content='5;url=/'>'"
+                page += "</head><body>"
+                page += "<h2>Update Started</h2>"
+                page += "<p>The update has been scheduled. The device will restart shortly.</p>"
+                page += "<p>Please wait up to 10 minutes for the update to complete.</p>"
+                page += "<p><strong>Do not unplug the device!</strong></p>"
+                page += "</body></html>"
+                
+                # Send response before rebooting
+                response = Response(request, page, content_type="text/html")
+                
+                # Schedule reboot after a short delay
+                async def delayed_reboot():
+                    await asyncio.sleep(2)
+                    logger.info("Rebooting for OTA update...")
+                    if is_circuitpython():
+                        import supervisor
+                        supervisor.reload()
+                    else:
+                        logger.info("Dev mode - would reboot here")
+                
+                # Create task for delayed reboot (won't block response)
+                asyncio.create_task(delayed_reboot())
+                
+                return response
+                
+            except Exception as e:
+                logger.error(e, "Error initiating OTA update")
+                return Response(request, self.generate_settings_page(), content_type="text/html")
 
         @self.server.route("/api/park", [GET])
         def api_park(request: Request):
@@ -412,6 +454,14 @@ class ThemeParkWebServer:
             logger.debug(f"Updated scroll speed to {scroll_speed}")
             # No immediate action needed for scroll speed as it's read on demand when scrolling
 
+        # Handle use_prerelease checkbox
+        if "use_prerelease=" in query_params:
+            use_prerelease = "use_prerelease=on" in query_params
+            self.app.settings_manager.set("use_prerelease", use_prerelease)
+            # Update OTA updater with new setting
+            self.app.ota_updater.use_prerelease = use_prerelease
+            logger.debug(f"Updated use_prerelease to {use_prerelease}")
+        
         # Save settings
         try:
             if hasattr(self.app.theme_park_service, 'save_settings'):
@@ -990,9 +1040,60 @@ class ThemeParkWebServer:
 
         page += "<button type=\"submit\">Save Settings</button>"
         page += "</form>"
+        
+        # Add OTA update section
+        page += self._generate_ota_section()
 
         page += "</div></body></html>"
         return page
+    
+    def _generate_ota_section(self):
+        """Generate the OTA update section for settings page"""
+        parts = []
+        parts.append("<h2>Software Updates</h2>")
+        parts.append("<div class=\"software-section\">")
+        
+        try:
+            # Get current and latest versions
+            current_version = self.app.ota_updater.get_version("src")
+            latest_version = self.app.ota_updater.get_latest_version()
+            
+            parts.append(f"<p>Current version: <strong>{current_version}</strong></p>")
+            
+            # Check if update is available
+            if latest_version > current_version:
+                parts.append(f"<p>Update available: <strong>{latest_version}</strong></p>")
+                parts.append("<form action='/update' method='post'>")
+                parts.append("<p><strong>Warning:</strong> The display will be unresponsive during the update process.</p>")
+                parts.append("<ol>")
+                parts.append("<li>Click the button below to download and install the update</li>")
+                parts.append("<li>The web interface will stop responding immediately</li>")
+                parts.append("<li>The LED display may show random characters or go blank for up to 10 minutes</li>")
+                parts.append("<li><strong>Do not unplug the device during the update!</strong></li>")
+                parts.append("</ol>")
+                parts.append("<button type='submit' onclick=\"return confirm('Start update? The device will be unresponsive for several minutes.')\">Download and Install Update</button>")
+                parts.append("</form>")
+            else:
+                parts.append(f"<p>Software is up to date (latest: v{latest_version})</p>")
+                
+            # Add pre-release toggle for testing
+            if self.app.settings_manager.get("show_dev_options", False):
+                parts.append("<hr>")
+                parts.append("<h3>Developer Options</h3>")
+                use_prerelease = self.app.settings_manager.get("use_prerelease", False)
+                checked = "checked" if use_prerelease else ""
+                parts.append("<form action='/settings' method='get'>")
+                parts.append(f"<input type='checkbox' name='use_prerelease' id='use_prerelease' {checked}>")
+                parts.append("<label for='use_prerelease'>Check for pre-release versions (testing only)</label>")
+                parts.append("<button type='submit'>Update</button>")
+                parts.append("</form>")
+                
+        except Exception as e:
+            logger.error(e, "Error checking for updates")
+            parts.append("<p>Unable to check for updates. Please verify internet connection.</p>")
+            
+        parts.append("</div>")
+        return ''.join(parts)
 
     def _process_color_params(self, query_params: str) -> None:
         """

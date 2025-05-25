@@ -77,6 +77,23 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
             logger.error(e, f"Error handling request: {self.path}")
             self.send_error(500, f"Internal server error: {str(e)}")
     
+    def do_POST(self):
+        """Handle POST requests"""
+        try:
+            parsed_url = urllib.parse.urlparse(self.path)
+            path = parsed_url.path
+            
+            logger.debug(f"POST request: {path}")
+            
+            if path == "/update":
+                self.handle_update_request()
+            else:
+                self.send_error(404, "Not Found")
+                
+        except Exception as e:
+            logger.error(e, f"Error handling POST request: {self.path}")
+            self.send_error(500, f"Internal server error: {str(e)}")
+    
     def serve_static_file(self, path, content_type):
         """Serve a static file from the www directory"""
         # Strip leading slash
@@ -127,6 +144,39 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         self.send_header("Content-type", "text/html")
         self.end_headers()
         self.wfile.write(page.encode("utf-8"))
+    
+    def handle_update_request(self):
+        """Handle OTA update request"""
+        try:
+            logger.info("OTA update requested via web interface (dev mode)")
+            
+            if self.app_instance:
+                # Schedule update for next boot
+                self.app_instance.ota_updater.check_for_update_to_install_during_next_reboot()
+                
+                # Create response page
+                page = "<!DOCTYPE html><html><head>"
+                page += "<title>Update Started - Theme Park Waits (Dev)</title>"
+                page += "<meta http-equiv='refresh' content='5;url=/'>'"
+                page += "</head><body>"
+                page += "<h2>Update Started (Development Mode)</h2>"
+                page += "<p>In production, the device would restart now.</p>"
+                page += "<p>Update has been scheduled for next boot.</p>"
+                page += "<p><a href='/'>Return to main page</a></p>"
+                page += "</body></html>"
+                
+                self.send_response(200)
+                self.send_header("Content-type", "text/html")
+                self.end_headers()
+                self.wfile.write(page.encode("utf-8"))
+                
+                logger.info("Dev mode - would reboot here for OTA update")
+            else:
+                self.send_error(500, "App instance not available")
+                
+        except Exception as e:
+            logger.error(e, "Error initiating OTA update")
+            self.send_error(500, str(e))
     
     def serve_settings_page(self, query_params, query_string):
         """Serve the settings page"""
@@ -255,6 +305,14 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
                     app.settings_manager.settings["domain_name"] = domain_name
             except Exception as e:
                 logger.error(e, "Error updating domain name")
+        
+        # Process use_prerelease
+        if "use_prerelease=" in query_params:
+            use_prerelease = "use_prerelease=on" in query_params
+            app.settings_manager.set("use_prerelease", use_prerelease)
+            # Update OTA updater with new setting
+            app.ota_updater.use_prerelease = use_prerelease
+            logger.debug(f"Updated use_prerelease to {use_prerelease}")
         
         # Process brightness
         brightness_match = re.search(r'brightness_scale=([^&]+)', query_params)
@@ -704,8 +762,62 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         page += "<button type=\"submit\">Save Settings</button>"
         page += "</form>"
         
+        # Add OTA update section
+        page += self._generate_ota_section()
+        
         page += "</div></body></html>"
         return page
+    
+    def _generate_ota_section(self):
+        """Generate the OTA update section for settings page"""
+        parts = []
+        parts.append("<h2>Software Updates</h2>")
+        parts.append("<div class=\"software-section\">")
+        
+        app = self.app_instance
+        
+        try:
+            # Get current and latest versions
+            current_version = app.ota_updater.get_version("src")
+            latest_version = app.ota_updater.get_latest_version()
+            
+            parts.append(f"<p>Current version: <strong>{current_version}</strong></p>")
+            
+            # Check if update is available
+            if latest_version > current_version:
+                parts.append(f"<p>Update available: <strong>{latest_version}</strong></p>")
+                parts.append("<form action='/update' method='post'>")
+                parts.append("<p><strong>Warning:</strong> The display will be unresponsive during the update process.</p>")
+                parts.append("<ol>")
+                parts.append("<li>Click the button below to download and install the update</li>")
+                parts.append("<li>The web interface will stop responding immediately</li>")
+                parts.append("<li>The LED display may show random characters or go blank for up to 10 minutes</li>")
+                parts.append("<li><strong>Do not unplug the device!</strong></li>")
+                parts.append("</ol>")
+                parts.append("<button type='submit' onclick=\"return confirm('Start update? The device will be unresponsive for several minutes.')\">Download and Install Update</button>")
+                parts.append("</form>")
+            else:
+                parts.append(f"<p>Software is up to date (latest: v{latest_version})</p>")
+                
+            # Add pre-release toggle for testing
+            if app.settings_manager.get("show_dev_options", False):
+                parts.append("<hr>")
+                parts.append("<h3>Developer Options</h3>")
+                use_prerelease = app.settings_manager.get("use_prerelease", False)
+                checked = "checked" if use_prerelease else ""
+                parts.append("<form action='/settings' method='get'>")
+                parts.append(f"<input type='checkbox' name='use_prerelease' id='use_prerelease' {checked}>")
+                parts.append("<label for='use_prerelease'>Check for pre-release versions (testing only)</label>")
+                parts.append("<button type='submit'>Update</button>")
+                parts.append("</form>")
+                
+        except Exception as e:
+            logger.error(e, "Error checking for updates")
+            parts.append("<p>Unable to check for updates. Please verify internet connection.</p>")
+            parts.append(f"<p>Error: {str(e)}</p>")  # Dev mode - show error details
+            
+        parts.append("</div>")
+        return ''.join(parts)
 
 
 class DevThemeParkWebServer:

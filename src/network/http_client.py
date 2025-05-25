@@ -57,6 +57,10 @@ class Response:
                 logger.debug(f"Response text was: {self.text[:100]}...")
                 raise ValueError(f"syntax error in JSON: {str(e)}")
         return self._json
+    
+    def close(self):
+        """Close the response (no-op for compatibility)"""
+        pass
 
 
 class HttpClient:
@@ -332,3 +336,53 @@ class HttpClient:
         """
         self.use_live_data = use_live_data
         logger.info(f"HTTP client configured to use {'live' if use_live_data else 'mock'} data")
+    
+    def get_sync(self, url, headers=None, max_retries=3):
+        """
+        Synchronous wrapper for get() method for compatibility with legacy code
+        
+        Args:
+            url: The URL to fetch
+            headers: Optional headers dictionary
+            max_retries: Maximum number of retry attempts
+            
+        Returns:
+            Response object
+        """
+        import asyncio
+        
+        # Check if we're already in an event loop
+        try:
+            loop = asyncio.get_running_loop()
+            # We're in an async context, can't use asyncio.run
+            # Create a task and run it with a new event loop in a thread
+            import concurrent.futures
+            import threading
+            
+            result = None
+            exception = None
+            
+            def run_in_thread():
+                nonlocal result, exception
+                try:
+                    # Create a new event loop for this thread
+                    new_loop = asyncio.new_event_loop()
+                    asyncio.set_event_loop(new_loop)
+                    result = new_loop.run_until_complete(self.get(url, headers, max_retries))
+                    new_loop.close()
+                except Exception as e:
+                    exception = e
+            
+            thread = threading.Thread(target=run_in_thread)
+            thread.start()
+            thread.join(timeout=30)  # 30 second timeout
+            
+            if exception:
+                raise exception
+            if result is None:
+                raise TimeoutError("HTTP request timed out")
+            return result
+            
+        except RuntimeError:
+            # No event loop running, we can use asyncio.run
+            return asyncio.run(self.get(url, headers, max_retries))

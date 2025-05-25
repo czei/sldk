@@ -16,9 +16,15 @@ from src.utils.timer import Timer
 from src.network.wifi_manager import WiFiManager
 from src.utils.url_utils import load_credentials
 from src.ui.display_factory import is_dev_mode, is_circuitpython
+from src.ota.ota_updater import OTAUpdater
 
 # Initialize logger
 logger = ErrorHandler("error_log")
+
+# GitHub repository configuration for OTA updates
+GITHUBREPO = 'https://github.com/Czeiszperger/themeparkwaits.release'
+# TODO: Move token to a secure location
+TOKEN = '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'
 
 
 class ThemeParkApp:
@@ -42,6 +48,17 @@ class ThemeParkApp:
         self.message_queue = MessageQueue(display, 4)
         self.update_timer = Timer(300)  # Update every 5 minutes
         self.wifi_manager = WiFiManager(self.settings_manager)
+        
+        # Initialize OTA updater
+        # Check for pre-release flag in settings for testing
+        use_prerelease = self.settings_manager.get("use_prerelease", False)
+        self.ota_updater = OTAUpdater(
+            http_client, 
+            GITHUBREPO, 
+            main_dir="src",
+            headers={'Authorization': f'token {TOKEN}'},
+            use_prerelease=use_prerelease
+        )
         
         # Initialize socket_pool differently based on platform
         if is_dev_mode():
@@ -71,6 +88,9 @@ class ThemeParkApp:
 
         # Show splash screen first before any network operations
         await self.display.show_splash(4)
+        
+        # Check for pending OTA update before starting main app
+        await self._check_and_install_pending_update()
 
         # Create a task for network and data initialization (runs in background)
         # TODO: Figure out how to make the initialization process async to talk to an event-drive display to update users.
@@ -113,7 +133,7 @@ class ThemeParkApp:
 
             # Pass a lambda that calls is_wifi_password_configured instead of calling it directly
             asyncio.run(asyncio.gather(
-                self.wifi_manager.run_web_server(lambda: self.is_wifi_password_configured()),
+                self.wifi_manager.run_web_server(lambda: is_wifi_password_configured()),
                 self.run_configure_wifi_message()
             ))
 
@@ -157,9 +177,49 @@ class ThemeParkApp:
                 await self.display.show_scroll_message("WiFi Failed - Check settings")
 
     async def run_configure_wifi_message(self):
-        while self.is_wifi_password_configured() is False:
+        while is_wifi_password_configured() is False:
             setup_text = f"Connect your phone to Wifi channel {self.wifi_manager.AP_SSID}, password \"{self.wifi_manager.AP_PASSWORD}\". Then load page http://192.168.4.1"
             await self.display.show_scroll_message(setup_text)
+    
+    async def _check_and_install_pending_update(self):
+        """Check if an OTA update was downloaded and needs installation"""
+        try:
+            if self.ota_updater.update_available_at_boot():
+                logger.info("Pending OTA update found, installing...")
+                
+                # Set progress callback to show on display
+                async def show_progress(msg):
+                    await self.display.show_scroll_message(msg)
+                    await asyncio.sleep(0.1)  # Brief pause for display
+                
+                self.ota_updater.update_progress_callback = lambda msg: asyncio.create_task(show_progress(msg))
+                
+                await self.display.show_scroll_message("Installing update... Do not unplug!")
+                await asyncio.sleep(2)
+                
+                # Since we need network for installation, check if WiFi is configured
+                if is_wifi_password_configured():
+                    ssid, password = load_credentials()
+                    # Note: install_update_if_available_after_boot expects sync code
+                    # We'll need to handle this carefully
+                    if self.ota_updater.install_update_if_available_after_boot(ssid, password):
+                        await self.display.show_scroll_message("Update complete! Rebooting...")
+                        await asyncio.sleep(2)
+                        
+                        # Reboot the device
+                        if is_circuitpython():
+                            import supervisor
+                            supervisor.reload()
+                        else:
+                            logger.info("Dev mode - would reboot here")
+                else:
+                    logger.warning("OTA update pending but WiFi not configured")
+                    await self.display.show_scroll_message("Update pending - configure WiFi first")
+                    await asyncio.sleep(3)
+                    
+        except Exception as e:
+            logger.error(e, "Error checking for pending OTA update")
+            # Continue booting even if OTA check fails
 
     async def try_wifi_until_connected(self):
         # Skip in dev mode

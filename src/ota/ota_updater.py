@@ -1,8 +1,10 @@
-import os, gc
-import adafruit_requests
-import socketpool
-import wifi
-import ssl
+import os
+import gc
+import time
+from src.utils.error_handler import ErrorHandler
+
+# Initialize logger
+logger = ErrorHandler("error_log")
 
 class OTAUpdater:
     """
@@ -10,9 +12,7 @@ class OTAUpdater:
     optimized for low power usage.
     """
 
-    def __init__(self, http_client_param, github_repo, github_src_dir='', module='', main_dir='main', new_version_dir='next', secrets_file=None, headers={}):
-        # self.http_client = adafruit_requests.Session(socketpool.SocketPool(wifi.radio), ssl.create_default_context())
-        # self.http_client = HttpClient(headers=headers)
+    def __init__(self, http_client_param, github_repo, github_src_dir='', module='', main_dir='main', new_version_dir='next', secrets_file=None, headers={}, use_prerelease=False):
         self.headers = headers
         self.http_client = http_client_param
         self.github_repo = github_repo.rstrip('/').replace('https://github.com/', '')
@@ -21,6 +21,8 @@ class OTAUpdater:
         self.main_dir = main_dir
         self.new_version_dir = new_version_dir
         self.secrets_file = secrets_file
+        self.use_prerelease = use_prerelease  # Support pre-releases for testing
+        self.update_progress_callback = None  # Callback for update progress
 
     def __del__(self):
         self.http_client = None
@@ -41,11 +43,11 @@ class OTAUpdater:
 
         (current_version, latest_version) = self.check_for_new_version()
         if latest_version > current_version:
-            print('New version available, will download and install on next reboot')
+            logger.info('New version available, will download and install on next reboot')
             self._create_new_version_file(latest_version)
             return True
         else:
-            print(f'New version not available: {current_version}:{latest_version}')
+            logger.info(f'No update available. Current: {current_version}, Latest: {latest_version}')
 
         return False
 
@@ -66,12 +68,12 @@ class OTAUpdater:
         if self.new_version_dir in os.listdir(self.module):
             if '.version' in os.listdir(self.modulepath(self.new_version_dir)):
                 latest_version = self.get_version(self.modulepath(self.new_version_dir), '../.version')
-                print('New update found: ', latest_version)
+                logger.info(f'New update found: {latest_version}')
                 OTAUpdater._using_network(ssid, password)
                 self.install_update_if_available()
                 return True
             
-        print('No new updates found...')
+        logger.info('No new updates found...')
         return False
 
     def install_update_if_available(self):
@@ -100,21 +102,17 @@ class OTAUpdater:
 
     @staticmethod
     def _using_network(ssid, password):
-        import wifi
-        if not wifi.radio.connected:
-            print('connecting to network...')
-            wifi.radio.connect(ssid, password)
-            while not wifi.radio.connected:
-                pass
-        print('network config:', wifi.radio.ap_info)
+        # In current codebase, WiFi should already be connected by WiFiManager
+        # This method is kept for compatibility but may not be needed
+        logger.info("WiFi connection should already be established by WiFiManager")
 
     def check_for_new_version(self):
         current_version = self.get_version(self.modulepath(self.main_dir))
         latest_version = self.get_latest_version()
 
-        print('Checking version... ')
-        print('\tCurrent version: ', current_version)
-        print('\tLatest version: ', latest_version)
+        logger.info('Checking version... ')
+        logger.info(f'\tCurrent version: {current_version}')
+        logger.info(f'\tLatest version: {latest_version}')
         return (current_version, latest_version)
 
     def _create_new_version_file(self, latest_version):
@@ -131,83 +129,179 @@ class OTAUpdater:
         return '0.0'
 
     def get_latest_version(self):
-        url = "https://api.github.com/repos/{}/releases/latest".format(self.github_repo)
-        print(f"Checking git release number at: {url}")
-        latest_release = self.http_client.get('https://api.github.com/repos/{}/releases/latest'.format(self.github_repo), headers=self.headers)
-        gh_json = latest_release.json()
-        # print(f"Raw Github data: {gh_json}")
-        try:
-            version = gh_json['tag_name']
-        except KeyError as e:
-            raise ValueError(
-                "Release not found: \n",
-                "Please ensure release as marked as 'latest', rather than pre-release \n",
-                "github api message: \n {} \n ".format(gh_json)
-            )
-        latest_release.close()
-        return version
+        if self.use_prerelease:
+            # Get all releases including pre-releases for testing
+            url = "https://api.github.com/repos/{}/releases".format(self.github_repo)
+            logger.info(f"Checking all releases (including pre-releases) at: {url}")
+            
+            try:
+                response = self.http_client.get_sync(url, headers=self.headers)
+                releases = response.json()
+                response.close()
+                
+                if releases and len(releases) > 0:
+                    # Get the first release (most recent)
+                    version = releases[0]['tag_name']
+                    is_prerelease = releases[0].get('prerelease', False)
+                    logger.info(f"Found {'pre-release' if is_prerelease else 'release'}: {version}")
+                    return version
+                else:
+                    raise ValueError("No releases found")
+                    
+            except Exception as e:
+                logger.error(e, "Error fetching releases")
+                raise ValueError(f"Error fetching releases: {e}")
+        else:
+            # Get only the latest stable release
+            url = "https://api.github.com/repos/{}/releases/latest".format(self.github_repo)
+            logger.info(f"Checking latest stable release at: {url}")
+            
+            try:
+                response = self.http_client.get_sync(url, headers=self.headers)
+                gh_json = response.json()
+                response.close()
+                
+                version = gh_json['tag_name']
+                logger.info(f"Found latest stable release: {version}")
+                return version
+                
+            except KeyError as e:
+                raise ValueError(
+                    "Release not found. Please ensure release is marked as 'latest', not pre-release"
+                )
+            except Exception as e:
+                logger.error(e, "Error fetching latest release")
+                raise ValueError(f"Error fetching latest release: {e}")
 
     def _download_new_version(self, version):
-        print('Downloading version {}'.format(version))
+        logger.info(f'Downloading version {version}')
+        if self.update_progress_callback:
+            self.update_progress_callback("Starting download...")
+        
         self._download_all_files(version)
-        print('Version {} downloaded to {}'.format(version, self.modulepath(self.new_version_dir)))
+        
+        logger.info(f'Version {version} downloaded to {self.modulepath(self.new_version_dir)}')
+        if self.update_progress_callback:
+            self.update_progress_callback("Download complete!")
 
     def _download_all_files(self, version, sub_dir=''):
-        url = 'https://api.github.com/repos/{}/contents{}{}{}?ref=refs/tags/{}'.format(self.github_repo, self.github_src_dir, self.main_dir, sub_dir, version)
-        print(f"Fetching file list from {url}")
+        url = 'https://api.github.com/repos/{}/contents{}{}{}?ref=refs/tags/{}'.format(
+            self.github_repo, self.github_src_dir, self.main_dir, sub_dir, version
+        )
+        logger.debug(f"Fetching file list from {url}")
         gc.collect()
-        file_list = self.http_client.get(url,headers=self.headers)
-        file_list_json = file_list.json()
-        #print(f"List of files to copy {file_list_json}")
+        
+        try:
+            response = self.http_client.get_sync(url, headers=self.headers)
+            file_list_json = response.json()
+            response.close()
+        except Exception as e:
+            logger.error(e, f"Error fetching file list from {url}")
+            raise
+        
+        # Count total files for progress
+        file_count = sum(1 for f in file_list_json if f['type'] == 'file')
+        files_downloaded = 0
+        
         for file in file_list_json:
-            # print(f"Copying file {file.name}")
             path = self.modulepath(self.new_version_dir + '/' + file['path'].replace(self.main_dir + '/', '').replace(self.github_src_dir, ''))
+            
             if file['type'] == 'file':
                 gitPath = file['path']
-                print('\tDownloading: ', gitPath, 'to', path)
-                self._download_file(version, gitPath, path)
+                
+                # Check if file needs to be downloaded (compare with existing if possible)
+                needs_download = True
+                existing_path = self.modulepath(self.main_dir + '/' + file['path'].replace(self.main_dir + '/', '').replace(self.github_src_dir, ''))
+                
+                # For now, always download. In future, could compare SHA hashes
+                if needs_download:
+                    logger.info(f'Downloading: {gitPath}')
+                    if self.update_progress_callback:
+                        files_downloaded += 1
+                        progress_msg = f"Downloading {files_downloaded}/{file_count}: {os.path.basename(gitPath)}"
+                        self.update_progress_callback(progress_msg)
+                    
+                    self._download_file(version, gitPath, path)
+                    
             elif file['type'] == 'dir':
-                print('Creating dir', path)
+                logger.debug(f'Creating directory: {path}')
                 self.mkdir(path)
                 self._download_all_files(version, sub_dir + '/' + file['name'])
+                
+            # Aggressive garbage collection to manage memory
             gc.collect()
 
-        file_list.close()
-
     def _download_file(self, version, gitPath, path):
-        response = self.http_client.get('https://raw.githubusercontent.com/{}/{}/{}'.format(self.github_repo, version, gitPath), headers=self.headers)
-        file = open(path, "wb")
-        file.write(response.content)
-        file.close()
-        print("File downloaded successfully.")
+        try:
+            url = 'https://raw.githubusercontent.com/{}/{}/{}'.format(self.github_repo, version, gitPath)
+            response = self.http_client.get_sync(url, headers=self.headers)
+            
+            # Write file in chunks to manage memory
+            with open(path, "wb") as file:
+                # If response has content attribute, use it
+                if hasattr(response, 'content'):
+                    file.write(response.content)
+                else:
+                    # Otherwise read in chunks
+                    chunk_size = 512
+                    while True:
+                        chunk = response.read(chunk_size)
+                        if not chunk:
+                            break
+                        file.write(chunk)
+                        gc.collect()
+            
+            response.close()
+            logger.debug(f"Downloaded {gitPath} successfully")
+            
+        except Exception as e:
+            logger.error(e, f"Error downloading file {gitPath}")
+            # Clean up partial file
+            try:
+                os.remove(path)
+            except:
+                pass
+            raise
 
     def _copy_secrets_file(self):
-        if self.secrets_file:
-            fromPath = self.modulepath(self.main_dir + '/' + self.secrets_file)
-            toPath = self.modulepath(self.new_version_dir + '/' + self.secrets_file)
-            print('Copying secrets file from {} to {}'.format(fromPath, toPath))
-            self._copy_file(fromPath, toPath)
-            print('Copied secrets file from {} to {}'.format(fromPath, toPath))
+        """Copy secrets.py and settings.json to preserve user configuration"""
+        files_to_preserve = ['secrets.py', 'settings.json']
+        
+        for filename in files_to_preserve:
+            fromPath = self.modulepath(self.main_dir + '/' + filename)
+            toPath = self.modulepath(self.new_version_dir + '/' + filename)
+            
+            # Check if file exists before copying
+            if self._exists_file(fromPath):
+                logger.info(f'Preserving {filename}')
+                try:
+                    self._copy_file(fromPath, toPath)
+                    logger.debug(f'Copied {filename} successfully')
+                except Exception as e:
+                    logger.error(e, f'Error copying {filename}')
+                    # Continue with update even if settings can't be copied
+            else:
+                logger.debug(f'{filename} not found, skipping')
 
     def _delete_old_version(self):
-        print('Deleting old version at {} ...'.format(self.modulepath(self.main_dir)))
+        logger.info('Deleting old version at {} ...'.format(self.modulepath(self.main_dir)))
         self._rmtree(self.modulepath(self.main_dir))
-        print('Deleted old version at {} ...'.format(self.modulepath(self.main_dir)))
+        logger.info('Deleted old version at {} ...'.format(self.modulepath(self.main_dir)))
 
     def _install_new_version(self):
-        print('Installing new version at {} ...'.format(self.modulepath(self.main_dir)))
+        logger.info('Installing new version at {} ...'.format(self.modulepath(self.main_dir)))
         if self._os_supports_rename():
-            print(f"Renaming {self.new_version_dir} to {self.modulepath(self.main_dir)}")
+            logger.info(f"Renaming {self.new_version_dir} to {self.modulepath(self.main_dir)}")
             os.rename(self.modulepath(self.new_version_dir), self.modulepath(self.main_dir))
         else:
-            print(f"Copying individual files from {self.new_version_dir} to {self.modulepath(self.main_dir)}")
+            logger.info(f"Copying individual files from {self.new_version_dir} to {self.modulepath(self.main_dir)}")
             self._copy_directory(self.modulepath(self.new_version_dir), self.modulepath(self.main_dir))
             self._rmtree(self.modulepath(self.new_version_dir))
-        print('Update installed, please reboot now')
+        logger.info('Update installed, please reboot now')
 
     def _rmtree(self, directory):
         for entry in os.listdir(directory):
-            print(f"Deleting file {directory + '/' + entry}")
+            logger.debug(f"Deleting file {directory + '/' + entry}")
             stat = os.stat(directory + '/' + entry)
             is_dir = (stat[0] & 0o170000) == 0o040000
             if is_dir:
@@ -230,16 +324,16 @@ class OTAUpdater:
         if not self._exists_dir(toPath):
             self._mk_dirs(toPath)
 
-        print(f"Copying directory {fromPath} to {toPath}")
+        logger.debug(f"Copying directory {fromPath} to {toPath}")
         for entry in os.listdir(fromPath):
             stat = os.stat(fromPath+ '/' + entry)
             is_dir = (stat[0] & 0o170000) == 0o040000
             is_dir = (stat[0] & 0x4000) != 0
             if is_dir:
-                print(f"Calling copy_directory again {fromPath} to {toPath}")
+                logger.debug(f"Recursively copying directory {fromPath}/{entry} to {toPath}/{entry}")
                 self._copy_directory(fromPath + '/' + entry, toPath + '/' + entry)
             else:
-                print(f"Copying file {fromPath}/{entry} to {toPath}/{entry}" )
+                logger.debug(f"Copying file {fromPath}/{entry} to {toPath}/{entry}" )
                 self._copy_file(fromPath + '/' + entry, toPath + '/' + entry)
 
     def _copy_file(self, fromPath, toPath):
@@ -256,6 +350,14 @@ class OTAUpdater:
     def _exists_dir(self, path):
         try:
             os.listdir(path)
+            return True
+        except:
+            return False
+    
+    def _exists_file(self, path):
+        """Check if a file exists"""
+        try:
+            os.stat(path)
             return True
         except:
             return False
