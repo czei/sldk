@@ -6,7 +6,7 @@ import pytest
 import asyncio
 from unittest.mock import patch, MagicMock, AsyncMock, call
 
-from src.network.http_client import HttpClient, Response
+from src.network.http_client import HttpClient
 
 
 class TestHttpClientErrors:

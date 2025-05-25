@@ -67,177 +67,31 @@ Scroll message: Choose theme park at http://themeparkwaits.local
 Text length: 48, height %: 0.40, scale: 2.37
 Rendered text at size: 2685x128
 Set scroll speed: 0.03 seconds between frames
-GET request: / with params: 
-Web: "GET / HTTP/1.1" 200 -
+Adding splash message to queue
+Scroll message: Choose theme park at http://themeparkwaits.local
+Text length: 48, height %: 0.40, scale: 2.37
+Rendered text at size: 2685x128
+Set scroll speed: 0.03 seconds between frames
 GET request: /style.css with params: 
 Web: "GET /style.css HTTP/1.1" 200 -
 GET request: /gear.png with params: 
 Web: "GET /gear.png HTTP/1.1" 200 -
-GET request: /apple-touch-icon-precomposed.png with params: 
 GET request: /apple-touch-icon-precomposed.png with params: 
 GET request: /apple-touch-icon-precomposed.png with params: 
 GET request: /apple-touch-icon.png with params: 
 GET request: /favicon.ico with params: 
 Web: "GET /favicon.ico HTTP/1.1" 404 -
 GET request: /apple-touch-icon-precomposed.png with params: 
-GET request: /apple-touch-icon-precomposed.png with params: 
-GET request: /apple-touch-icon.png with params: 
 GET request: /apple-touch-icon.png with params: 
 GET request: /apple-touch-icon-precomposed.png with params: 
 GET request: /apple-touch-icon.png with params: 
+GET request: /apple-touch-icon-precomposed.png with params: 
 GET request: /apple-touch-icon.png with params: 
+GET request: /apple-touch-icon-precomposed.png with params: 
 GET request: /apple-touch-icon-precomposed.png with params: 
 GET request: /apple-touch-icon.png with params: 
 GET request: /apple-touch-icon.png with params: 
-GET request: /settings with params: 
-Checking latest stable release at: https://api.github.com/repos/Czeiszperger/themeparkwaits.release/releases/latest
-Found latest stable release: 1.9
-Web: "GET /settings HTTP/1.1" 200 -
-GET request: /style.css with params: 
-Web: "GET /style.css HTTP/1.1" 200 -
-GET request: /gear.png with params: 
-Web: "GET /gear.png HTTP/1.1" 200 -
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-GET request: / with params: 
-Web: "GET / HTTP/1.1" 200 -
-GET request: /style.css with params: 
-Web: "GET /style.css HTTP/1.1" 200 -
-GET request: /gear.png with params: 
-Web: "GET /gear.png HTTP/1.1" 200 -
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
+GET request: /apple-touch-icon.png with params: 
 GET request: / with params: 
 Web: "GET / HTTP/1.1" 200 -
 GET request: /style.css with params: 
@@ -260,45 +114,40 @@ Scroll message: Choose theme park at http://themeparkwaits.local
 Text length: 48, height %: 0.40, scale: 2.37
 Rendered text at size: 2685x128
 Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-GET request: / with params: 
-Web: "GET / HTTP/1.1" 200 -
-GET request: /style.css with params: 
-Web: "GET /style.css HTTP/1.1" 200 -
-GET request: /gear.png with params: 
-Web: "GET /gear.png HTTP/1.1" 200 -
-GET request: / with params: 
-Web: "GET / HTTP/1.1" 200 -
-GET request: /style.css with params: 
-Web: "GET /style.css HTTP/1.1" 200 -
-GET request: /gear.png with params: 
-Web: "GET /gear.png HTTP/1.1" 200 -
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
-Adding splash message to queue
-Scroll message: Choose theme park at http://themeparkwaits.local
-Text length: 48, height %: 0.40, scale: 2.37
-Rendered text at size: 2685x128
-Set scroll speed: 0.03 seconds between frames
+Application terminated:
+stack trace:Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/base_events.py", line 720, in run_until_complete
+    return future.result()
+           ~~~~~~~~~~~~~^^
+  File "/Users/czei/Projects/Disney/ThemeParkAPI/theme_park_main.py", line 110, in main
+    await app.run()
+  File "/Users/czei/Projects/Disney/ThemeParkAPI/src/app.py", line 665, in run
+    await self.run_display_loop()
+  File "/Users/czei/Projects/Disney/ThemeParkAPI/src/app.py", line 561, in run_display_loop
+    await self.message_queue.show()
+  File "/Users/czei/Projects/Disney/ThemeParkAPI/src/ui/message_queue.py", line 177, in show
+    await asyncio.create_task(
+        self.func_queue[self.index](self.param_queue[self.index]))
+  File "/Users/czei/Projects/Disney/ThemeParkAPI/src/ui/simulator_display.py", line 436, in show_scroll_message
+    await asyncio.sleep(estimated_scroll_time)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/tasks.py", line 718, in sleep
+    return await future
+           ^^^^^^^^^^^^
+asyncio.exceptions.CancelledError
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/Users/czei/Projects/Disney/ThemeParkAPI/theme_park_main.py", line 118, in <module>
+    asyncio.run(main())
+    ~~~~~~~~~~~^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 194, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 123, in run
+    raise KeyboardInterrupt()
+KeyboardInterrupt
+

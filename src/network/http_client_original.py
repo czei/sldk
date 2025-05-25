@@ -1,59 +1,86 @@
 """
-HTTP client for making API requests - Refactored version
+HTTP client for making API requests.
 Copyright 2024 3DUPFitters LLC
 """
 import json
-import gc
+import adafruit_requests
+import ssl
+import socketpool
+import wifi
 from src.utils.error_handler import ErrorHandler
 
 # Initialize logger
 logger = ErrorHandler("error_log")
 
 
-class BaseResponse:
-    """Base class for all response types with common functionality"""
+class Response:
+    """HTTP response object"""
     
-    def __init__(self, status_code=200, text="", content=None):
+    def __init__(self, status_code= 200, text= "", content=None):
         """
         Initialize a response
         
         Args:
             status_code: The HTTP status code
-            text: The response body as text
+            text: The response body text
             content: The response body as bytes (optional)
         """
         self.status_code = status_code
         self.text = text
-        self.content = content if content is not None else text.encode('utf-8')
-        self._json_cache = None
-        self._read_position = 0
+        self._json = None
+        # Store content as bytes if provided, otherwise convert text to bytes
+        if content is not None:
+            self.content = content
+        else:
+            self.content = text.encode('utf-8') if text else b""
+        # Don't create session here - it should be done after WiFi is connected
+
         
     def json(self):
-        """Parse the response as JSON"""
-        if self._json_cache is None:
+        """
+        Parse the response body as JSON with error handling
+        
+        Returns:
+            The parsed JSON data
+            
+        Raises:
+            ValueError: If the text cannot be parsed as JSON
+        """
+        if self._json is None:
             try:
-                # Strip any BOM or whitespace
+                # Strip any BOM or whitespace that might cause parsing issues
                 text_to_parse = self.text.strip()
                 if text_to_parse.startswith('\ufeff'):
                     text_to_parse = text_to_parse[1:]
                 
                 # Handle empty responses
                 if not text_to_parse:
-                    self._json_cache = {}
-                    return self._json_cache
+                    return {}
                     
-                self._json_cache = json.loads(text_to_parse)
+                self._json = json.loads(text_to_parse)
             except json.JSONDecodeError as e:
                 logger.error(e, f"JSON parse error: {str(e)}")
+                logger.debug(f"Response text was: {self.text[:100]}...")
                 raise ValueError(f"syntax error in JSON: {str(e)}")
-        return self._json_cache
+        return self._json
     
     def close(self):
-        """Close the response (no-op by default)"""
+        """Close the response (no-op for compatibility)"""
         pass
-        
+    
     def read(self, size=-1):
-        """Read bytes from the content"""
+        """
+        Read bytes from the response content
+        
+        Args:
+            size: Number of bytes to read, or -1 for all
+            
+        Returns:
+            Bytes read from content
+        """
+        if not hasattr(self, '_read_position'):
+            self._read_position = 0
+            
         if size == -1:
             # Read all remaining content
             result = self.content[self._read_position:]
@@ -64,33 +91,6 @@ class BaseResponse:
             self._read_position += len(result)
             
         return result
-
-
-class UrllibResponse(BaseResponse):
-    """Wrapper for urllib responses to match adafruit_requests interface"""
-    
-    def __init__(self, urllib_response):
-        """
-        Wrap a urllib response to provide adafruit_requests-compatible interface
-        
-        Args:
-            urllib_response: The urllib response object
-        """
-        # Read content once and cache it
-        content = urllib_response.read()
-        # Try to decode as text, but handle binary content
-        try:
-            text = content.decode('utf-8')
-        except UnicodeDecodeError:
-            text = ""  # Binary content, no text representation
-        
-        # Initialize base class with the extracted data
-        super().__init__(urllib_response.status, text, content)
-
-
-class MockResponse(BaseResponse):
-    """Mock response for development mode testing"""
-    # No additional code needed - inherits everything from BaseResponse!
 
 
 class HttpClient:
@@ -140,7 +140,7 @@ class HttpClient:
             max_retries: Maximum number of retry attempts
 
         Returns:
-            A Response object (native adafruit_requests, UrllibResponse, or MockResponse)
+            A Response object
         """
         if headers is None:
             headers = {
@@ -157,6 +157,7 @@ class HttpClient:
             # Check if we're getting the park list
             if url == "https://queue-times.com/parks.json":
                 # Return a properly formatted park list for the ThemeParkList class
+                # Note: ThemeParkList expects a specific structure matching queue-times.com API
                 mock_data = """[
                     {
                         "name": "Disney Parks",
@@ -181,7 +182,7 @@ class HttpClient:
                         ]
                     }
                 ]"""
-                return MockResponse(status_code=200, text=mock_data)
+                return Response(status_code=200, text=mock_data)
 
             # Check if we're getting a specific park
             elif "/parks/" in url and "/queue_times.json" in url:
@@ -200,7 +201,7 @@ class HttpClient:
                             if os.path.exists(test_data_path):
                                 with open(test_data_path, "r") as f:
                                     mock_data = f.read()
-                                    return MockResponse(status_code=200, text=mock_data)
+                                    return Response(status_code=200, text=mock_data)
                         except Exception as e:
                             logger.error(e, "Error loading Magic Kingdom test data, using fallback mock data")
                             
@@ -212,7 +213,7 @@ class HttpClient:
                             if os.path.exists(test_data_path):
                                 with open(test_data_path, "r") as f:
                                     mock_data = f.read()
-                                    return MockResponse(status_code=200, text=mock_data)
+                                    return Response(status_code=200, text=mock_data)
                         except Exception as e:
                             logger.error(e, "Error loading EPCOT test data, using fallback mock data")
 
@@ -222,15 +223,15 @@ class HttpClient:
                         {"id": 102, "name": "Haunted Mansion", "is_open": true, "wait_time": 30, "last_updated": "2023-04-12T10:35:00Z"},
                         {"id": 103, "name": "Pirates of the Caribbean", "is_open": true, "wait_time": 20, "last_updated": "2023-04-12T10:40:00Z"}
                     ]}]}"""
-                    return MockResponse(status_code=200, text=mock_data)
+                    return Response(status_code=200, text=mock_data)
 
             # For any other URL, return empty response
-            return MockResponse(status_code=200, text="{}")
+            return Response(status_code=200, text="{}")
 
         while retry_count < max_retries:
             try:
                 if self.using_adafruit and self.session:
-                    # For Adafruit CircuitPython requests - return native response
+                    # For Adafruit CircuitPython requests
                     try:
                         # Import OutOfRetries exception to explicitly handle it
                         try:
@@ -242,10 +243,22 @@ class HttpClient:
                             out_of_retries_exception = OutOfRetries
 
                         try:
-                            # Return the native adafruit_requests response directly
                             resp = self.session.get(url, headers=headers)
-                            return resp
-                            
+                            # For adafruit_requests, we need to capture content before closing
+                            status = resp.status_code
+                            text = resp.text if hasattr(resp, 'text') else ""
+                            # Try to get raw content if available
+                            content = None
+                            if hasattr(resp, 'content'):
+                                content = resp.content
+                            elif hasattr(resp, '_raw') and hasattr(resp._raw, 'data'):
+                                content = resp._raw.data
+                            resp.close()
+                            return Response(
+                                status_code=status,
+                                text=text,
+                                content=content
+                            )
                         except out_of_retries_exception as retry_error:
                             # Special handling for OutOfRetries - needs longer retry delay
                             logger.error(retry_error, f"Socket failures detected (attempt {retry_count+1}) - WiFi issues likely")
@@ -257,9 +270,6 @@ class HttpClient:
                             # Try to reset the session if possible
                             try:
                                 # Get a new session from socket pool
-                                import socketpool
-                                import wifi
-                                import ssl
                                 pool = socketpool.SocketPool(wifi.radio)
                                 ssl_context = ssl.create_default_context()
                                 import adafruit_requests
@@ -277,11 +287,16 @@ class HttpClient:
                         last_error = adafruit_error
                         retry_count += 1
                 else:
-                    # For standard Python urllib - wrap response
+                    # For standard Python urllib
                     try:
                         request = self.urllib.Request(url, headers=headers)
                         with self.urllib.urlopen(request) as response:
-                            return UrllibResponse(response)
+                            content = response.read()
+                            return Response(
+                                status_code=response.status,
+                                text=content.decode('utf-8'),
+                                content=content
+                            )
                     except self.URLError as url_error:
                         logger.error(url_error, f"URLError (attempt {retry_count+1})")
                         last_error = url_error
@@ -303,10 +318,10 @@ class HttpClient:
                 import asyncio
                 await asyncio.sleep(2 * retry_count)  # Exponential backoff
 
-        # All retries failed - return mock error response
+        # All retries failed - return empty Response with error status
         error_msg = str(last_error) if last_error else "Unknown error"
         logger.error(None, f"All {max_retries} GET attempts to {url} failed: {error_msg}")
-        return MockResponse(status_code=500, text="{}")
+        return Response(status_code=500, text="{}")
             
     async def post(self, url, data, headers=None):
         """
@@ -318,7 +333,7 @@ class HttpClient:
             headers: Optional headers to include
             
         Returns:
-            A Response object (native or wrapped)
+            A Response object
         """
         if headers is None:
             headers = {
@@ -332,11 +347,13 @@ class HttpClient:
             
         try:
             if self.using_adafruit:
-                # Return native adafruit_requests response
                 resp = self.session.post(url, data=data, headers=headers)
-                return resp
+                return Response(
+                    status_code=resp.status_code,
+                    text=resp.text
+                )
             else:
-                # Use stdlib for non-CircuitPython - wrap response
+                # Use stdlib for non-CircuitPython
                 request = self.urllib.Request(
                     url, 
                     data=data.encode('utf-8') if isinstance(data, str) else data,
@@ -344,11 +361,14 @@ class HttpClient:
                     method="POST"
                 )
                 with self.urllib.urlopen(request) as response:
-                    return UrllibResponse(response)
+                    return Response(
+                        status_code=response.status,
+                        text=response.read().decode('utf-8')
+                    )
                     
         except Exception as e:
             logger.error(e, f"Error making POST request to {url}")
-            return MockResponse(status_code=500, text=str(e))
+            return Response(status_code=500, text=str(e))
     
     def set_use_live_data(self, use_live_data):
         """
@@ -370,9 +390,10 @@ class HttpClient:
             max_retries: Maximum number of retry attempts
             
         Returns:
-            Response object (native or wrapped)
+            Response object
         """
         # Collect garbage before making request to free up memory
+        import gc
         gc.collect()
         
         # Since CircuitPython HTTP requests are already synchronous,
@@ -388,32 +409,58 @@ class HttpClient:
         while retry_count < max_retries:
             try:
                 if self.using_adafruit and self.session:
-                    # CircuitPython with adafruit_requests - return native response
+                    # CircuitPython with adafruit_requests - already synchronous
+                    # Force garbage collection before each request attempt
                     gc.collect()
                     
                     resp = None
                     try:
                         logger.debug(f"Making synchronous GET request to {url}")
                         resp = self.session.get(url, headers=headers)
-                        # Return the native response - let the caller handle it
-                        return resp
-                    except Exception as e:
+                        # Create response object and immediately clean up
+                        status = resp.status_code
+                        
+                        # For raw GitHub content, we need to handle binary data
+                        if "raw.githubusercontent.com" in url:
+                            # For binary files, don't try to decode as text
+                            content = resp.content if hasattr(resp, 'content') else resp.read()
+                            text = ""  # Don't decode binary content
+                        else:
+                            # For JSON/text responses
+                            text = resp.text if hasattr(resp, 'text') else ""
+                            # Try to get raw content if available
+                            content = None
+                            if hasattr(resp, 'content'):
+                                content = resp.content
+                            elif hasattr(resp, '_raw') and hasattr(resp._raw, 'data'):
+                                content = resp._raw.data
+                        
+                        resp.close()
+                        resp = None
+                        gc.collect()
+                        return Response(status_code=status, text=text, content=content)
+                    finally:
                         # Ensure response is closed even on error
                         if resp:
                             try:
                                 resp.close()
                             except:
                                 pass
-                        raise
+                        resp = None
                         
                 elif self.urllib:
-                    # Standard Python with urllib - wrap response
+                    # Standard Python with urllib
                     request = self.urllib.Request(url, headers=headers)
                     with self.urllib.urlopen(request) as response:
-                        return UrllibResponse(response)
+                        content = response.read()
+                        return Response(
+                            status_code=response.status,
+                            text=content.decode('utf-8'),
+                            content=content
+                        )
                 else:
                     # No HTTP client available
-                    return MockResponse(status_code=500, text="No HTTP client available")
+                    return Response(status_code=500, text="No HTTP client available")
                     
             except Exception as e:
                 logger.error(e, f"Error in get_sync attempt {retry_count+1}")
@@ -427,4 +474,4 @@ class HttpClient:
         # All retries failed
         error_msg = str(last_error) if last_error else "Unknown error"
         logger.error(None, f"All {max_retries} GET attempts to {url} failed: {error_msg}")
-        return MockResponse(status_code=500, text=f"Error: {error_msg}")
+        return Response(status_code=500, text=f"Error: {error_msg}")
