@@ -10,7 +10,7 @@ SRC_DIR := src
 PYTHON := python
 PIP := python -m pip
 
-.PHONY: test test-all test-unit test-legacy test-coverage install-test-deps dev
+.PHONY: test test-all test-unit test-legacy test-coverage install-test-deps dev lint lint-errors
 all: test release
 
 # Development mode with simulator
@@ -44,6 +44,25 @@ install-test-deps:
 install-dev-deps:
 	$(PIP) install pygame pillow numpy
 
+# Install lint dependencies
+install-lint-deps:
+	$(PIP) install ruff
+
+# Lint all Python files - comprehensive check
+lint:
+	@echo "Running Python linter (ruff)..."
+	$(PYTHON) -m ruff check $(SRC_DIR) *.py test/ --fix
+	@echo "Linting complete!"
+
+# Lint only for critical errors (undefined names, syntax errors, etc.)
+lint-errors:
+	@echo "Checking for critical errors..."
+	$(PYTHON) -m ruff check $(SRC_DIR) *.py --select=E9,F63,F7,F82,F821 --no-fix
+	@echo "Critical error check complete!"
+
+# Run lint before tests
+test-with-lint: lint-errors test
+
 # Copy all files to the release GIT archive
 release: $(SRC_DIR)/*.py
 	cp -f boot.py $(RELEASE_DESTDIR)
@@ -51,15 +70,28 @@ release: $(SRC_DIR)/*.py
 	cp -f theme_park_main.py $(RELEASE_DESTDIR)
 	cp -rf $(SRC_DIR) $(RELEASE_DESTDIR)
 
-# Copy files to the connected MatrixPortal S3
-copy-to-circuitpy : $(TEST_DIR)
+# Copy files to the connected MatrixPortal S3 (with lint check)
+copy-to-circuitpy : lint-errors $(TEST_DIR)
 	cp -f boot.py $(TEST_DIR)
 	cp -f code_entry.py $(TEST_DIR)/code.py
 	cp -f theme_park_main.py $(TEST_DIR)
 	rsync -av --update --progress \
 		--exclude='images/' \
-		--exclude='fonts/' \
-		--exclude='.DS_STORE' \
+		--exclude='.DS_Store' \
+		--exclude='**/.DS_Store' \
+		--exclude="__pycache__" \
+		--exclude="__init__.py" \
+		$(SRC_DIR)/ $(TEST_DIR)/src/
+
+# Copy files without lint check (use with caution)
+copy-to-circuitpy-no-lint : $(TEST_DIR)
+	cp -f boot.py $(TEST_DIR)
+	cp -f code_entry.py $(TEST_DIR)/code.py
+	cp -f theme_park_main.py $(TEST_DIR)
+	rsync -av --update --progress \
+		--exclude='images/' \
+		--exclude='.DS_Store' \
+		--exclude='**/.DS_Store' \
 		--exclude="__pycache__" \
 		--exclude="__init__.py" \
 		$(SRC_DIR)/ $(TEST_DIR)/src/

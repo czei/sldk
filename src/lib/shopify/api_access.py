@@ -4,7 +4,7 @@ import sys
 
 def basestring_type():
     if sys.version_info[0] < 3:  # Backwards compatibility for python < v3.0.0
-        return basestring
+        return basestring  # noqa: F821 - basestring is defined in Python 2
     else:
         return str
 

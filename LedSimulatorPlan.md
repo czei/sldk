@@ -80,9 +80,132 @@ PyLEDSimulator/
         └── test_matrixportal_s3.py
 ```
 
-### 2. Core Components
+### 2. Implementation Philosophy and Constraints
 
-#### 2.1 LED Matrix Core (`led_matrix.py`)
+#### 2.1 API Compatibility Approach
+The simulator aims for "sufficient API compatibility" rather than 100% byte-for-byte behavioral matching with CircuitPython's displayio. This pragmatic approach acknowledges that:
+
+- CircuitPython's displayio is implemented in highly optimized C/C++
+- Perfect behavioral replication in pure Python/Pygame would be extremely challenging
+- The primary goal is visual testing and development, not hardware emulation
+
+##### Known Limitations (to be documented):
+- Rendering order nuances may differ slightly
+- Memory management will follow Python's model, not CircuitPython's
+- Some advanced features (rotation, scaling transforms) may have behavioral differences
+- Transparency and clipping edge cases may not match exactly
+
+##### Compatibility Priority (implement in this order):
+1. Basic display operations (show, refresh)
+2. Common displayio classes (Group, Bitmap, TileGrid, Label)
+3. Font rendering with terminalio.FONT
+4. Palette and color operations
+5. Advanced features as needed by real-world usage
+
+#### 2.2 Font Rendering Compatibility
+
+##### Known Font Rendering Challenges:
+1. **BDF Font Parsing**: CircuitPython's font rendering differs from standard implementations
+2. **Glyph Metrics**: Baseline, ascent, and descent calculations may vary
+3. **Anti-aliasing**: CircuitPython uses 1-bit rendering, no anti-aliasing
+4. **Character Spacing**: Kerning and advance width handling differences
+
+##### Compatibility Testing Requirements:
+- Create visual comparison tests with CircuitPython screenshots
+- Test all bundled fonts with various character sets
+- Verify special character rendering (accents, symbols)
+- Test edge cases: empty strings, missing glyphs, oversized text
+
+#### 2.3 Pygame Event Loop Integration
+
+##### Non-Blocking Architecture Requirements:
+The simulator must integrate seamlessly with existing Pygame applications without taking over the main event loop. This requires:
+
+1. **Event Loop Patterns**:
+   ```python
+   # Pattern 1: User-controlled loop
+   device = MatrixPortalS3()
+   while running:
+       # User's game logic
+       device.update()  # Non-blocking update
+       
+   # Pattern 2: Callback-based updates
+   device = MatrixPortalS3()
+   device.on_frame_update = my_callback
+   device.start_async()  # Runs in background
+   ```
+
+2. **Integration Challenges**:
+   - Cannot assume control of pygame.init() or display creation
+   - Must handle cases where user already has a Pygame window
+   - Need to support both standalone and embedded usage
+   - Event handling must not interfere with user's event processing
+
+3. **Solution Approach**:
+   - Provide multiple integration modes (standalone, embedded, headless)
+   - Use pygame.Surface for rendering instead of direct display access
+   - Optional automatic event loop with escape hatch for manual control
+   - Clear documentation on integration patterns
+
+#### 2.4 Board Module Simulation Strategy
+
+##### Minimal Initial Implementation:
+The `board` module simulation will start with a minimal approach, adding features only as needed by real usage:
+
+```python
+# board/__init__.py - Minimal initial implementation
+class Board:
+    """Minimal board module for simulator compatibility"""
+    
+    def __init__(self):
+        self.DISPLAY = None  # Set by device initialization
+        # Add other attributes as needed based on actual usage
+        
+# Future additions based on need:
+# - Pin definitions (board.D13, board.A0, etc.)
+# - I2C/SPI interfaces
+# - Built-in sensors (accelerometer, etc.)
+# - Board-specific features
+```
+
+This approach avoids over-engineering and ensures we only implement what's actually used.
+
+#### 2.5 Memory Management Simulation
+
+##### Simplified GC Simulation:
+Rather than attempting to replicate CircuitPython's exact GC behavior, use a simplified model:
+
+```python
+class SimplifiedGC:
+    """Simplified garbage collection simulation"""
+    
+    def __init__(self, memory_limit_kb=256):
+        self.memory_limit = memory_limit_kb * 1024
+        self.allocated = 0
+        self.gc_threshold = 0.8  # Trigger at 80% usage
+        
+    def allocate(self, size):
+        """Simulate memory allocation"""
+        if self.allocated + size > self.memory_limit:
+            self.collect()  # Try GC first
+            if self.allocated + size > self.memory_limit:
+                raise MemoryError("Unable to allocate memory")
+        self.allocated += size
+        
+    def collect(self):
+        """Simulate garbage collection"""
+        # Simple model: recover 30-50% of allocated memory
+        recovered = random.uniform(0.3, 0.5) * self.allocated
+        self.allocated -= recovered
+        # Add realistic delay
+        time.sleep(0.01 + (self.allocated / self.memory_limit) * 0.05)
+```
+
+This provides memory pressure simulation without the complexity of tracking individual allocations.
+
+### 3. Core Components
+
+#### 3.1 LED Matrix Core (`led_matrix.py`)
 ```python
 class LEDMatrix:
     """Core LED matrix simulation with pixel-level control"""
@@ -398,6 +521,19 @@ These examples should be:
 - Used as integration tests to verify compatibility
 - Referenced in documentation as "works identically to hardware"
 
+#### 4.4 License Attribution for Adapted Code
+Since CircuitPython is MIT licensed and PyLEDSimulator will be Apache 2.0:
+- Create an `ATTRIBUTION.md` file listing all adapted CircuitPython code
+- Add MIT license headers to any files containing adapted code
+- Include original CircuitPython copyright notices where applicable
+- Example attribution format:
+```
+# Portions adapted from CircuitPython
+# Copyright (c) 2016-2024 Adafruit Industries
+# Licensed under MIT License
+# Original source: https://github.com/adafruit/circuitpython/blob/main/tests/...
+```
+
 ### 5. Key Features to Implement
 
 #### 5.1 Pixel-Perfect LED Simulation
@@ -502,10 +638,16 @@ scroll_label.animate()
 - Bitmap pooling
 - Group flattening for rendering
 
-### 8. Hardware Performance Simulation
+### 8. Hardware Performance Simulation (Simplified Approach)
 
-#### 8.1 Performance Throttling System
-The simulator will include a comprehensive system to accurately simulate the reduced computational speed and constraints of CircuitPython hardware.
+#### 8.1 Performance Simulation Philosophy
+The simulator will provide a simplified, high-level approximation of hardware performance rather than attempting to exactly emulate CircuitPython's execution characteristics. This pragmatic approach acknowledges:
+
+- Exact CPU instruction timing simulation would add significant overhead
+- Python's GC differs fundamentally from MicroPython's GC
+- The primary goal is to approximate timing, not exact hardware emulation
+
+#### 8.2 Simplified Performance System
 
 ##### Core Performance Manager (`core/performance_manager.py`)
 ```python
@@ -751,7 +893,30 @@ device.initialize()
 - Recording and playback of animations
 - Integration with CircuitPython REPL
 
-### 12. Implementation Timeline
+### 12. Summary of Key Design Decisions Based on Feedback
+
+#### 12.1 Pragmatic Implementation Philosophy
+- Acknowledge that perfect CircuitPython emulation is not the goal
+- Focus on "sufficient API compatibility" for practical development use
+- Document known limitations clearly to set appropriate expectations
+
+#### 12.2 Simplified Approaches
+- **Performance Simulation**: High-level timing approximation rather than CPU instruction emulation
+- **Memory Management**: Simple allocation tracking with percentage-based GC recovery
+- **Board Module**: Minimal initial implementation, expanding based on actual usage needs
+- **Font Rendering**: Accept minor visual differences, focus on functional compatibility
+
+#### 12.3 Integration Flexibility
+- Multiple Pygame integration patterns to avoid taking over the event loop
+- Support both standalone window and embedded surface rendering
+- Clear separation between simulator core and UI presentation
+
+#### 12.4 Testing Strategy
+- Leverage CircuitPython's existing test suite for API compatibility validation
+- Visual comparison tests with configurable tolerance for rendering differences
+- Performance benchmarks comparing simulated vs actual hardware timing
+
+### 13. Implementation Timeline
 
 #### Phase 1: Core Framework (Week 1-2)
 - Set up project structure

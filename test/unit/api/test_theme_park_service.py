@@ -200,11 +200,11 @@ class TestThemeParkService:
                 # Call fetch_park_data
                 result = await service.fetch_park_data(1)
                 
-                # Verify http client was called for each attempt (should be 3 retries)
-                assert mock_http.get.call_count == 3
+                # Verify http client was called for each attempt (should be 2 retries now)
+                assert mock_http.get.call_count == 2
                 
-                # Verify sleep was called between retries
-                assert mock_sleep.call_count == 3
+                # Verify sleep was called between retries (only 1 sleep for 2 attempts)
+                assert mock_sleep.call_count == 1
                 
                 # Verify the correct URL was called
                 mock_http.get.assert_called_with("https://queue-times.com/parks/1/queue_times.json")

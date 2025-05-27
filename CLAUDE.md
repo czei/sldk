@@ -3,8 +3,15 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Build Commands
-* `make copy_to_circuitpy` - Deploy to MatrixPortal S3 device
+* `make copy_to_circuitpy` - Deploy to MatrixPortal S3 device (runs lint check first)
+* `make copy_to_circuitpy-no-lint` - Deploy without lint check (use with caution)
 * `make release` - Copy files to release archive
+
+## Linting
+* `make lint` - Run comprehensive linting with auto-fix (uses ruff)
+* `make lint-errors` - Check for critical errors only (undefined names, syntax errors)
+* `make install-lint-deps` - Install linting dependencies (ruff)
+* Note: `make copy_to_circuitpy` automatically runs `lint-errors` to catch critical issues before deployment
 
 ## Testing
 * Run all tests: `make test-all` or `python -m pytest`
@@ -29,7 +36,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Code Style
 * Think hard about how to find the root cause of problems. DO NOT cover up issues such as the lack of data.
 * If there are significant details or questions about what is intended ask me for more details before doing anything.
-* **Unit Tests**: Always Run all unit tests after each change and iterate until they all work.
+* **Linting**: ALWAYS run `make lint-errors` before deploying to CircuitPython to catch undefined names, syntax errors, and other critical issues
+* **Unit Tests**: ALWAYS run unit tests after ANY code changes using `make test-unit` or `python -m pytest test/unit -v`. If tests fail, iterate and fix the issues until all tests pass. NEVER commit or consider a change complete until all unit tests are passing.
 * **Imports**: Group by stdlib, third-party (Adafruit), then project modules
 * **Classes**: PascalCase (e.g., `ThemeParkList`)
 * **Functions/Variables**: snake_case (e.g., `get_park_by_id`, `park_list`)
