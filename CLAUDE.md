@@ -49,6 +49,49 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## CircuitPython Development
 
+### CRITICAL: CircuitPython Compatibility Requirements
+**⚠️ BEFORE using ANY Python standard library feature, exception, or module:**
+1. **CHECK** if it exists in CircuitPython by consulting the [CircuitPython API documentation](https://docs.circuitpython.org/en/latest/docs/library/index.html)
+2. **VERIFY** compatibility with CircuitPython 8.x/9.x (not just MicroPython)
+3. **TEST** with actual imports in the CircuitPython REPL when possible
+
+### Common CircuitPython Incompatibilities to Avoid:
+| Standard Python | CircuitPython Alternative | Notes |
+|-----------------|---------------------------|-------|
+| `json.JSONDecodeError` | `ValueError` | CircuitPython's json.loads() raises ValueError for invalid JSON |
+| `FileNotFoundError` | `OSError` | CircuitPython only has OSError, not the specific subclasses |
+| `pathlib.Path` | `os.path` operations | pathlib not available in CircuitPython |
+| `urllib.parse` | Manual string parsing | urllib module not available |
+| `threading` | `asyncio` | Only cooperative multitasking available |
+| `subprocess` | Not available | Cannot spawn processes |
+| `typing` module | Remove type hints | Type hints should be in comments or removed |
+| `enum.auto()` | Explicit values | auto() not available in CircuitPython's enum |
+| `f-strings with =` | Regular f-strings | f"{var=}" syntax not supported |
+| `match/case` | `if/elif` | Pattern matching not available |
+
+### Required Compatibility Patterns:
+```python
+# ❌ WRONG - Standard Python only
+try:
+    data = json.loads(response)
+except json.JSONDecodeError:
+    pass
+
+# ✅ CORRECT - CircuitPython compatible
+try:
+    data = json.loads(response)
+except ValueError:  # CircuitPython uses ValueError
+    pass
+
+# ❌ WRONG - Standard Python only
+except FileNotFoundError:
+    pass
+
+# ✅ CORRECT - CircuitPython compatible  
+except OSError:  # CircuitPython only has OSError
+    pass
+```
+
 ### CRITICAL: Synchronize web_server.py and dev_web_server.py
 **⚠️ IMPORTANT: The UI for the MatrixPortal hardware is in web_server.py and the UI for the development simulation is in dev_web_server.py. ANY change made to one file MUST be made to the other file as well. NO EXCEPTIONS.**
 
@@ -63,15 +106,59 @@ When making changes to either web server:
    - API endpoints
    - Update mechanisms (like queue_rebuild_needed)
 
+### CircuitPython Development Guidelines:
 * Instructions for the wait times API are at:  https://queue-times.com/pages/api
 * CircuitPython uses its own http library adafruit_requests, and all HTTP calls are synchronous.
 * All changes should be made to work on both the MatrixPortal S3 hardware and in the simulated dev environment. 
-* Remember that CircuitPython 3.x is a fork of MicroPython, and the standard libraries either aren't available or have versions specific to CircuitPython
-* CircuitPython devices are very slow and have use cooperative multitasking using asyncio, not multithreading. This is made more difficult because the CircuitPython HTTP library is synchronous, so background tasks like scrolling stop when HTTP calls are made. 
+* Remember that CircuitPython 8.x/9.x is a fork of MicroPython, and the standard libraries either aren't available or have versions specific to CircuitPython
+* CircuitPython devices are very slow and use cooperative multitasking using asyncio, not multithreading. This is made more difficult because the CircuitPython HTTP library is synchronous, so background tasks like scrolling stop when HTTP calls are made.
+* When in doubt about CircuitPython compatibility, check:
+  - [CircuitPython Core Modules](https://docs.circuitpython.org/en/latest/docs/library/index.html)
+  - [CircuitPython vs MicroPython differences](https://docs.circuitpython.org/en/latest/docs/design_guide.html)
+  - Test imports in REPL: `import module_name` to verify availability
 * Support both running on actual hardware and testing in standard Python environment
 * Test functionality in isolation before deploying to hardware
 * Ensure tests properly mock CircuitPython-specific modules
 * Separate functionality that could be applied to any CircuitPython project from the specific functionality of this project. The ultimate goal is to refactor into an open source library.
+
+### CircuitPython-Safe Module Usage:
+```python
+# File operations
+import os
+# ✅ os.listdir(), os.stat(), os.remove() - available
+# ❌ os.path.exists() - use try/except OSError instead
+
+# JSON handling
+import json
+# ✅ json.loads(), json.dumps() - available
+# ❌ json.JSONDecodeError - use ValueError instead
+
+# Time operations  
+import time
+# ✅ time.sleep(), time.monotonic() - available
+# ❌ time.time() - use time.monotonic() instead
+
+# Async operations
+import asyncio
+# ✅ asyncio.create_task(), asyncio.gather() - available
+# ❌ asyncio.run() - use asyncio.run() only at top level
+
+# Random numbers
+import random
+# ✅ random.randint(), random.choice() - available
+# ❌ random.choices() - not available in CircuitPython
+
+# Regular expressions
+import re
+# ✅ re.search(), re.match(), re.findall() - available
+# ❌ re.Pattern type hints - not available
+```
+
+### Before Adding New Code:
+1. **Run lint check**: `make lint-errors` to catch undefined names
+2. **Check CircuitPython docs**: Verify module/exception exists
+3. **Test imports**: Try `import module_name` in CircuitPython REPL
+4. **Use try/except**: Wrap imports that might fail in dev vs hardware
 
 ## Using the think tool
 Before taking any action or responding to the user after receiving tool results, use the think tool as a scratchpad to:

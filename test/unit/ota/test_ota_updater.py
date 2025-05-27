@@ -160,6 +160,95 @@ class TestOTAUpdater:
         with patch('os.listdir', side_effect=FileNotFoundError()):
             assert ota_updater.update_available_at_boot() is False
     
+    def test_download_file_url_construction(self, ota_updater, mock_http_client):
+        """Test _download_file constructs the correct URL and downloads content"""
+        # Set up the updater with a full GitHub URL
+        ota_updater.github_repo = 'https://github.com/Czeiszperger/themeparkwaits.release'
+        
+        # Mock the HTTP response
+        mock_response = Mock()
+        mock_response.read.side_effect = [b'file content chunk 1', b'file content chunk 2', b'']
+        mock_response.content = b'file content'
+        mock_http_client.get_sync.return_value = mock_response
+        
+        # Create a temporary file path for testing
+        import tempfile
+        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+            test_path = tmp_file.name
+        
+        try:
+            # Call the method
+            ota_updater._download_file('v1.9', 'src/main.py', test_path)
+            
+            # Verify the correct URL was constructed
+            expected_url = 'https://raw.githubusercontent.com/Czeiszperger/themeparkwaits.release/v1.9/src/main.py'
+            mock_http_client.get_sync.assert_called_once_with(expected_url, headers=ota_updater.headers)
+            
+            # Verify file was written
+            with open(test_path, 'rb') as f:
+                content = f.read()
+                # Should have written the content attribute if it exists
+                assert content == b'file content'
+        
+        finally:
+            # Clean up
+            import os
+            if os.path.exists(test_path):
+                os.remove(test_path)
+    
+    def test_download_file_without_content_attribute(self, ota_updater, mock_http_client):
+        """Test _download_file when response doesn't have content attribute"""
+        # Set up the updater with a full GitHub URL
+        ota_updater.github_repo = 'https://github.com/Czeiszperger/themeparkwaits.release'
+        
+        # Mock the HTTP response without content attribute
+        mock_response = Mock()
+        # Remove content attribute to simulate CircuitPython response
+        if hasattr(mock_response, 'content'):
+            delattr(mock_response, 'content')
+        mock_response.read.side_effect = [b'chunk1', b'chunk2', b'']
+        mock_http_client.get_sync.return_value = mock_response
+        
+        # Create a temporary file path for testing
+        import tempfile
+        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+            test_path = tmp_file.name
+        
+        try:
+            # Call the method
+            ota_updater._download_file('v1.9', 'src/app.py', test_path)
+            
+            # Verify file was written with chunks
+            with open(test_path, 'rb') as f:
+                content = f.read()
+                assert content == b'chunk1chunk2'
+        
+        finally:
+            # Clean up
+            import os
+            if os.path.exists(test_path):
+                os.remove(test_path)
+    
+    def test_download_file_error_handling(self, ota_updater, mock_http_client):
+        """Test _download_file handles errors and cleans up partial files"""
+        # Mock the HTTP client to raise an error
+        mock_http_client.get_sync.side_effect = Exception("Network error")
+        
+        # Create a temporary file path for testing
+        import tempfile
+        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+            test_path = tmp_file.name
+        
+        # Call the method and expect it to raise
+        with pytest.raises(Exception) as exc_info:
+            ota_updater._download_file('v1.9', 'src/main.py', test_path)
+        
+        assert "Network error" in str(exc_info.value)
+        
+        # Verify the partial file was cleaned up
+        import os
+        assert not os.path.exists(test_path)
+    
     def test_real_api_get_latest_version(self):
         """Test get_latest_version with real API call"""
         # Create a real HTTP client
