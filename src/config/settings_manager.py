@@ -50,6 +50,10 @@ class SettingsManager:
             self.settings["scroll_speed"] = "Medium"
         if self.settings.get("display_mode") is None:
             self.settings["display_mode"] = "all_rides"
+        if self.settings.get("sort_mode") is None:
+            self.settings["sort_mode"] = "alphabetical"
+        if self.settings.get("group_by_park") is None:
+            self.settings["group_by_park"] = False
 
     def get_scroll_speed(self):
         """

@@ -319,10 +319,25 @@ class ThemeParkApp:
             force_update = self.theme_park_service.update_needed
             # Reset the flag
             self.theme_park_service.update_needed = False
+        
+        # Check if we just need to rebuild the queue (e.g., after sort settings change)
+        queue_rebuild_only = False
+        if hasattr(self.theme_park_service, 'queue_rebuild_needed'):
+            queue_rebuild_only = self.theme_park_service.queue_rebuild_needed
+            # Reset the flag
+            self.theme_park_service.queue_rebuild_needed = False
 
         # Check if update is needed
         timer_ready = self.update_timer.finished()
         cycle_complete = self.message_queue.has_completed_cycle
+        
+        # If we only need to rebuild the queue (no data fetch needed)
+        if queue_rebuild_only:
+            logger.info("Rebuilding message queue after settings change")
+            # Skip the data fetch, jump straight to rebuilding the queue
+            self.message_queue.init()
+            await self.build_messages()
+            return
         
         # Don't update unless: timer is ready AND (cycle is complete OR we're forcing/ignoring timer)
         if not timer_ready and not ignore_timer and not force_update:

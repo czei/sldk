@@ -15,6 +15,7 @@ from src.models.vacation import Vacation
 from src.utils.color_utils import ColorUtils
 from src.utils.error_handler import ErrorHandler
 from adafruit_httpserver import REQUEST_HANDLED_RESPONSE_SENT
+from src.ui.display_factory import is_circuitpython
 
 # Initialize logger
 logger = ErrorHandler("error_log")
@@ -102,8 +103,17 @@ class ThemeParkWebServer:
         def settings(request: Request):
             """Handle settings endpoint"""
             query_params = str(request.query_params) if request.query_params else None
+            update_checked = 'update_checked' in str(request.query_params) if request.query_params else False
+            update_error = None
+            
+            if request.query_params and 'update_error' in str(request.query_params):
+                import urllib.parse
+                import re
+                error_match = re.search(r'update_error=([^&]+)', str(request.query_params))
+                if error_match:
+                    update_error = urllib.parse.unquote(error_match.group(1))
 
-            if query_params:
+            if query_params and not update_checked and not update_error:
                 # Process settings form submission
                 try:
                     self._process_query_params(query_params)
@@ -114,10 +124,8 @@ class ThemeParkWebServer:
 
             # Generate settings page
             # Generate settings page with success message if query params were processed
-            if query_params:
-                page = self.generate_settings_page(success=True)
-            else:
-                page = self.generate_settings_page()
+            success = query_params and not update_checked and not update_error
+            page = self.generate_settings_page(success=success, update_checked=update_checked, update_error=update_error)
             return Response(request, page, content_type="text/html")
         
         @self.server.route("/update", [POST])
@@ -161,6 +169,33 @@ class ThemeParkWebServer:
             except Exception as e:
                 logger.error(e, "Error initiating OTA update")
                 return Response(request, self.generate_settings_page(), content_type="text/html")
+
+        @self.server.route("/check-update", [GET])
+        def check_update(request: Request):
+            """Handle check for updates request"""
+            try:
+                logger.info("Update check requested via web interface")
+                
+                # Get current and latest versions
+                current_version = self.app.ota_updater.get_version("src")
+                latest_version = self.app.ota_updater.get_latest_version()
+                
+                # Store the latest version info in settings manager temporarily
+                self.app.settings_manager.latest_version_check = {
+                    'current': current_version,
+                    'latest': latest_version,
+                    'checked_at': time.time()
+                }
+                
+                # Redirect back to settings page with update info
+                return Redirect(request, "/settings?update_checked=1")
+                
+            except Exception as e:
+                logger.error(e, "Error checking for updates")
+                # Redirect back to settings with error
+                # URL encode the error message manually for CircuitPython
+                error_msg = str(e).replace(' ', '%20').replace("'", '%27')
+                return Redirect(request, f"/settings?update_error={error_msg}")
 
         @self.server.route("/api/park", [GET])
         def api_park(request: Request):
@@ -370,6 +405,9 @@ class ThemeParkWebServer:
                     if park_changed:
                         logger.info(f"Parks changed from {current_park_ids} to {new_park_ids}")
                         
+                        # Store the selected parks to settings
+                        self.app.theme_park_service.park_list.store_settings(self.app.settings_manager)
+                        
                         # Set flag to trigger update in the main loop
                         if hasattr(self.app.theme_park_service, 'update_needed'):
                             self.app.theme_park_service.update_needed = True
@@ -454,6 +492,25 @@ class ThemeParkWebServer:
             logger.debug(f"Updated scroll speed to {scroll_speed}")
             # No immediate action needed for scroll speed as it's read on demand when scrolling
 
+        # Process sort mode
+        sort_changed = False
+        sort_match = re.search(r'sort_mode=([^&]+)', query_params)
+        if sort_match:
+            sort_mode = sort_match.group(1)
+            old_sort_mode = self.app.settings_manager.settings.get("sort_mode", "alphabetical")
+            if sort_mode != old_sort_mode:
+                sort_changed = True
+            self.app.settings_manager.settings["sort_mode"] = sort_mode
+            logger.debug(f"Updated sort mode to {sort_mode}")
+        
+        # Process group by park
+        old_group_by_park = self.app.settings_manager.settings.get("group_by_park", False)
+        group_by_park = "group_by_park=on" in query_params
+        if group_by_park != old_group_by_park:
+            sort_changed = True
+        self.app.settings_manager.settings["group_by_park"] = group_by_park
+        logger.debug(f"Updated group by park to {group_by_park}")
+
         # Handle use_prerelease checkbox
         if "use_prerelease=" in query_params:
             use_prerelease = "use_prerelease=on" in query_params
@@ -477,6 +534,9 @@ class ThemeParkWebServer:
         except Exception as e:
             logger.error(e, "Error saving settings")
 
+        # Check if only sort settings changed (no park change)
+        sort_only_changed = sort_changed and not park_changed
+        
         # Trigger park update if needed
         if park_changed:
             self._trigger_park_update()
@@ -485,6 +545,10 @@ class ThemeParkWebServer:
             if hasattr(self.app, 'update_timer'):
                 self.app.update_timer.reset(expired=True)
                 logger.info("Forced immediate park data update after park change")
+        elif sort_only_changed and hasattr(self.app, 'theme_park_service'):
+            # Only sort settings changed - just rebuild the queue
+            self.app.theme_park_service.queue_rebuild_needed = True
+            logger.debug("Set queue_rebuild_needed flag after sort settings change")
                 
         if settings_changed and hasattr(self.app, 'message_queue'):
             self.app.display.set_colors(self.app.settings_manager)
@@ -839,6 +903,30 @@ class ThemeParkWebServer:
             page_parts.append(f"<input type=\"checkbox\" id=\"skip_meet\" name=\"skip_meet\" {checked}>")
             page_parts.append("<label for=\"skip_meet\">Skip Meet & Greets</label>")
             page_parts.append("</div>")
+            
+            # Sort mode
+            page_parts.append("<div class=\"form-group\">")
+            page_parts.append("<label for=\"sort_mode\">Sort Rides By:</label>")
+            sort_mode = settings.get("sort_mode", "alphabetical")
+            page_parts.append("<select id=\"sort_mode\" name=\"sort_mode\">")
+            sort_options = [
+                ("alphabetical", "Alphabetical"),
+                ("max_wait", "Longest Wait First"),
+                ("min_wait", "Shortest Wait First")
+            ]
+            for value, label in sort_options:
+                selected = "selected" if value == sort_mode else ""
+                page_parts.append(f"<option value=\"{value}\" {selected}>{label}</option>")
+            page_parts.append("</select>")
+            page_parts.append("</div>")
+            
+            # Group by park
+            page_parts.append("<div class=\"form-group checkbox-group\">")
+            group_by_park = settings.get("group_by_park", False)
+            checked = "checked" if group_by_park else ""
+            page_parts.append(f"<input type=\"checkbox\" id=\"group_by_park\" name=\"group_by_park\" {checked}>")
+            page_parts.append("<label for=\"group_by_park\">Group rides by park</label>")
+            page_parts.append("</div>")
 
             page_parts.append("</div>")
 
@@ -941,12 +1029,14 @@ class ThemeParkWebServer:
         
         return page
 
-    def generate_settings_page(self, success=False):
+    def generate_settings_page(self, success=False, update_checked=False, update_error=None):
         """
         Generate the settings HTML page
 
         Args:
             success: Whether to show a success message
+            update_checked: Whether we just checked for updates
+            update_error: Error message if update check failed
 
         Returns:
             HTML content for the settings page
@@ -1025,6 +1115,7 @@ class ThemeParkWebServer:
             page += f"<option value=\"{speed}\" {selected}>{speed}</option>"
         page += "</select>"
         page += "</div>"
+        
         page += "</div>"
 
         # Color settings
@@ -1042,39 +1133,83 @@ class ThemeParkWebServer:
         page += "</form>"
         
         # Add OTA update section
-        page += self._generate_ota_section()
+        page += self._generate_ota_section(update_checked, update_error)
 
         page += "</div></body></html>"
         return page
     
-    def _generate_ota_section(self):
+    def _generate_ota_section(self, update_checked=False, update_error=None):
         """Generate the OTA update section for settings page"""
         parts = []
         parts.append("<h2>Software Updates</h2>")
         parts.append("<div class=\"software-section\">")
         
         try:
-            # Get current and latest versions
+            # Get current version
             current_version = self.app.ota_updater.get_version("src")
-            latest_version = self.app.ota_updater.get_latest_version()
-            
             parts.append(f"<p>Current version: <strong>{current_version}</strong></p>")
             
-            # Check if update is available
-            if latest_version > current_version:
-                parts.append(f"<p>Update available: <strong>{latest_version}</strong></p>")
-                parts.append("<form action='/update' method='post'>")
-                parts.append("<p><strong>Warning:</strong> The display will be unresponsive during the update process.</p>")
-                parts.append("<ol>")
-                parts.append("<li>Click the button below to download and install the update</li>")
-                parts.append("<li>The web interface will stop responding immediately</li>")
-                parts.append("<li>The LED display may show random characters or go blank for up to 10 minutes</li>")
-                parts.append("<li><strong>Do not unplug the device during the update!</strong></li>")
-                parts.append("</ol>")
-                parts.append("<button type='submit' onclick=\"return confirm('Start update? The device will be unresponsive for several minutes.')\">Download and Install Update</button>")
-                parts.append("</form>")
+            # Check if we have recent version check results
+            if update_error:
+                parts.append(f"<p style='color: red;'>Error checking for updates: {update_error}</p>")
+                parts.append("<p><a href='/check-update'>Try again</a></p>")
+            elif update_checked and hasattr(self.app.settings_manager, 'latest_version_check'):
+                version_info = self.app.settings_manager.latest_version_check
+                latest = version_info.get('latest', 'Unknown')
+                current = version_info.get('current', current_version)
+                
+                parts.append(f"<p>Latest version: <strong>{latest}</strong></p>")
+                
+                # Compare versions
+                def version_to_tuple(v):
+                    # Remove 'v' prefix if present
+                    v = v.lstrip('v')
+                    # Split by dots
+                    parts_list = v.split('.')
+                    
+                    # Handle cases like "1.85" which should be "1.8.5"
+                    if len(parts_list) == 2 and len(parts_list[1]) > 1:
+                        # Split second part if it has multiple digits
+                        major = parts_list[0]
+                        minor_patch = parts_list[1]
+                        if minor_patch.isdigit() and len(minor_patch) == 2:
+                            # Convert "85" to "8.5"
+                            parts_list = [major, minor_patch[0], minor_patch[1]]
+                    
+                    # Pad with zeros if needed
+                    while len(parts_list) < 3:
+                        parts_list.append('0')
+                    return tuple(int(p) for p in parts_list[:3])
+                
+                try:
+                    current_tuple = version_to_tuple(current)
+                    latest_tuple = version_to_tuple(latest)
+                    
+                    if latest_tuple > current_tuple:
+                        # Update available
+                        parts.append("<div style='background-color: #f0f8ff; padding: 15px; margin: 15px 0; border-radius: 5px;'>")
+                        parts.append("<h3 style='color: #0066cc; margin-top: 0;'>Update Available!</h3>")
+                        parts.append(f"<p>A new version ({latest}) is available for installation.</p>")
+                        parts.append("<p><strong>Important:</strong></p>")
+                        parts.append("<ul>")
+                        parts.append("<li>The update process takes up to 10 minutes</li>")
+                        parts.append("<li>The display will be blank for minutes at a time</li>")
+                        parts.append("<li><strong>DO NOT</strong> reset or unplug the device during the update</li>")
+                        parts.append("</ul>")
+                        parts.append("<form action='/update' method='post'>")
+                        parts.append("<button type='submit' style='background-color: #0066cc; color: white; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer;'>Update Software</button>")
+                        parts.append("</form>")
+                        parts.append("</div>")
+                    else:
+                        # Already up to date
+                        parts.append("<p style='color: #008000;'>✓ You have the latest version!</p>")
+                except Exception as e:
+                    logger.error(e, "Error comparing versions")
+                    parts.append(f"<p>Latest version: <strong>{latest}</strong></p>")
+                    parts.append("<p><a href='/check-update'>Check again</a></p>")
             else:
-                parts.append(f"<p>Software is up to date (latest: v{latest_version})</p>")
+                # No check performed yet
+                parts.append("<p>Latest version: <a href='/check-update'>Check for updates</a></p>")
                 
             # Add pre-release toggle for testing
             if self.app.settings_manager.get("show_dev_options", False):

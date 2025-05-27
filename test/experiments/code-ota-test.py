@@ -1,3 +1,5 @@
+import sys
+sys.path.insert(0, '../..')
 from src.ota.ota_updater import OTAUpdater
 
 token='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'

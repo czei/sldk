@@ -8,6 +8,7 @@ import json
 import re
 import os
 import time
+import urllib
 from http.server import HTTPServer, BaseHTTPRequestHandler
 from urllib.parse import parse_qs, urlparse
 import threading
@@ -63,6 +64,8 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
                 self.serve_api_parks(query_params)
             elif path == "/api/rides":
                 self.serve_api_rides(query_params)
+            elif path == "/check-update":
+                self.handle_check_update()
             else:
                 # Try to serve it as a static file
                 success = self.serve_static_file(path, "text/html")
@@ -87,12 +90,64 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
             
             if path == "/update":
                 self.handle_update_request()
+            elif path == "/start-update":
+                self.handle_start_update()
             else:
                 self.send_error(404, "Not Found")
                 
         except Exception as e:
             logger.error(e, f"Error handling POST request: {self.path}")
             self.send_error(500, f"Internal server error: {str(e)}")
+    
+    def handle_start_update(self):
+        """Handle request to start software update"""
+        try:
+            # In dev mode, we can't actually update
+            page = """<!DOCTYPE html><html><head>
+            <title>Software Update - Theme Park Waits</title>
+            <meta http-equiv="refresh" content="5;url=/settings">
+            </head><body>
+            <h2>Software Update</h2>
+            <p>Software updates are only available on actual hardware devices.</p>
+            <p>This is a development environment.</p>
+            <p>Redirecting back to settings in 5 seconds...</p>
+            </body></html>"""
+            
+            self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.end_headers()
+            self.wfile.write(page.encode("utf-8"))
+            
+        except Exception as e:
+            logger.error(e, "Error starting update")
+            self.send_error(500, f"Error starting update: {str(e)}")
+    
+    def handle_check_update(self):
+        """Handle check for updates request"""
+        try:
+            app = self.app_instance
+            # Get current and latest versions
+            current_version = app.ota_updater.get_version("src")
+            latest_version = app.ota_updater.get_latest_version()
+            
+            # Store the latest version info in settings manager temporarily
+            app.settings_manager.latest_version_check = {
+                'current': current_version,
+                'latest': latest_version,
+                'checked_at': time.time()
+            }
+            
+            # Redirect back to settings page with update info
+            self.send_response(302)
+            self.send_header("Location", "/settings?update_checked=1")
+            self.end_headers()
+            
+        except Exception as e:
+            logger.error(e, "Error checking for updates")
+            # Redirect back to settings with error
+            self.send_response(302)
+            self.send_header("Location", f"/settings?update_error={str(e)}")
+            self.end_headers()
     
     def serve_static_file(self, path, content_type):
         """Serve a static file from the www directory"""
@@ -181,22 +236,31 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
     def serve_settings_page(self, query_params, query_string):
         """Serve the settings page"""
         success = False
+        update_checked = 'update_checked' in query_string
+        update_error = None
+        if 'update_error=' in query_string:
+            import urllib.parse
+            error_match = re.search(r'update_error=([^&]+)', query_string)
+            if error_match:
+                update_error = urllib.parse.unquote(error_match.group(1))
         
         if query_params and self.app_instance:
-            # Process query parameters
-            try:
-                self._process_query_params(query_string)
-                success = True
-                # Redirect to /settings without query parameters
-                self.send_response(302)
-                self.send_header("Location", "/settings")
-                self.end_headers()
-                return
-            except Exception as e:
-                logger.error(e, f"Error processing settings params: {query_string}")
+            # Skip processing if this is just an update check result
+            if not (update_checked or update_error):
+                # Process query parameters
+                try:
+                    self._process_query_params(query_string)
+                    success = True
+                    # Redirect to /settings without query parameters
+                    self.send_response(302)
+                    self.send_header("Location", "/settings")
+                    self.end_headers()
+                    return
+                except Exception as e:
+                    logger.error(e, f"Error processing settings params: {query_string}")
         
         # Generate and serve the settings page
-        page = self.generate_settings_page(success)
+        page = self.generate_settings_page(success, update_checked, update_error)
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
@@ -252,6 +316,9 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
                     
                     if park_changed:
                         logger.info(f"Parks changed from {current_park_ids} to {new_park_ids}")
+                        
+                        # Store the selected parks to settings
+                        app.theme_park_service.park_list.store_settings(app.settings_manager)
                         
                         settings_changed = True
                         
@@ -326,6 +393,22 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
             scroll_speed = scroll_match.group(1)
             app.settings_manager.settings["scroll_speed"] = scroll_speed
         
+        # Process sort mode
+        prev_sort_mode = app.settings_manager.settings.get("sort_mode", "alphabetical")
+        sort_match = re.search(r'sort_mode=([^&]+)', query_params)
+        if sort_match:
+            sort_mode = sort_match.group(1)
+            app.settings_manager.settings["sort_mode"] = sort_mode
+            if sort_mode != prev_sort_mode:
+                settings_changed = True
+        
+        # Process group by park
+        prev_group_by_park = app.settings_manager.settings.get("group_by_park", False)
+        group_by_park = "group_by_park=on" in query_params
+        app.settings_manager.settings["group_by_park"] = group_by_park
+        if group_by_park != prev_group_by_park:
+            settings_changed = True
+        
         # Process color parameters
         self._process_color_params(query_params)
         
@@ -340,8 +423,12 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
             logger.error(e, "Error saving settings")
         
         # Trigger park update if needed
-        if (park_changed or settings_changed) and hasattr(app, 'theme_park_service'):
+        if park_changed and hasattr(app, 'theme_park_service'):
+            # Park changed - need to fetch new data
             app.theme_park_service.update_needed = True
+        elif settings_changed and hasattr(app, 'theme_park_service'):
+            # Only settings changed (e.g., sort mode) - just rebuild the queue
+            app.theme_park_service.queue_rebuild_needed = True
         
         return park_changed or settings_changed
     
@@ -490,6 +577,30 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         checked = "checked" if skip_meet else ""
         page_parts.append(f"<input type=\"checkbox\" id=\"skip_meet\" name=\"skip_meet\" {checked}>")
         page_parts.append("<label for=\"skip_meet\">Skip Meet & Greets</label>")
+        page_parts.append("</div>")
+        
+        # Sort mode dropdown
+        page_parts.append("<div class=\"form-group\">")
+        page_parts.append("<label for=\"sort_mode\">Sort Rides By:</label>")
+        sort_mode = settings.get("sort_mode", "alphabetical")
+        page_parts.append("<select id=\"sort_mode\" name=\"sort_mode\">")
+        sort_options = [
+            ("alphabetical", "Alphabetical"),
+            ("max_wait", "Longest Wait First"),
+            ("min_wait", "Shortest Wait First")
+        ]
+        for value, label in sort_options:
+            selected = "selected" if value == sort_mode else ""
+            page_parts.append(f"<option value=\"{value}\" {selected}>{label}</option>")
+        page_parts.append("</select>")
+        page_parts.append("</div>")
+        
+        # Group by park checkbox
+        page_parts.append("<div class=\"form-group checkbox-group\">")
+        group_by_park = settings.get("group_by_park", False)
+        checked = "checked" if group_by_park else ""
+        page_parts.append(f"<input type=\"checkbox\" id=\"group_by_park\" name=\"group_by_park\" {checked}>")
+        page_parts.append("<label for=\"group_by_park\">Group rides by park</label>")
         page_parts.append("</div>")
         page_parts.append("</div>")
         
@@ -672,7 +783,7 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         # Implementation not needed for this fix
         pass
     
-    def generate_settings_page(self, success=False):
+    def generate_settings_page(self, success=False, update_checked=False, update_error=None):
         """Generate the settings HTML page"""
         app = self.app_instance
         settings = {}
@@ -738,6 +849,7 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
             page += f"<option value=\"{speed}\" {selected}>{speed}</option>"
         page += "</select>"
         page += "</div>"
+        
         page += "</div>"
         
         # Color settings
@@ -763,12 +875,12 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         page += "</form>"
         
         # Add OTA update section
-        page += self._generate_ota_section()
+        page += self._generate_ota_section(update_checked, update_error)
         
         page += "</div></body></html>"
         return page
     
-    def _generate_ota_section(self):
+    def _generate_ota_section(self, update_checked=False, update_error=None):
         """Generate the OTA update section for settings page"""
         parts = []
         parts.append("<h2>Software Updates</h2>")
@@ -777,27 +889,71 @@ class DevThemeParkWebHandler(BaseHTTPRequestHandler):
         app = self.app_instance
         
         try:
-            # Get current and latest versions
+            # Get current version
             current_version = app.ota_updater.get_version("src")
-            latest_version = app.ota_updater.get_latest_version()
-            
             parts.append(f"<p>Current version: <strong>{current_version}</strong></p>")
             
-            # Check if update is available
-            if latest_version > current_version:
-                parts.append(f"<p>Update available: <strong>{latest_version}</strong></p>")
-                parts.append("<form action='/update' method='post'>")
-                parts.append("<p><strong>Warning:</strong> The display will be unresponsive during the update process.</p>")
-                parts.append("<ol>")
-                parts.append("<li>Click the button below to download and install the update</li>")
-                parts.append("<li>The web interface will stop responding immediately</li>")
-                parts.append("<li>The LED display may show random characters or go blank for up to 10 minutes</li>")
-                parts.append("<li><strong>Do not unplug the device!</strong></li>")
-                parts.append("</ol>")
-                parts.append("<button type='submit' onclick=\"return confirm('Start update? The device will be unresponsive for several minutes.')\">Download and Install Update</button>")
-                parts.append("</form>")
+            # Check if we have recent version check results
+            if update_error:
+                parts.append(f"<p style='color: red;'>Error checking for updates: {update_error}</p>")
+                parts.append("<p><a href='/check-update'>Try again</a></p>")
+            elif update_checked and hasattr(app.settings_manager, 'latest_version_check'):
+                version_info = app.settings_manager.latest_version_check
+                latest = version_info.get('latest', 'Unknown')
+                current = version_info.get('current', current_version)
+                
+                parts.append(f"<p>Latest version: <strong>{latest}</strong></p>")
+                
+                # Compare versions
+                def version_to_tuple(v):
+                    # Remove 'v' prefix if present
+                    v = v.lstrip('v')
+                    # Split by dots
+                    parts_list = v.split('.')
+                    
+                    # Handle cases like "1.85" which should be "1.8.5"
+                    if len(parts_list) == 2 and len(parts_list[1]) > 1:
+                        # Split second part if it has multiple digits
+                        major = parts_list[0]
+                        minor_patch = parts_list[1]
+                        if minor_patch.isdigit() and len(minor_patch) == 2:
+                            # Convert "85" to "8.5"
+                            parts_list = [major, minor_patch[0], minor_patch[1]]
+                    
+                    # Pad with zeros if needed
+                    while len(parts_list) < 3:
+                        parts_list.append('0')
+                    return tuple(int(p) for p in parts_list[:3])
+                
+                try:
+                    current_tuple = version_to_tuple(current)
+                    latest_tuple = version_to_tuple(latest)
+                    
+                    if latest_tuple > current_tuple:
+                        # Update available
+                        parts.append("<div style='background-color: #f0f8ff; padding: 15px; margin: 15px 0; border-radius: 5px;'>")
+                        parts.append("<h3 style='color: #0066cc; margin-top: 0;'>Update Available!</h3>")
+                        parts.append(f"<p>A new version ({latest}) is available for installation.</p>")
+                        parts.append("<p><strong>Important:</strong></p>")
+                        parts.append("<ul>")
+                        parts.append("<li>The update process takes up to 10 minutes</li>")
+                        parts.append("<li>The display will be blank for minutes at a time</li>")
+                        parts.append("<li><strong>DO NOT</strong> reset or unplug the device during the update</li>")
+                        parts.append("</ul>")
+                        parts.append("<form action='/start-update' method='post' onsubmit='return confirm(\"Are you sure you want to start the update? This will take up to 10 minutes and the display will be blank. DO NOT unplug the device!\");'>")
+                        parts.append("<button type='submit' style='background-color: #0066cc; color: white; padding: 10px 20px; font-size: 16px; border: none; border-radius: 5px; cursor: pointer;'>Update Software</button>")
+                        parts.append("</form>")
+                        parts.append("</div>")
+                    else:
+                        # Already up to date
+                        parts.append("<p style='color: #008000;'>✓ You have the latest version!</p>")
+                except Exception as e:
+                    logger.error(e, "Error comparing versions")
+                    parts.append(f"<p>Latest version: <strong>{latest}</strong></p>")
+                    parts.append("<p><a href='/check-update'>Check again</a></p>")
             else:
-                parts.append(f"<p>Software is up to date (latest: v{latest_version})</p>")
+                # No check performed yet
+                parts.append("<p>Latest version: <a href='/check-update'>Check for updates</a></p>")
                 
             # Add pre-release toggle for testing
             if app.settings_manager.get("show_dev_options", False):

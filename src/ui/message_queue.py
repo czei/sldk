@@ -120,54 +120,124 @@ class MessageQueue:
             self.param_queue.append("No parks selected")
             return
 
-        # Always show all rides from all selected parks (single ride functionality removed)
-        for park in parks_to_display:
-            if park.is_open is False:
-                self.func_queue.append(self.display.show_scroll_message)
-                self.delay_queue.append(self.delay)
-                self.param_queue.append(park.name + " is closed")
-            else:
-                await self._add_all_rides(park, park_list.skip_meet, park_list.skip_closed)
+        # Get sort settings
+        sort_mode = self.display.settings_manager.get("sort_mode", "alphabetical")
+        group_by_park = self.display.settings_manager.get("group_by_park", False)
+        
+        if group_by_park:
+            # Process each park separately, maintaining the order they were selected
+            for park in parks_to_display:
+                if park.is_open is False:
+                    self.func_queue.append(self.display.show_scroll_message)
+                    self.delay_queue.append(self.delay)
+                    self.param_queue.append(park.name + " is closed")
+                else:
+                    await self._add_park_rides_sorted(park, park_list.skip_meet, park_list.skip_closed, sort_mode)
+        else:
+            # Combine all rides from all parks and sort together
+            all_rides = []
+            for park in parks_to_display:
+                if park.is_open:
+                    # Collect rides with their park info
+                    for ride in park.rides:
+                        # Apply filters
+                        if "Meet" in ride.name and park_list.skip_meet:
+                            continue
+                        if ride.is_open() is False and park_list.skip_closed:
+                            continue
+                        all_rides.append((ride, park))
+            
+            # Sort the combined list
+            sorted_rides = self._sort_rides(all_rides, sort_mode)
+            
+            # Add sorted rides to queue
+            for ride, park in sorted_rides:
+                await self._add_single_ride(ride, park)
             
         self.regenerate_flag = False
-        
     
-    
-    async def _add_all_rides(self, park, skip_meet, skip_closed):
+    def _sort_rides(self, rides_with_parks, sort_mode):
         """
-        Add all rides to the queue
+        Sort rides based on the specified sort mode
+        
+        Args:
+            rides_with_parks: List of (ride, park) tuples
+            sort_mode: "alphabetical", "max_wait", or "min_wait"
+            
+        Returns:
+            Sorted list of (ride, park) tuples
+        """
+        if sort_mode == "alphabetical":
+            return sorted(rides_with_parks, key=lambda x: x[0].name.lower())
+        elif sort_mode == "max_wait":
+            # Sort by wait time descending (longest first)
+            # Closed rides and rides with no data are treated as 0
+            return sorted(rides_with_parks, 
+                         key=lambda x: x[0].wait_time if x[0].is_open() else 0, 
+                         reverse=True)
+        elif sort_mode == "min_wait":
+            # Sort by wait time ascending (shortest first)
+            # Closed rides and rides with no data are treated as 0
+            return sorted(rides_with_parks, 
+                         key=lambda x: x[0].wait_time if x[0].is_open() else 0)
+        else:
+            # Default to alphabetical if unknown sort mode
+            return sorted(rides_with_parks, key=lambda x: x[0].name.lower())
+    
+    async def _add_park_rides_sorted(self, park, skip_meet, skip_closed, sort_mode):
+        """
+        Add rides from a single park in sorted order
         
         Args:
             park: The theme park
             skip_meet: Whether to skip meet & greet attractions
             skip_closed: Whether to skip closed rides
+            sort_mode: The sort mode to use
         """
         # Start with the park name
         self.func_queue.append(self.display.show_scroll_message)
         self.delay_queue.append(self.delay)
         self.param_queue.append(park.name + " wait times...")
         
+        # Collect and filter rides
+        rides_to_show = []
         for ride in park.rides:
-            await asyncio.sleep(0)
-            if "Meet" in ride.name and skip_meet == True:
-                logger.debug(f"Skipping character meet: {ride.name}")
+            if "Meet" in ride.name and skip_meet:
                 continue
-
-            if ride.is_open() is False and skip_closed == True:
+            if ride.is_open() is False and skip_closed:
                 continue
+            rides_to_show.append((ride, park))
+        
+        # Sort the rides
+        sorted_rides = self._sort_rides(rides_to_show, sort_mode)
+        
+        # Add sorted rides to queue
+        for ride, _ in sorted_rides:
+            await self._add_single_ride(ride, park)
+    
+    async def _add_single_ride(self, ride, park):
+        """
+        Add a single ride to the display queue
+        
+        Args:
+            ride: The ride to add
+            park: The park the ride belongs to (for context if needed)
+        """
+        await asyncio.sleep(0)
+        
+        if ride.open_flag is True:
+            self.func_queue.append(self.display.show_ride_wait_time)
+            self.param_queue.append(str(ride.wait_time))
+            self.delay_queue.append(0)
+        else:
+            self.func_queue.append(self.display.show_ride_closed)
+            self.param_queue.append("Closed")
+            self.delay_queue.append(0)
 
-            if ride.open_flag is True:
-                self.func_queue.append(self.display.show_ride_wait_time)
-                self.param_queue.append(str(ride.wait_time))
-                self.delay_queue.append(0)
-            else:
-                self.func_queue.append(self.display.show_ride_closed)
-                self.param_queue.append("Closed")
-                self.delay_queue.append(0)
-
-            self.func_queue.append(self.display.show_ride_name)
-            self.param_queue.append(ride.name)
-            self.delay_queue.append(self.delay)
+        self.func_queue.append(self.display.show_ride_name)
+        self.param_queue.append(ride.name)
+        # Use minimal delay for ride names to keep display responsive
+        self.delay_queue.append(0.5)
 
     async def show(self):
         """Show the next message in the queue"""

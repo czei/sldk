@@ -279,7 +279,10 @@ class HttpClient:
                 else:
                     # For standard Python urllib - wrap response
                     try:
-                        request = self.urllib.Request(url, headers=headers)
+                        request = self.urllib.Request(url)
+                        # Add headers individually for urllib
+                        for key, value in headers.items():
+                            request.add_header(key, value)
                         with self.urllib.urlopen(request) as response:
                             return UrllibResponse(response)
                     except self.URLError as url_error:
@@ -340,9 +343,11 @@ class HttpClient:
                 request = self.urllib.Request(
                     url, 
                     data=data.encode('utf-8') if isinstance(data, str) else data,
-                    headers=headers,
                     method="POST"
                 )
+                # Add headers individually for urllib
+                for key, value in headers.items():
+                    request.add_header(key, value)
                 with self.urllib.urlopen(request) as response:
                     return UrllibResponse(response)
                     
@@ -408,7 +413,10 @@ class HttpClient:
                         
                 elif self.urllib:
                     # Standard Python with urllib - wrap response
-                    request = self.urllib.Request(url, headers=headers)
+                    request = self.urllib.Request(url)
+                    # Add headers individually for urllib
+                    for key, value in headers.items():
+                        request.add_header(key, value)
                     with self.urllib.urlopen(request) as response:
                         return UrllibResponse(response)
                 else:

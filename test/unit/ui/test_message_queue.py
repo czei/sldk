@@ -222,6 +222,11 @@ class TestMessageQueue:
         # Create a mock display
         mock_display = MagicMock()
         
+        # Create mock settings manager that returns default sort settings
+        mock_settings_manager = MagicMock()
+        mock_settings_manager.get.side_effect = lambda key, default: default
+        mock_display.settings_manager = mock_settings_manager
+        
         # Initialize message queue
         mq = MessageQueue(mock_display)
         
@@ -262,27 +267,26 @@ class TestMessageQueue:
             # Add rides for the open park
             await mq.add_rides(mock_park_list)
             
-            # Verify the park name was added
-            assert mq.func_queue[0] == mock_display.show_scroll_message
-            assert mq.param_queue[0] == "Test Park wait times..."
-            
-            # For open ride: should add wait time and name
-            assert mq.func_queue[1] == mock_display.show_ride_wait_time
-            assert mq.param_queue[1] == "15"
-            assert mq.func_queue[2] == mock_display.show_ride_name
-            assert mq.param_queue[2] == "Open Ride"
+            # With group_by_park=False (default), park name is NOT shown
+            # With alphabetical sorting: "Closed Ride", "Meet Mickey Mouse", "Open Ride"
             
             # For closed ride: should add closed message and name
-            assert mq.func_queue[3] == mock_display.show_ride_closed
-            assert mq.param_queue[3] == "Closed"
-            assert mq.func_queue[4] == mock_display.show_ride_name
-            assert mq.param_queue[4] == "Closed Ride"
+            assert mq.func_queue[0] == mock_display.show_ride_closed
+            assert mq.param_queue[0] == "Closed"
+            assert mq.func_queue[1] == mock_display.show_ride_name
+            assert mq.param_queue[1] == "Closed Ride"
             
             # For meet & greet: should add wait time and name
-            assert mq.func_queue[5] == mock_display.show_ride_wait_time
-            assert mq.param_queue[5] == "30"
-            assert mq.func_queue[6] == mock_display.show_ride_name
-            assert mq.param_queue[6] == "Meet Mickey Mouse"
+            assert mq.func_queue[2] == mock_display.show_ride_wait_time
+            assert mq.param_queue[2] == "30"
+            assert mq.func_queue[3] == mock_display.show_ride_name
+            assert mq.param_queue[3] == "Meet Mickey Mouse"
+            
+            # For open ride: should add wait time and name
+            assert mq.func_queue[4] == mock_display.show_ride_wait_time
+            assert mq.param_queue[4] == "15"
+            assert mq.func_queue[5] == mock_display.show_ride_name
+            assert mq.param_queue[5] == "Open Ride"
             
             # Regenerate flag should be set to false
             assert mq.regenerate_flag is False
@@ -292,6 +296,11 @@ class TestMessageQueue:
         """Test adding ride information with skip filters enabled"""
         # Create a mock display
         mock_display = MagicMock()
+        
+        # Create mock settings manager that returns default sort settings
+        mock_settings_manager = MagicMock()
+        mock_settings_manager.get.side_effect = lambda key, default: default
+        mock_display.settings_manager = mock_settings_manager
         
         # Initialize message queue
         mq = MessageQueue(mock_display)
@@ -328,28 +337,20 @@ class TestMessageQueue:
         mock_park_list.skip_closed = True   # Skip closed rides
         mock_park_list.skip_meet = True     # Skip meet & greets
         
-        # Mock logger
-        with patch('src.ui.message_queue.logger') as mock_logger:
-            # Mock asyncio.sleep to avoid waiting
-            with patch('asyncio.sleep', new_callable=AsyncMock) as mock_sleep:
-                # Add rides for the open park
-                await mq.add_rides(mock_park_list)
-                
-                # Verify the park name was added
-                assert mq.func_queue[0] == mock_display.show_scroll_message
-                assert mq.param_queue[0] == "Test Park wait times..."
-                
-                # For open ride: should add wait time and name
-                assert mq.func_queue[1] == mock_display.show_ride_wait_time
-                assert mq.param_queue[1] == "15"
-                assert mq.func_queue[2] == mock_display.show_ride_name
-                assert mq.param_queue[2] == "Open Ride"
-                
-                # Closed ride should be skipped (only 3 items total in the queue)
-                assert len(mq.func_queue) == 3
-                
-                # Debug log should show skipping the meet & greet
-                mock_logger.debug.assert_any_call("Skipping character meet: Meet Mickey Mouse")
+        # Mock asyncio.sleep to avoid waiting
+        with patch('asyncio.sleep', new_callable=AsyncMock) as mock_sleep:
+            # Add rides for the open park
+            await mq.add_rides(mock_park_list)
+            
+            # With group_by_park=False (default), park name is NOT shown
+            # For open ride: should add wait time and name
+            assert mq.func_queue[0] == mock_display.show_ride_wait_time
+            assert mq.param_queue[0] == "15"
+            assert mq.func_queue[1] == mock_display.show_ride_name
+            assert mq.param_queue[1] == "Open Ride"
+            
+            # Closed ride and meet & greet should be skipped (only 2 items total in the queue)
+            assert len(mq.func_queue) == 2
     
     @pytest.mark.asyncio
     async def test_show(self):

@@ -491,8 +491,9 @@ class SimulatedLEDMatrix(DisplayInterface):
         self._current_ride_name = ride_name
         self._current_ride_name_color = (100, 150, 255)  # Light blue color for ride names
         self._update_combined_display()
-        # Simulate scrolling time for longer ride names
-        await asyncio.sleep(len(ride_name) * 0.1)
+        # Minimal sleep to allow other tasks to run
+        # Just yield control without significant delay
+        await asyncio.sleep(0.01)
     
     def set_colors(self, settings_manager):
         """Set display colors from settings"""

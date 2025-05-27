@@ -52,8 +52,20 @@ class OTAUpdater:
         return False
 
     def update_available_at_boot(self):
-        is_available = self.new_version_dir in os.listdir(self.module) and '.version' in os.listdir(self.modulepath(self.new_version_dir))
-        return is_available
+        # Handle empty module path (default to current directory)
+        module_path = self.module if self.module else '.'
+        try:
+            module_contents = os.listdir(module_path)
+            if self.new_version_dir not in module_contents:
+                return False
+            
+            new_version_path = self.modulepath(self.new_version_dir)
+            new_version_contents = os.listdir(new_version_path)
+            is_available = '.version' in new_version_contents
+            return is_available
+        except (OSError, FileNotFoundError):
+            # Directory doesn't exist or can't be accessed
+            return False
 
     def install_update_if_available_after_boot(self, ssid, password):
         """This method will install the latest version if out-of-date after boot.
@@ -65,13 +77,19 @@ class OTAUpdater:
         - If no, the WIFI connection is not initialized as no new known version is available
         """
 
-        if self.new_version_dir in os.listdir(self.module):
-            if '.version' in os.listdir(self.modulepath(self.new_version_dir)):
-                latest_version = self.get_version(self.modulepath(self.new_version_dir), '../.version')
-                logger.info(f'New update found: {latest_version}')
-                OTAUpdater._using_network(ssid, password)
-                self.install_update_if_available()
-                return True
+        # Handle empty module path (default to current directory)
+        module_path = self.module if self.module else '.'
+        try:
+            if self.new_version_dir in os.listdir(module_path):
+                if '.version' in os.listdir(self.modulepath(self.new_version_dir)):
+                    latest_version = self.get_version(self.modulepath(self.new_version_dir), '../.version')
+                    logger.info(f'New update found: {latest_version}')
+                    OTAUpdater._using_network(ssid, password)
+                    self.install_update_if_available()
+                    return True
+        except (OSError, FileNotFoundError):
+            # Directory doesn't exist or can't be accessed
+            pass
             
         logger.info('No new updates found...')
         return False
@@ -122,10 +140,14 @@ class OTAUpdater:
             versionfile.close()
 
     def get_version(self, directory, version_file_name='.version'):
-        if version_file_name in os.listdir(directory):
-            with open(directory + '/' + version_file_name) as f:
-                version = f.read()
-                return version
+        try:
+            if version_file_name in os.listdir(directory):
+                with open(directory + '/' + version_file_name) as f:
+                    version = f.read().strip()
+                    return version
+        except (OSError, FileNotFoundError):
+            # Directory doesn't exist or can't be accessed
+            pass
         return '0.0'
 
     def get_latest_version(self):
