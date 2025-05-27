@@ -40,10 +40,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 * **Hardware Abstraction**: Include fallbacks when hardware components aren't available
 
 ## CircuitPython Development
+
+### CRITICAL: Synchronize web_server.py and dev_web_server.py
+**⚠️ IMPORTANT: The UI for the MatrixPortal hardware is in web_server.py and the UI for the development simulation is in dev_web_server.py. ANY change made to one file MUST be made to the other file as well. NO EXCEPTIONS.**
+
+When making changes to either web server:
+1. **ALWAYS** check if the same functionality exists in the other file
+2. **ALWAYS** apply the same changes to both files
+3. **NEVER** make changes to only one file
+4. This includes:
+   - Query parameter processing
+   - Settings updates
+   - HTML generation
+   - API endpoints
+   - Update mechanisms (like queue_rebuild_needed)
+
 * Instructions for the wait times API are at:  https://queue-times.com/pages/api
 * CircuitPython uses its own http library adafruit_requests, and all HTTP calls are synchronous.
 * All changes should be made to work on both the MatrixPortal S3 hardware and in the simulated dev environment. 
-* The UI for the MatrixPortal hardware is in web_server.py and the UI for the development simulation is in dev_web_server.py.  Changes should always be made to both files. 
 * Remember that CircuitPython 3.x is a fork of MicroPython, and the standard libraries either aren't available or have versions specific to CircuitPython
 * CircuitPython devices are very slow and have use cooperative multitasking using asyncio, not multithreading. This is made more difficult because the CircuitPython HTTP library is synchronous, so background tasks like scrolling stop when HTTP calls are made. 
 * Support both running on actual hardware and testing in standard Python environment

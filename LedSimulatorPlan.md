@@ -274,9 +274,133 @@ class MatrixPortalS3(BaseDevice):
         self.display = Display(None, width=self.width, height=self.height)
 ```
 
-### 4. Key Features to Implement
+### 4. CircuitPython Source Code Reference
 
-#### 4.1 Pixel-Perfect LED Simulation
+#### 4.1 Accessing CircuitPython Source
+The complete CircuitPython source code is available at: https://github.com/adafruit/circuitpython
+
+Key directories for displayio implementation reference:
+- **shared-module/displayio/**: Core displayio implementation in C
+- **shared-bindings/displayio/**: Python API bindings
+- **tests/**: Unit tests for various modules
+- **examples/**: Example code demonstrating displayio usage
+
+##### Important Source Files to Study:
+1. **Display Implementation**:
+   - `shared-module/displayio/Display.c` - Core display logic
+   - `shared-bindings/displayio/Display.c` - Python API
+
+2. **Group Implementation**:
+   - `shared-module/displayio/Group.c` - Group rendering logic
+   - `shared-bindings/displayio/Group.c` - Python API
+
+3. **Bitmap and Palette**:
+   - `shared-module/displayio/Bitmap.c`
+   - `shared-module/displayio/Palette.c`
+
+4. **TileGrid**:
+   - `shared-module/displayio/TileGrid.c` - Sprite rendering
+
+##### Function Lists to Implement:
+Extract complete function lists by examining the Python binding files:
+```bash
+# Clone CircuitPython repository
+git clone https://github.com/adafruit/circuitpython.git
+cd circuitpython
+
+# Find all displayio Python API functions
+grep -h "STATIC mp_obj_t" shared-bindings/displayio/*.c | grep -o "displayio_[^(]*"
+
+# Find all display_text functions
+grep -h "STATIC mp_obj_t" shared-bindings/adafruit_display_text/*.c | grep -o "display_text_[^(]*"
+```
+
+#### 4.2 Utilizing CircuitPython Tests
+
+##### Test Integration Strategy:
+1. **Copy Relevant Tests**:
+   - Copy tests from `circuitpython/tests/circuitpython/` that test displayio functionality
+   - Adapt tests to run against the simulator implementation
+   - Use these as acceptance tests to verify API compatibility
+
+2. **Test Categories to Import**:
+   - `test_displayio_*.py` - Core displayio tests
+   - `test_bitmap_*.py` - Bitmap manipulation tests
+   - `test_group_*.py` - Group hierarchy tests
+   - Any display_text related tests
+
+3. **Test Adaptation Process**:
+   ```python
+   # Original CircuitPython test
+   import displayio
+   display = board.DISPLAY
+   
+   # Adapted for simulator
+   from pyledsimulator import displayio
+   from pyledsimulator.devices import MatrixPortalS3
+   device = MatrixPortalS3()
+   display = device.display
+   ```
+
+##### Running CircuitPython Tests:
+```bash
+# Clone CircuitPython if not already done
+git clone https://github.com/adafruit/circuitpython.git
+
+# Copy relevant tests to PyLEDSimulator
+mkdir -p tests/circuitpython_compat
+cp circuitpython/tests/circuitpython/test_displayio*.py tests/circuitpython_compat/
+
+# Create test adapter to run CircuitPython tests
+# See tests/circuitpython_compat/adapter.py for implementation
+```
+
+##### Test Adapter Example (`tests/circuitpython_compat/adapter.py`):
+```python
+"""Adapter to run CircuitPython tests against PyLEDSimulator"""
+import sys
+import pytest
+
+# Mock CircuitPython specific modules
+class MockBoard:
+    DISPLAY = None
+
+sys.modules['board'] = MockBoard()
+
+# Import simulator modules as CircuitPython modules
+import pyledsimulator.displayio as displayio
+import pyledsimulator.terminalio as terminalio
+import pyledsimulator.adafruit_display_text as adafruit_display_text
+
+sys.modules['displayio'] = displayio
+sys.modules['terminalio'] = terminalio
+sys.modules['adafruit_display_text'] = adafruit_display_text
+
+# Setup default display for tests
+from pyledsimulator.devices import MatrixPortalS3
+device = MatrixPortalS3()
+device.initialize()
+MockBoard.DISPLAY = device.display
+```
+
+#### 4.3 Code Examples from CircuitPython
+
+Study these key examples from the CircuitPython repository:
+1. **examples/displayio_simpletest.py** - Basic displayio usage
+2. **examples/display_text_simpletest.py** - Text rendering
+3. **examples/bitmap_font_simpletest.py** - Font loading
+4. **examples/display_shapes_simpletest.py** - Shape drawing
+5. **examples/matrixportal_simpletest.py** - MatrixPortal specific features
+
+These examples should be:
+- Copied to PyLEDSimulator's examples directory
+- Modified minimally to work with the simulator
+- Used as integration tests to verify compatibility
+- Referenced in documentation as "works identically to hardware"
+
+### 5. Key Features to Implement
+
+#### 5.1 Pixel-Perfect LED Simulation
 - Each LED is rendered as a rounded rectangle with configurable pitch (2.5, 3, 4, 5, 6mm)
 - Dark gaps between LEDs to simulate real hardware appearance
 - LED size calculated as 80% of pitch, with 20% dark space
@@ -378,44 +502,247 @@ scroll_label.animate()
 - Bitmap pooling
 - Group flattening for rendering
 
-### 8. Documentation Requirements
+### 8. Hardware Performance Simulation
 
-#### 8.1 API Documentation
+#### 8.1 Performance Throttling System
+The simulator will include a comprehensive system to accurately simulate the reduced computational speed and constraints of CircuitPython hardware.
+
+##### Core Performance Manager (`core/performance_manager.py`)
+```python
+class PerformanceManager:
+    """Manages hardware performance simulation"""
+    
+    def __init__(self, hardware_profile="SAMD51"):
+        self.hardware_profile = hardware_profile
+        self.profiles = {
+            "SAMD51": {
+                "cpu_mhz": 120,
+                "base_delay_ms": 0.1,
+                "memory_kb": 256,
+                "gc_overhead": 0.15,  # 15% overhead for garbage collection
+                "io_delay_ms": 0.5
+            },
+            "RP2040": {
+                "cpu_mhz": 125,
+                "base_delay_ms": 0.08,
+                "memory_kb": 264,
+                "gc_overhead": 0.12,
+                "io_delay_ms": 0.3
+            },
+            "ESP32-S3": {
+                "cpu_mhz": 240,
+                "base_delay_ms": 0.05,
+                "memory_kb": 512,
+                "gc_overhead": 0.10,
+                "io_delay_ms": 0.2
+            }
+        }
+        self.enabled = True
+        self.speed_multiplier = 1.0
+        self._last_gc_time = 0
+        
+    def simulate_instruction_delay(self, instruction_count=1):
+        """Add delay based on instruction complexity"""
+        
+    def simulate_memory_constraint(self, allocation_size):
+        """Simulate memory allocation delays and failures"""
+        
+    def simulate_gc_pause(self):
+        """Simulate garbage collection pauses"""
+        
+    def simulate_io_operation(self, operation_type="read"):
+        """Simulate I/O operation delays"""
+```
+
+#### 8.2 Hardware Simulation Features
+
+##### 8.2.1 CPU Speed Simulation
+- Configurable CPU clock speeds matching real hardware (SAMD51: 120MHz, RP2040: 125MHz, ESP32-S3: 240MHz)
+- Instruction-level delays based on operation complexity
+- Python interpreter overhead simulation
+- Adjustable speed multiplier for testing (0.1x to 10x real speed)
+
+##### 8.2.2 Memory Constraints
+- Simulated memory limits matching hardware (256KB for SAMD51, 264KB for RP2040, etc.)
+- Memory allocation delays
+- Out-of-memory exception simulation
+- Garbage collection pause simulation with realistic timing
+- Memory fragmentation effects
+
+##### 8.2.3 I/O Operation Delays
+- Display update delays (SPI communication simulation)
+- File system access delays
+- Network operation delays (for WiFi-enabled boards)
+- Hardware bus communication delays
+
+##### 8.2.4 CircuitPython-Specific Behaviors
+- Cooperative multitasking simulation (no true threading)
+- Import statement delays
+- Module memory overhead
+- Watchdog timer simulation
+- Auto-reload delays when code changes
+
+#### 8.3 Integration with Display Operations
+
+##### Modified LED Matrix (`core/led_matrix.py`)
+```python
+class LEDMatrix:
+    def __init__(self, width, height, pitch=2.5, led_size=None, 
+                 performance_manager=None):
+        # ... existing init code ...
+        self.performance_manager = performance_manager or PerformanceManager()
+        
+    def set_pixel(self, x, y, color):
+        """Set a single pixel color with performance simulation"""
+        if self.performance_manager.enabled:
+            # Simulate pixel write delay
+            self.performance_manager.simulate_instruction_delay(3)
+        # ... existing pixel setting code ...
+        
+    def render(self):
+        """Render the matrix to pygame surface with realistic delays"""
+        if self.performance_manager.enabled:
+            # Simulate display refresh delay
+            self.performance_manager.simulate_io_operation("display_refresh")
+            # Simulate potential GC pause during rendering
+            self.performance_manager.simulate_gc_pause()
+        # ... existing render code ...
+```
+
+#### 8.4 Configuration and Control
+
+##### Performance Configuration (`config/performance_config.py`)
+```python
+class PerformanceConfig:
+    """Configuration for hardware performance simulation"""
+    
+    def __init__(self):
+        self.simulation_enabled = True
+        self.hardware_profile = "SAMD51"
+        self.speed_multiplier = 1.0
+        self.gc_simulation = True
+        self.memory_constraints = True
+        self.io_delays = True
+        self.profile_overrides = {}
+        
+    def load_from_file(self, config_path):
+        """Load performance settings from JSON config"""
+        
+    def create_custom_profile(self, name, settings):
+        """Create custom hardware profile"""
+```
+
+#### 8.5 Profiling and Metrics
+
+##### Performance Monitor (`utils/performance_monitor.py`)
+```python
+class PerformanceMonitor:
+    """Monitor and report performance metrics"""
+    
+    def __init__(self, performance_manager):
+        self.performance_manager = performance_manager
+        self.metrics = {
+            "frame_times": [],
+            "gc_pauses": [],
+            "memory_usage": [],
+            "cpu_utilization": []
+        }
+        
+    def start_frame(self):
+        """Mark the start of a frame"""
+        
+    def end_frame(self):
+        """Mark the end of a frame and calculate metrics"""
+        
+    def generate_report(self):
+        """Generate performance report comparing simulated vs actual"""
+        
+    def export_metrics(self, filename):
+        """Export metrics for analysis"""
+```
+
+#### 8.6 Example Usage
+
+```python
+from pyledsimulator.devices import MatrixPortalS3
+from pyledsimulator.core import PerformanceManager
+from pyledsimulator.config import PerformanceConfig
+
+# Create performance configuration
+perf_config = PerformanceConfig()
+perf_config.hardware_profile = "SAMD51"
+perf_config.speed_multiplier = 1.0  # Real-time simulation
+
+# Create performance manager
+perf_manager = PerformanceManager(perf_config.hardware_profile)
+
+# Create device with performance simulation
+device = MatrixPortalS3(performance_manager=perf_manager)
+device.initialize()
+
+# Code will now run with realistic hardware delays
+# Scrolling text will move at actual hardware speed
+# Memory constraints will be enforced
+```
+
+#### 8.7 Testing with Performance Simulation
+
+##### Performance Test Suite (`tests/test_performance/`)
+- Test timing accuracy against real hardware measurements
+- Verify memory constraint enforcement
+- Test GC pause simulation
+- Validate I/O operation delays
+- Benchmark different hardware profiles
+
+#### 8.8 User Interface for Performance Control
+
+##### Performance Control Panel
+- Real-time speed adjustment slider
+- Hardware profile selector
+- Memory usage visualization
+- Frame rate display
+- GC pause indicator
+- Toggle for enabling/disabling simulation
+- Save/load performance profiles
+
+### 9. Documentation Requirements
+
+#### 9.1 API Documentation
 - Complete docstrings for all public methods
 - Type hints throughout
 - Usage examples for each class
 - Migration guide showing single codebase for hardware and simulator
 - displayio API compatibility reference
 
-#### 8.2 Tutorials
+#### 9.2 Tutorials
 - Getting started guide
 - Converting CircuitPython code
 - Creating custom devices
 - Advanced animation techniques
 
-### 9. Packaging and Distribution
+### 10. Packaging and Distribution
 
-#### 9.1 Package Configuration
+#### 10.1 Package Configuration
 - setup.py with proper metadata
 - Requirements: pygame>=2.0 (hard dependency), pillow>=8.0, numpy
 - Python 3.7+ support
 - Apache 2.0 License
 
-#### 9.2 Distribution
+#### 10.2 Distribution
 - PyPI package (pip install pyledsimulator)
 - GitHub releases with examples
 - Docker image for easy testing
 - Conda package for scientific users
 
-### 10. Future Enhancements
+### 11. Future Enhancements
 
-#### 10.1 Additional Device Support
+#### 11.1 Additional Device Support
 - Various Adafruit LED matrices
 - RGB LED panels
 - Custom LED arrangements
 - E-paper display simulation
 
-#### 10.2 Advanced Features
+#### 11.2 Advanced Features
 - Hardware-specific features (accelerometer, buttons)
 - Color depth restrictions
 - Dirty rectangle tracking for performance
@@ -424,29 +751,38 @@ scroll_label.animate()
 - Recording and playback of animations
 - Integration with CircuitPython REPL
 
-### 11. Implementation Timeline
+### 12. Implementation Timeline
 
 #### Phase 1: Core Framework (Week 1-2)
 - Set up project structure
 - Implement LEDMatrix and PixelBuffer
 - Basic pygame rendering
 - Simple device implementation
+- Initial PerformanceManager implementation
 
 #### Phase 2: displayio Implementation (Week 3-4)
 - Implement all displayio classes
 - Add font support
 - Implement Label and text rendering
 - Create unit tests
+- Integrate performance simulation with display operations
 
-#### Phase 3: Device Support (Week 5)
+#### Phase 3: Hardware Performance Simulation (Week 5)
+- Complete PerformanceManager with all hardware profiles
+- Implement memory constraint simulation
+- Add GC pause simulation
+- Create performance monitoring tools
+- Performance simulation unit tests
+
+#### Phase 4: Device Support (Week 6)
 - Complete MatrixPortal S3 implementation
 - Add multi-display support
 - Performance optimization
-- Integration tests
+- Integration tests with performance simulation
 
-#### Phase 4: Polish and Release (Week 6)
-- Complete documentation
-- Create examples
+#### Phase 5: Polish and Release (Week 7)
+- Complete documentation including performance simulation guide
+- Create examples demonstrating performance simulation
 - Package for distribution
 - Initial release
 
