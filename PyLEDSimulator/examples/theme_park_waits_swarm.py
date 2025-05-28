@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """Swarming LED animation that builds THEME PARK WAITS display.
 
-Starts with all black LEDs. A swarm of yellow LEDs moves around the screen.
+Starts with all black LEDs. A swarm of colorful LEDs moves around the screen,
+with colors changing dynamically over time creating a rainbow effect.
 When a swarming LED passes over a position that's part of the THEME PARK WAITS
-text, it gets captured and becomes permanently part of the text. The swarm
-continues until all text positions are filled.
+text, it gets captured and joins the dynamic rainbow text display.
+Both the swarm and the captured text continuously cycle through colors,
+creating a vibrant, ever-changing display.
 """
 
 import sys
@@ -15,6 +17,70 @@ import math
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from pyledsimulator.devices import MatrixPortalS3
+
+
+def hsv_to_rgb(h, s, v):
+    """Convert HSV color to RGB."""
+    h = h % 1.0
+    c = v * s
+    x = c * (1 - abs((h * 6) % 2 - 1))
+    m = v - c
+    
+    if h < 1/6:
+        r, g, b = c, x, 0
+    elif h < 2/6:
+        r, g, b = x, c, 0
+    elif h < 3/6:
+        r, g, b = 0, c, x
+    elif h < 4/6:
+        r, g, b = 0, x, c
+    elif h < 5/6:
+        r, g, b = x, 0, c
+    else:
+        r, g, b = c, 0, x
+        
+    return (int((r + m) * 255), int((g + m) * 255), int((b + m) * 255))
+
+
+def get_dynamic_flock_color(time_elapsed, bird_index=0):
+    """Generate dynamic colors for the bird flock based on time and position.
+    
+    Args:
+        time_elapsed: Time since animation started
+        bird_index: Optional index of the bird for variation
+        
+    Returns:
+        (r, g, b) color tuple
+    """
+    # Create a rainbow effect that cycles over time
+    # Different birds get slightly offset colors for variety
+    hue_offset = (time_elapsed * 0.5 + bird_index * 0.1) % 1.0
+    
+    # Create a vibrant rainbow effect
+    return hsv_to_rgb(hue_offset, 0.9, 0.8)
+
+
+def get_dynamic_text_color(time_elapsed, pixel_pos):
+    """Generate dynamic colors for the captured text based on time and position.
+    
+    Args:
+        time_elapsed: Time since animation started
+        pixel_pos: (x, y) position of the pixel for spatial variation
+        
+    Returns:
+        (r, g, b) color tuple
+    """
+    # Create a wave effect across the text
+    # Color changes based on position and time for a flowing rainbow
+    x, y = pixel_pos
+    # Normalize position to create a wave effect across the display
+    position_offset = (x / 64.0 + y / 32.0) * 0.3
+    
+    # Slower color cycle for text (0.2x speed) with position-based offset
+    hue = (time_elapsed * 0.2 + position_offset) % 1.0
+    
+    # Full saturation and brightness for vibrant text
+    return hsv_to_rgb(hue, 1.0, 1.0)
 
 
 def get_theme_park_waits_pixels():
@@ -486,8 +552,6 @@ def main():
     device.initialize()
     device.matrix.clear()
     
-    yellow = (255, 255, 0)
-    
     # Get target pixels for THEME PARK WAITS
     target_pixels = get_theme_park_waits_pixels()
     captured_pixels = set()
@@ -503,7 +567,8 @@ def main():
     spawn_interval = 3.0  # Seconds between new flocks
     
     print(f"Starting bird flock animation with {num_needed} LEDs needed...")
-    print("Watch as flocks of birds build THEME PARK WAITS!")
+    print("Watch as flocks of colorful birds build THEME PARK WAITS!")
+    print("Both birds and text continuously cycle through rainbow colors.")
     print("Press ESC or close window to exit.")
     
     # Animation state
@@ -671,15 +736,18 @@ def main():
         # Update display
         device.matrix.clear()
         
-        # Draw captured text pixels (permanently on)
+        # Draw captured text pixels with dynamic colors
         for pixel in captured_pixels:
-            device.matrix.set_pixel(pixel[0], pixel[1], yellow)
+            text_color = get_dynamic_text_color(time_elapsed, pixel)
+            device.matrix.set_pixel(pixel[0], pixel[1], text_color)
         
-        # Draw birds
-        for bird in flock:
+        # Draw birds with dynamic colors
+        for i, bird in enumerate(flock):
             if bird.is_on_screen():
                 bird_x, bird_y = bird.get_pixel_pos()
-                device.matrix.set_pixel(bird_x, bird_y, yellow)
+                # Get dynamic color for this bird
+                bird_color = get_dynamic_flock_color(time_elapsed, i)
+                device.matrix.set_pixel(bird_x, bird_y, bird_color)
         
         # Show progress every 100 frames
         if frame_count % 100 == 0:

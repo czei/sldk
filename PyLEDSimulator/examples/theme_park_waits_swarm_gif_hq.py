@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""High-quality version of the swarm animation GIF generator.
+"""High-quality version of the swarm animation with dynamic colors.
 
-This version captures more frames and uses less aggressive optimization
-to produce a higher quality animated GIF.
+This version captures more frames and generates an MP4 video file
+with dynamic rainbow colors for both the birds and the captured text.
+Also creates a preview GIF for quick viewing.
 """
 
 import sys
@@ -19,6 +20,70 @@ from pyledsimulator.core import DisplayManager
 from PIL import Image
 import pygame
 import imageio
+
+
+def hsv_to_rgb(h, s, v):
+    """Convert HSV color to RGB."""
+    h = h % 1.0
+    c = v * s
+    x = c * (1 - abs((h * 6) % 2 - 1))
+    m = v - c
+    
+    if h < 1/6:
+        r, g, b = c, x, 0
+    elif h < 2/6:
+        r, g, b = x, c, 0
+    elif h < 3/6:
+        r, g, b = 0, c, x
+    elif h < 4/6:
+        r, g, b = 0, x, c
+    elif h < 5/6:
+        r, g, b = x, 0, c
+    else:
+        r, g, b = c, 0, x
+        
+    return (int((r + m) * 255), int((g + m) * 255), int((b + m) * 255))
+
+
+def get_dynamic_flock_color(time_elapsed, bird_index=0):
+    """Generate dynamic colors for the bird flock based on time and position.
+    
+    Args:
+        time_elapsed: Time since animation started
+        bird_index: Optional index of the bird for variation
+        
+    Returns:
+        (r, g, b) color tuple
+    """
+    # Create a rainbow effect that cycles over time
+    # Different birds get slightly offset colors for variety
+    hue_offset = (time_elapsed * 0.5 + bird_index * 0.1) % 1.0
+    
+    # Create a vibrant rainbow effect
+    return hsv_to_rgb(hue_offset, 0.9, 0.8)
+
+
+def get_dynamic_text_color(time_elapsed, pixel_pos):
+    """Generate dynamic colors for the captured text based on time and position.
+    
+    Args:
+        time_elapsed: Time since animation started
+        pixel_pos: (x, y) position of the pixel for spatial variation
+        
+    Returns:
+        (r, g, b) color tuple
+    """
+    # Create a wave effect across the text
+    # Color changes based on position and time for a flowing rainbow
+    x, y = pixel_pos
+    # Normalize position to create a wave effect across the display
+    position_offset = (x / 64.0 + y / 32.0) * 0.3
+    
+    # Slower color cycle for text (0.2x speed) with position-based offset
+    hue = (time_elapsed * 0.2 + position_offset) % 1.0
+    
+    # Full saturation and brightness for vibrant text
+    return hsv_to_rgb(hue, 1.0, 1.0)
 
 
 # Copy all the helper functions from the original file
@@ -435,7 +500,7 @@ def create_flock_from_direction(num_birds, direction, target_pixels, captured_pi
 
 
 def main():
-    """Run the flocking bird animation and save as high-quality GIF."""
+    """Run the flocking bird animation and save as high-quality MP4."""
     frames_dir = "swarm_frames_hq"
     if os.path.exists(frames_dir):
         shutil.rmtree(frames_dir)
@@ -450,8 +515,6 @@ def main():
     device.display_manager.add_display(device.matrix)
     device.display_manager.create_window(title="THEME PARK WAITS Bird Flock (HQ)")
     
-    yellow = (255, 255, 0)
-    
     target_pixels = get_theme_park_waits_pixels()
     captured_pixels = set()
     
@@ -464,7 +527,8 @@ def main():
     spawn_interval = 3.0
     
     print(f"Starting high-quality bird flock animation with {num_needed} LEDs needed...")
-    print("Capturing frames for GIF generation...")
+    print("Dynamic rainbow colors for both birds and text!")
+    print("Capturing frames for MP4 video generation...")
     print("Press ESC or close window to exit.")
     
     start_time = time.time()
@@ -473,9 +537,9 @@ def main():
     last_update = time.time()
     completion_time = None
     
-    # Higher quality settings
+    # Higher quality settings - capture every frame for 24fps video
     frame_number = 0
-    capture_interval = 2  # Capture every other frame for smoother animation
+    capture_interval = 1  # Capture every frame for maximum frames
     captured_frames = []
     
     def update_animation():
@@ -600,13 +664,17 @@ def main():
         
         device.matrix.clear()
         
+        # Draw captured text pixels with dynamic colors
         for pixel in captured_pixels:
-            device.matrix.set_pixel(pixel[0], pixel[1], yellow)
+            text_color = get_dynamic_text_color(time_elapsed, pixel)
+            device.matrix.set_pixel(pixel[0], pixel[1], text_color)
         
-        for bird in flock:
+        # Draw birds with dynamic colors
+        for i, bird in enumerate(flock):
             if bird.is_on_screen():
                 bird_x, bird_y = bird.get_pixel_pos()
-                device.matrix.set_pixel(bird_x, bird_y, yellow)
+                bird_color = get_dynamic_flock_color(time_elapsed, i)
+                device.matrix.set_pixel(bird_x, bird_y, bird_color)
         
         # Capture frames with higher frequency
         if frame_count % capture_interval == 0:
@@ -630,10 +698,10 @@ def main():
         # Update the display
         device.display_manager.update()
         
-    print("Animation loop finished, saving GIF...")
+    print("Animation loop finished, saving video...")
     
     if captured_frames:
-        print(f"\nCreating high-quality GIF from {len(captured_frames)} frames...")
+        print(f"\nCreating high-quality video from {len(captured_frames)} frames...")
         
         # Load frames and skip duplicates
         images = []
@@ -641,6 +709,9 @@ def main():
         skipped = 0
         
         for i, frame_path in enumerate(captured_frames):
+            # Skip if file doesn't exist (can happen with frame numbering issues)
+            if not os.path.exists(frame_path):
+                continue
             img = Image.open(frame_path)
             
             # Convert to comparable format
@@ -655,29 +726,56 @@ def main():
                 
         print(f"Loaded {len(images)} unique frames (skipped {skipped} duplicates)")
         
-        gif_path = "theme_park_waits_swarm_hq.gif"
+        video_path = "theme_park_waits_swarm_hq.mp4"
         if len(images) > 1:
-            # 30ms per frame = ~33fps for smoother animation
-            print(f"Saving {len(images)} frames to GIF using imageio...")
+            # 24fps for smooth playback with 6 second duration
+            target_duration = 6.0  # seconds
+            fps = 24
             
-            # Save using imageio for better animated GIF support
-            with imageio.get_writer(gif_path, mode='I', duration=0.03, loop=0) as writer:
-                for img in images:
+            # If we have more frames than needed, sample them
+            frames_needed = int(target_duration * fps)  # 144 frames for 6 seconds
+            if len(images) > frames_needed:
+                # Sample frames evenly
+                indices = [int(i * len(images) / frames_needed) for i in range(frames_needed)]
+                sampled_images = [images[i] for i in indices]
+                print(f"Sampled {len(sampled_images)} frames from {len(images)} total frames")
+            elif len(images) < frames_needed:
+                # Need to interpolate/duplicate frames to reach target
+                sampled_images = []
+                for i in range(frames_needed):
+                    source_index = int(i * len(images) / frames_needed)
+                    sampled_images.append(images[min(source_index, len(images) - 1)])
+                print(f"Interpolated to {len(sampled_images)} frames from {len(images)} source frames")
+            else:
+                sampled_images = images
+                
+            print(f"Saving {len(sampled_images)} frames to MP4 at 24fps (6 second duration)...")
+            
+            # Save as MP4 with ffmpeg backend at 24fps
+            with imageio.get_writer(video_path, fps=fps, codec='libx264', quality=8) as writer:
+                for img in sampled_images:
                     # Convert PIL image to numpy array
                     img_array = np.array(img.convert('RGB'))
                     writer.append_data(img_array)
             
-            print(f"High-quality GIF saved as: {gif_path}")
-            print(f"GIF size: {os.path.getsize(gif_path) / 1024:.1f} KB")
+            print(f"High-quality MP4 saved as: {video_path}")
+            print(f"MP4 size: {os.path.getsize(video_path) / 1024:.1f} KB")
+            print(f"Video duration: {len(sampled_images) / fps:.1f} seconds at {fps}fps")
             
-            # Verify the GIF was created correctly
-            verify_img = Image.open(gif_path)
-            try:
-                print(f"Verification - GIF has {getattr(verify_img, 'n_frames', 'unknown')} frames")
-            except:
-                print("Verification - GIF created successfully")
+            # Also save a preview GIF with fewer frames for quick viewing
+            preview_gif_path = "theme_park_waits_swarm_preview.gif"
+            preview_frames = images[::5]  # Every 5th frame
+            print(f"\nCreating preview GIF with {len(preview_frames)} frames...")
+            
+            with imageio.get_writer(preview_gif_path, mode='I', duration=0.3, loop=0) as writer:
+                for img in preview_frames:
+                    img_array = np.array(img.convert('RGB'))
+                    writer.append_data(img_array)
+            
+            print(f"Preview GIF saved as: {preview_gif_path}")
+            print(f"Preview size: {os.path.getsize(preview_gif_path) / 1024:.1f} KB")
         else:
-            print(f"ERROR: Only {len(images)} image(s) captured, cannot create animated GIF")
+            print(f"ERROR: Only {len(images)} image(s) captured, cannot create video")
         
         shutil.rmtree(frames_dir)
     else:
