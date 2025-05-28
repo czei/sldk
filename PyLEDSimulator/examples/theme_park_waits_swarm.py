@@ -97,18 +97,13 @@ def get_theme_park_waits_pixels():
     for y in range(15, 31):
         pixels.add((13, y))
         pixels.add((14, y))
-    # Inner left diagonal
+    # Middle V of W
     for x in range(7, 9): pixels.add((x, 28))
     for x in range(7, 9): pixels.add((x, 27))
     for x in range(11, 13): pixels.add((x, 28))
     for x in range(11, 13): pixels.add((x, 27))
     for y in range(23, 27): pixels.add((9, y))
     for y in range(23, 27): pixels.add((10, y))
-    # for y in range(15, 23): pixels.add((8, y))
-    # for y in range(23, 31): pixels.add((9, y))
-    # Inner right diagonal
-    # for y in range(15, 23): pixels.add((11, y))
-    # for y in range(23, 31): pixels.add((10, y))
     # END of CLAUDE DO NOT EDIT
     
     # A (x=16, y=15) - 10 LEDs wide, 16 pixels tall

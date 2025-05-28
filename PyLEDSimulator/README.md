@@ -57,6 +57,14 @@ PyLEDSimulator aims for "sufficient API compatibility" with CircuitPython's disp
 - Some rotation/scaling transforms may have minor differences
 - Font rendering may have slight metric differences
 
+### CircuitPython Compatibility
+
+For detailed information about writing code that works in both the simulator and on CircuitPython hardware, see [CIRCUITPYTHON_COMPATIBILITY.md](CIRCUITPYTHON_COMPATIBILITY.md). This guide covers:
+- Module availability differences
+- Exception handling in CircuitPython
+- Memory constraints
+- Common pitfalls and solutions
+
 ## Examples
 
 See the `examples/` directory for various usage examples:

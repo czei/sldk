@@ -163,3 +163,11 @@ The simulator runs at desktop speeds, which is much faster than CircuitPython ha
 1. Use appropriate delays in animations
 2. Test scrolling speeds on actual hardware
 3. Consider implementing the PerformanceManager for accurate simulation (future enhancement)
+
+## CircuitPython Compatibility
+
+For important information about CircuitPython-specific limitations and compatibility considerations, see [CIRCUITPYTHON_COMPATIBILITY.md](CIRCUITPYTHON_COMPATIBILITY.md). This includes:
+- Module availability differences between standard Python and CircuitPython
+- Exception handling differences
+- Memory constraints on hardware
+- Common pitfalls when developing cross-platform code
