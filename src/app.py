@@ -87,7 +87,7 @@ class ThemeParkApp:
             self.display.set_colors(self.settings_manager)
 
         # Show splash screen first before any network operations
-        await self.display.show_splash(4)
+        await self.display.show_splash(12, True)
         
         # Check for pending OTA update before starting main app
         await self._check_and_install_pending_update()
