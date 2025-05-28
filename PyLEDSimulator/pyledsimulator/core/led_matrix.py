@@ -13,7 +13,7 @@ class LEDMatrix:
     including realistic LED rendering with configurable pitch and appearance.
     """
     
-    def __init__(self, width, height, pitch=4.0, led_size=None, performance_manager=None):
+    def __init__(self, width, height, pitch=3.0, led_size=None, performance_manager=None):
         """Initialize LED matrix.
         
         Args:
@@ -29,11 +29,13 @@ class LEDMatrix:
         
         # Calculate LED size and spacing based on pitch
         # For a given pitch, LED size is typically 80% of pitch
+        # Scale factor adjusted to match physical 192mm x 96mm display (725x362 pixels at 96 DPI)
+        # 192mm / 64 pixels = 3mm pitch, display should be ~725 pixels wide
         if led_size is None:
-            self.led_size = int(pitch * 0.8 * 4)  # Scale factor for visual display
+            self.led_size = int(pitch * 0.8 * 3.75)  # 9 pixel LED size
         else:
             self.led_size = led_size
-        self.spacing = int(pitch * 0.2 * 4)  # 20% of pitch is dark space
+        self.spacing = int(pitch * 0.2 * 3.75)  # 2 pixel spacing
         
         self.pixel_buffer = PixelBuffer(width, height)
         self.brightness = 1.0

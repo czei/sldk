@@ -11,11 +11,11 @@ class MatrixPortalS3(BaseDevice):
     Standard configuration with 64x32 RGB LED matrix.
     """
     
-    def __init__(self, pitch=4.0, width=64, height=32):
+    def __init__(self, pitch=3.0, width=64, height=32):
         """Initialize MatrixPortal S3.
         
         Args:
-            pitch: LED pitch in mm (default 4.0)
+            pitch: LED pitch in mm (default 3.0 for 192x96mm physical size)
             width: Display width in pixels (default 64)
             height: Display height in pixels (default 32)
         """
