@@ -112,6 +112,7 @@ When making changes to either web server:
 * All changes should be made to work on both the MatrixPortal S3 hardware and in the simulated dev environment. 
 * Remember that CircuitPython 8.x/9.x is a fork of MicroPython, and the standard libraries either aren't available or have versions specific to CircuitPython
 * CircuitPython devices are very slow and use cooperative multitasking using asyncio, not multithreading. This is made more difficult because the CircuitPython HTTP library is synchronous, so background tasks like scrolling stop when HTTP calls are made.
+* **IMPORTANT**: On the CIRCUITPY drive, libraries are stored in `src/lib/` not just `lib/`. When importing Adafruit libraries, you may need to add `/src/lib` to `sys.path` first.
 * When in doubt about CircuitPython compatibility, check:
   - [CircuitPython Core Modules](https://docs.circuitpython.org/en/latest/docs/library/index.html)
   - [CircuitPython vs MicroPython differences](https://docs.circuitpython.org/en/latest/docs/design_guide.html)

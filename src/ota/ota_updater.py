@@ -167,17 +167,16 @@ class OTAUpdater:
                 
                 # Check for HTTP errors first
                 if hasattr(response, 'status_code') and response.status_code >= 400:
-                    logger.error(None, f"HTTP {response.status_code} error fetching releases: {response.text[:200]}...")
+                    if response.status_code in [404, 500]:
+                        logger.info(f"Repository {repo_path} not accessible (HTTP {response.status_code}) - OTA updates disabled")
+                        return "0.0"  # Return current version to skip update
+                    logger.error(None, f"HTTP {response.status_code} error fetching releases")
                     raise ValueError(f"HTTP {response.status_code} error: Repository may not exist or may be private")
                 
-                # Debug: Log the raw response (only if available)
-                if hasattr(response, 'text') and response.text:
-                    try:
-                        logger.debug(f"Raw response (first 200 chars): {response.text[:200]}")
-                    except:
-                        logger.debug(f"Raw response available but not subscriptable")
-                
                 releases = response.json()
+                
+                # Debug: Log the raw response after getting JSON
+                logger.debug(f"Raw response (first 200 chars): {str(releases)[:200] if releases else 'No releases'}")
                 response.close()
                 
                 if releases and len(releases) > 0:
@@ -202,7 +201,10 @@ class OTAUpdater:
                 
                 # Check for HTTP errors first
                 if hasattr(response, 'status_code') and response.status_code >= 400:
-                    logger.error(None, f"HTTP {response.status_code} error fetching latest release: {response.text[:200]}...")
+                    if response.status_code in [404, 500]:
+                        logger.info(f"Repository {repo_path} not accessible (HTTP {response.status_code}) - OTA updates disabled")
+                        return "0.0"  # Return current version to skip update
+                    logger.error(None, f"HTTP {response.status_code} error fetching latest release")
                     raise ValueError(f"HTTP {response.status_code} error: Repository may not exist or may be private")
                 
                 gh_json = response.json()
