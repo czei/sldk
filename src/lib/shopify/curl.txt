@@ -1,2 +1,0 @@
- curl -X POST https://themeparkwaits.myshopify.com/admin/api/2025-01/graphql.json -H "Accept: application/json" -H "Content-type: application/json" -H "User-agent: ShopifyPythonAPI/12.7.0 Python/3.13.1" -H  "X-shopify-access-token: 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" -d "{ \"query\": \"{ shop { name id } }\" }"
-

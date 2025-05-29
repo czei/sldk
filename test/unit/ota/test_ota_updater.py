@@ -1,7 +1,7 @@
 """Unit tests for OTAUpdater"""
 import pytest
 from unittest.mock import Mock, MagicMock, patch
-from src.ota.ota_updater import OTAUpdater
+from src.ota.ota_updater import OTAUpdater, _compare_versions, _normalize_version
 from src.network.http_client import HttpClient
 
 
@@ -84,10 +84,12 @@ class TestOTAUpdater:
         """Test get_latest_version for stable releases"""
         # Mock the API response
         mock_response = Mock()
+        mock_response.status_code = 200  # Add status_code attribute
         mock_response.json.return_value = {
             'tag_name': 'v1.5.0',
             'prerelease': False
         }
+        mock_response.close = Mock()  # Add close method
         mock_http_client.get_sync.return_value = mock_response
         
         # use_prerelease is False by default
@@ -103,6 +105,7 @@ class TestOTAUpdater:
         
         # Mock the API response
         mock_response = Mock()
+        mock_response.status_code = 200  # Add status_code attribute
         mock_response.json.return_value = [
             {
                 'tag_name': 'v2.0.0-beta',
@@ -113,6 +116,7 @@ class TestOTAUpdater:
                 'prerelease': False
             }
         ]
+        mock_response.close = Mock()  # Add close method
         mock_http_client.get_sync.return_value = mock_response
         
         version = ota_updater.get_latest_version()
@@ -167,8 +171,10 @@ class TestOTAUpdater:
         
         # Mock the HTTP response
         mock_response = Mock()
+        mock_response.status_code = 200  # Add status_code attribute
         mock_response.read.side_effect = [b'file content chunk 1', b'file content chunk 2', b'']
         mock_response.content = b'file content'
+        mock_response.close = Mock()  # Add close method
         mock_http_client.get_sync.return_value = mock_response
         
         # Create a temporary file path for testing
@@ -203,10 +209,12 @@ class TestOTAUpdater:
         
         # Mock the HTTP response without content attribute
         mock_response = Mock()
+        mock_response.status_code = 200  # Add status_code attribute
         # Remove content attribute to simulate CircuitPython response
         if hasattr(mock_response, 'content'):
             delattr(mock_response, 'content')
         mock_response.read.side_effect = [b'chunk1', b'chunk2', b'']
+        mock_response.close = Mock()  # Add close method
         mock_http_client.get_sync.return_value = mock_response
         
         # Create a temporary file path for testing
@@ -272,3 +280,117 @@ class TestOTAUpdater:
             assert latest_version[0].isdigit() or latest_version[0] == 'v'
         except Exception as e:
             pytest.fail(f"Real API call failed: {e}")
+    
+    def test_install_update_after_boot_version_file_path_fix(self, ota_updater):
+        """Test that install_update_if_available_after_boot reads .version from correct path"""
+        # Mock directory listing to simulate next/.version exists
+        with patch('os.listdir') as mock_listdir:
+            def listdir_side_effect(path):
+                if path == '.' or path == '':
+                    return ['next', 'src']
+                elif path == 'next' or path.endswith('next'):
+                    return ['.version', 'some_file.py']
+                else:
+                    return []
+            
+            mock_listdir.side_effect = listdir_side_effect
+            
+            # Mock the version file reading
+            mock_open = MagicMock()
+            mock_open.__enter__.return_value.read.return_value = '2.0'
+            
+            with patch('builtins.open', return_value=mock_open):
+                with patch.object(ota_updater, 'install_update_if_available', return_value=True):
+                    result = ota_updater.install_update_if_available_after_boot('ssid', 'password')
+                    
+                    # Should detect update and return True
+                    assert result is True
+                    
+                    # Verify that the correct path was used to read .version
+                    # The path should be 'next/.version', not 'next/../.version'
+                    mock_open.__enter__.return_value.read.assert_called_once()
+
+
+class TestVersionComparison:
+    """Test cases for version comparison functions"""
+    
+    def test_normalize_version_removes_v_prefix(self):
+        """Test that _normalize_version removes 'v' prefix"""
+        assert _normalize_version('v1.9') == '1.9'
+        assert _normalize_version('v2.0.0') == '2.0.0'
+        assert _normalize_version('1.9') == '1.9'
+        assert _normalize_version('2.0') == '2.0'
+    
+    def test_normalize_version_handles_empty_strings(self):
+        """Test that _normalize_version handles empty strings"""
+        assert _normalize_version('') == '0.0'
+        assert _normalize_version(None) == '0.0'
+    
+    def test_compare_versions_major_difference(self):
+        """Test version comparison with major version differences"""
+        # This is the main bug: 2.0 should be > 1.9
+        assert _compare_versions('2.0', '1.9') > 0
+        assert _compare_versions('1.9', '2.0') < 0
+        assert _compare_versions('3.0', '2.9') > 0
+        assert _compare_versions('10.0', '9.9') > 0
+    
+    def test_compare_versions_minor_difference(self):
+        """Test version comparison with minor version differences"""
+        assert _compare_versions('1.10', '1.9') > 0
+        assert _compare_versions('1.9', '1.10') < 0
+        assert _compare_versions('2.1', '2.0') > 0
+        assert _compare_versions('2.0', '2.1') < 0
+    
+    def test_compare_versions_patch_difference(self):
+        """Test version comparison with patch version differences"""
+        assert _compare_versions('1.9.1', '1.9.0') > 0
+        assert _compare_versions('1.9.0', '1.9.1') < 0
+        assert _compare_versions('2.0.1', '2.0.0') > 0
+    
+    def test_compare_versions_equal(self):
+        """Test version comparison when versions are equal"""
+        assert _compare_versions('1.9', '1.9') == 0
+        assert _compare_versions('2.0', '2.0') == 0
+        assert _compare_versions('v1.9', '1.9') == 0
+        assert _compare_versions('v2.0.0', '2.0') == 0
+    
+    def test_compare_versions_different_lengths(self):
+        """Test version comparison with different number of parts"""
+        assert _compare_versions('1.9.0', '1.9') == 0  # 1.9.0 == 1.9.0 (padded)
+        assert _compare_versions('1.9.1', '1.9') > 0   # 1.9.1 > 1.9.0 (padded)
+        assert _compare_versions('1.9', '1.9.1') < 0   # 1.9.0 (padded) < 1.9.1
+        assert _compare_versions('2.0', '1.9.9') > 0   # 2.0.0 (padded) > 1.9.9
+    
+    def test_compare_versions_with_v_prefix(self):
+        """Test version comparison with 'v' prefixes"""
+        assert _compare_versions('v2.0', 'v1.9') > 0
+        assert _compare_versions('v1.9', 'v2.0') < 0
+        assert _compare_versions('v2.0', '1.9') > 0
+        assert _compare_versions('1.9', 'v2.0') < 0
+    
+    def test_compare_versions_non_numeric_parts(self):
+        """Test version comparison with non-numeric parts (like pre-release tags)"""
+        # For non-numeric parts, fall back to string comparison
+        assert _compare_versions('2.0-alpha', '2.0-beta') < 0  # alpha < beta
+        assert _compare_versions('2.0-beta', '2.0-alpha') > 0  # beta > alpha
+        assert _compare_versions('2.0-rc1', '2.0-rc1') == 0
+    
+    def test_ota_updater_uses_semantic_comparison(self):
+        """Test that OTAUpdater now uses semantic version comparison"""
+        mock_http_client = Mock()
+        updater = OTAUpdater(
+            http_client_param=mock_http_client,
+            github_repo='test/repo',
+            main_dir='src'
+        )
+        
+        # Mock get_version to return current version 1.9
+        with patch.object(updater, 'get_version', return_value='1.9'):
+            # Mock get_latest_version to return 2.0
+            with patch.object(updater, 'get_latest_version', return_value='2.0'):
+                # Mock the file creation and download methods
+                with patch.object(updater, '_create_new_version_file'):
+                    result = updater.check_for_update_to_install_during_next_reboot()
+                    
+                    # Should now detect that 2.0 > 1.9 and return True
+                    assert result is True
