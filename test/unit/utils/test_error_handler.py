@@ -67,7 +67,8 @@ class TestErrorHandler:
                 mock_mount.readonly = False
                 mock_storage.getmount.return_value = mock_mount
 
-                handler = ErrorHandler(file_path)
+                # Create handler in development mode to test debug logging
+                handler = ErrorHandler(file_path, mode=ErrorHandler.DEVELOPMENT)
                 handler.info("Test info message")
                 handler.debug("Test debug message")
 
@@ -135,3 +136,74 @@ class TestErrorHandler:
             # Verify they were printed to console
             mock_print.assert_any_call("Test info message")
             mock_print.assert_any_call("Test debug message")
+    
+    def test_development_production_modes(self):
+        """Test that debug messages are only written to file in development mode"""
+        # Create temporary file
+        with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+            file_path = temp_file.name
+
+        try:
+            # Mock the storage module
+            with patch('src.utils.error_handler.storage') as mock_storage:
+                # Set up the mock to report writable filesystem
+                mock_mount = MagicMock()
+                mock_mount.readonly = False
+                mock_storage.getmount.return_value = mock_mount
+
+                # Test production mode (default)
+                handler_prod = ErrorHandler(file_path, mode=ErrorHandler.PRODUCTION)
+                handler_prod.info("Production info message")
+                handler_prod.debug("Production debug message")
+                handler_prod.error(None, "Production error message")
+
+                with open(file_path, 'r') as f:
+                    content = f.read()
+                    assert "Production info message" in content
+                    assert "Production debug message" not in content  # Debug not written in production
+                    assert "Production error message" in content
+
+                # Clear the file
+                with open(file_path, 'w') as f:
+                    f.write("")
+
+                # Test development mode
+                handler_dev = ErrorHandler(file_path + "_dev", mode=ErrorHandler.DEVELOPMENT)
+                handler_dev.info("Development info message")
+                handler_dev.debug("Development debug message")
+                handler_dev.error(None, "Development error message")
+
+                with open(file_path + "_dev", 'r') as f:
+                    content = f.read()
+                    assert "Development info message" in content
+                    assert "Development debug message" in content  # Debug IS written in development
+                    assert "Development error message" in content
+
+        finally:
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            if os.path.exists(file_path + "_dev"):
+                os.remove(file_path + "_dev")
+    
+    def test_global_mode_setting(self):
+        """Test setting global mode"""
+        # Store original mode
+        original_mode = ErrorHandler.get_mode()
+        
+        try:
+            # Test setting development mode
+            ErrorHandler.set_mode(ErrorHandler.DEVELOPMENT)
+            assert ErrorHandler.get_mode() == ErrorHandler.DEVELOPMENT
+            
+            # Test setting production mode
+            ErrorHandler.set_mode(ErrorHandler.PRODUCTION)
+            assert ErrorHandler.get_mode() == ErrorHandler.PRODUCTION
+            
+            # Test invalid mode
+            with pytest.raises(ValueError) as exc_info:
+                ErrorHandler.set_mode("invalid_mode")
+            assert "Invalid mode" in str(exc_info.value)
+            
+        finally:
+            # Restore original mode
+            ErrorHandler.set_mode(original_mode)

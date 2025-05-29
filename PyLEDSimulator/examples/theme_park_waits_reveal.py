@@ -155,6 +155,62 @@ def simple_shuffle(lst):
         lst[i], lst[j] = lst[j], lst[i]
 
 
+def show_splash(device, duration=4, show_version=False, version_text="v1.0"):
+    """Show THEME PARK WAITS splash screen with optional version.
+    
+    Args:
+        device: The MatrixPortalS3 device instance
+        duration: Duration to show splash in seconds (default: 4)
+        show_version: Whether to show version text (default: False)
+        version_text: Version text to display (default: "v1.0")
+    """
+    device.matrix.clear()
+    yellow = (255, 255, 0)
+    dim_yellow = (128, 128, 0)  # Dimmer yellow for version
+    
+    # Draw THEME PARK WAITS
+    target_pixels = get_theme_park_waits_pixels()
+    for pixel in target_pixels:
+        device.matrix.set_pixel(pixel[0], pixel[1], yellow)
+    
+    # Draw version text if requested
+    if show_version:
+        # Simple version display in bottom right corner
+        # Using a simple pixel pattern for version text
+        version_pixels = []
+        
+        # "v" character (small, bottom right area)
+        version_pixels.extend([
+            (52, 26), (52, 27),
+            (53, 28), (53, 29),
+            (54, 27), (54, 26)
+        ])
+        
+        # "1" character
+        version_pixels.extend([
+            (56, 26), (56, 27), (56, 28), (56, 29), (56, 30)
+        ])
+        
+        # "." dot
+        version_pixels.append((58, 30))
+        
+        # "0" character
+        version_pixels.extend([
+            (60, 26), (60, 27), (60, 28), (60, 29), (60, 30),
+            (61, 26), (61, 30),
+            (62, 26), (62, 27), (62, 28), (62, 29), (62, 30)
+        ])
+        
+        # Draw version pixels in dimmer yellow
+        for pixel in version_pixels:
+            if 0 <= pixel[0] < 64 and 0 <= pixel[1] < 32:
+                device.matrix.set_pixel(pixel[0], pixel[1], dim_yellow)
+    
+    # Wait for duration
+    time.sleep(duration)
+    device.matrix.clear()
+
+
 def main():
     """Run the optimized reveal animation."""
     device = MatrixPortalS3()
@@ -163,8 +219,17 @@ def main():
     
     yellow = (255, 255, 0)
     
-    print("Starting THEME PARK WAITS reveal animation...")
-    print("Starting with random LEDs on, gradually revealing the text...")
+    # Option to show splash with version first
+    show_splash_first = True  # Set to True to show splash before animation
+    
+    if show_splash_first:
+        print("Showing THEME PARK WAITS splash with version...")
+        show_splash(device, duration=3, show_version=True, version_text="v1.0")
+        print("Starting reveal animation...")
+    else:
+        print("Starting THEME PARK WAITS reveal animation...")
+        print("Starting with random LEDs on, gradually revealing the text...")
+    
     print("Press ESC or close window to exit.")
     
     # Get target pixels for THEME PARK WAITS
