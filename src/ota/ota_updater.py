@@ -165,6 +165,11 @@ class OTAUpdater:
             try:
                 response = self.http_client.get_sync(url, headers=self.headers)
                 
+                # Check for HTTP errors first
+                if hasattr(response, 'status_code') and response.status_code >= 400:
+                    logger.error(None, f"HTTP {response.status_code} error fetching releases: {response.text[:200]}...")
+                    raise ValueError(f"HTTP {response.status_code} error: Repository may not exist or may be private")
+                
                 # Debug: Log the raw response (only if available)
                 if hasattr(response, 'text') and response.text:
                     try:
@@ -194,6 +199,12 @@ class OTAUpdater:
             
             try:
                 response = self.http_client.get_sync(url, headers=self.headers)
+                
+                # Check for HTTP errors first
+                if hasattr(response, 'status_code') and response.status_code >= 400:
+                    logger.error(None, f"HTTP {response.status_code} error fetching latest release: {response.text[:200]}...")
+                    raise ValueError(f"HTTP {response.status_code} error: Repository may not exist or may be private")
+                
                 gh_json = response.json()
                 response.close()
                 

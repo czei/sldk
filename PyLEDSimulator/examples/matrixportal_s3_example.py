@@ -43,7 +43,7 @@ def main():
     main_group.append(led_label)
     
     # Show on display
-    device.show(main_group)
+    device.display.root_group = main_group
     
     # Run the simulation
     print("Running simulation... Press ESC or close window to exit.")

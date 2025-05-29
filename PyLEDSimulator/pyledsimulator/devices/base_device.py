@@ -61,7 +61,7 @@ class BaseDevice(ABC):
             group_or_tilegrid: Display object to show
         """
         if self.display:
-            self.display.show(group_or_tilegrid)
+            self.display.root_group = group_or_tilegrid
             
     def refresh(self):
         """Refresh the display."""
