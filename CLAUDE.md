@@ -2,12 +2,22 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## CRITICAL: Never Modify boot.py or code.py
+## CRITICAL: Never Modify boot.py or code.py AND Never Add Files to Root Directory
 **⚠️ IMPORTANT: The files `boot.py` and `code.py` in the root directory are FIXED and must NEVER be modified.**
-- These files are frozen from release1.9 because the OTA update system can only update files in `/src`
+**⚠️ CRITICAL: NO new Python files should EVER be added to the root CircuitPython directory.**
+
+### Root Directory Restrictions:
+- **NEVER modify** `boot.py` or `code.py` - they are frozen from release1.9
+- **NEVER add** any new `.py` files to the root directory
+- **NEVER create** new modules in the root - ALL code must go in `/src`
+- The OTA update system can ONLY update files in the `/src` directory
+- Any files outside `/src` cannot be updated via OTA and will break the update mechanism
+
+### Required Structure:
 - `code.py` contains only: `import src.themeparkwaits`
-- All application logic must be in `/src` directory or imported from there
+- All application logic MUST be in `/src` directory or subdirectories
 - The bridge module `src/themeparkwaits.py` handles the import chain to the main application
+- Entry point is now `src/main.py` (not `theme_park_main.py` in root)
 
 ## Build Commands
 * `make copy_to_circuitpy` - Deploy to MatrixPortal S3 device (runs lint check first)
