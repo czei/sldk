@@ -155,7 +155,7 @@ def simple_shuffle(lst):
         lst[i], lst[j] = lst[j], lst[i]
 
 
-def show_splash(device, duration=4, show_version=False, version_text="v1.0"):
+def show_splash(device, duration=8, show_version=False, version_text="v1.0"):
     """Show THEME PARK WAITS splash screen with optional version.
     
     Args:
