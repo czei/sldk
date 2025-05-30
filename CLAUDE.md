@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## CRITICAL: Never Modify boot.py or code.py
+**⚠️ IMPORTANT: The files `boot.py` and `code.py` in the root directory are FIXED and must NEVER be modified.**
+- These files are frozen from release1.9 because the OTA update system can only update files in `/src`
+- `code.py` contains only: `import src.themeparkwaits`
+- All application logic must be in `/src` directory or imported from there
+- The bridge module `src/themeparkwaits.py` handles the import chain to the main application
+
 ## Build Commands
 * `make copy_to_circuitpy` - Deploy to MatrixPortal S3 device (runs lint check first)
 * `make copy_to_circuitpy-no-lint` - Deploy without lint check (use with caution)

@@ -107,11 +107,11 @@ class TestMessageQueue:
             assert len(mq.param_queue) == 1
             assert len(mq.delay_queue) == 1
             assert mq.func_queue[0] == mock_display.show_splash
-            assert mq.param_queue[0] == 4  # Default duration
+            assert mq.param_queue[0] == (4, False)  # Default duration and reveal_style
             assert mq.delay_queue[0] == 0  # No additional delay
             
             # Verify the log message
-            mock_logger.debug.assert_called_once_with("Adding splash message to queue")
+            mock_logger.debug.assert_called_once_with("Adding splash message to queue with duration=4, reveal_style=False")
             
             # Add a splash screen with custom duration
             await mq.add_splash(duration=2)
@@ -121,7 +121,7 @@ class TestMessageQueue:
             assert len(mq.param_queue) == 2
             assert len(mq.delay_queue) == 2
             assert mq.func_queue[1] == mock_display.show_splash
-            assert mq.param_queue[1] == 2  # Custom duration
+            assert mq.param_queue[1] == (2, False)  # Custom duration with default reveal_style
             assert mq.delay_queue[1] == 0  # No additional delay
     
     @pytest.mark.asyncio

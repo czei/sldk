@@ -1,0 +1,20 @@
+Loading settings settings.json
+Creating display for platform: CircuitPython
+Desktop platform detected, using simulated display
+Initialized Simulated LED Matrix
+Using system font: arial at 48px
+Using font size: 48px in window size: 640x320
+Pygame initialized successfully
+Loading settings settings.json
+Error in main application:module 'wifi' has no attribute 'radio'
+stack trace:Traceback (most recent call last):
+  File "/Users/czei/Projects/Disney/ThemeParkAPI/theme_park_main.py", line 107, in main
+    app = ThemeParkApp(display, http_client)
+  File "/Users/czei/Projects/Disney/ThemeParkAPI/src/app.py", line 50, in __init__
+    self.wifi_manager = WiFiManager(self.settings_manager)
+                        ~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/czei/Projects/Disney/ThemeParkAPI/src/network/wifi_manager.py", line 64, in __init__
+    mac_ap = ' '.join([hex(i) for i in self.wifi.radio.mac_address_ap])
+                                       ^^^^^^^^^^^^^^^
+AttributeError: module 'wifi' has no attribute 'radio'
+

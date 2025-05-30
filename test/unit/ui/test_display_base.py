@@ -46,10 +46,10 @@ class TestDisplay:
                 await display.show_splash()
                 
                 # Verify sleep was called with default duration
-                mock_sleep.assert_called_once_with(4)
+                mock_sleep.assert_called_once_with(8)
                 
                 # Verify log message
-                mock_logger.info.assert_called_once_with("Showing splash screen for 4 seconds")
+                mock_logger.info.assert_called_once_with("Showing splash screen for 8 seconds")
                 
                 # Reset mocks
                 mock_sleep.reset_mock()

@@ -66,14 +66,14 @@ test-with-lint: lint-errors test
 # Copy all files to the release GIT archive
 release: $(SRC_DIR)/*.py
 	cp -f boot.py $(RELEASE_DESTDIR)
-	cp -f main.py $(RELEASE_DESTDIR)/code.py
+	cp -f code.py $(RELEASE_DESTDIR)
 	cp -f theme_park_main.py $(RELEASE_DESTDIR)
 	cp -rf $(SRC_DIR) $(RELEASE_DESTDIR)
 
 # Copy files to the connected MatrixPortal S3 (with lint check)
 copy-to-circuitpy : lint-errors $(TEST_DIR)
 	cp -f boot.py $(TEST_DIR)
-	cp -f code_entry.py $(TEST_DIR)/code.py
+	cp -f code.py $(TEST_DIR)
 	cp -f theme_park_main.py $(TEST_DIR)
 	rsync -av --update --progress \
 		--exclude='images/' \
@@ -86,7 +86,7 @@ copy-to-circuitpy : lint-errors $(TEST_DIR)
 # Copy files without lint check (use with caution)
 copy-to-circuitpy-no-lint : $(TEST_DIR)
 	cp -f boot.py $(TEST_DIR)
-	cp -f code_entry.py $(TEST_DIR)/code.py
+	cp -f code.py $(TEST_DIR)
 	cp -f theme_park_main.py $(TEST_DIR)
 	rsync -av --update --progress \
 		--exclude='images/' \
