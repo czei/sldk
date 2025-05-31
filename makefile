@@ -78,7 +78,6 @@ copy-to-circuitpy : lint-errors $(TEST_DIR)
 		--exclude='.DS_Store' \
 		--exclude='**/.DS_Store' \
 		--exclude="__pycache__" \
-		--exclude="__init__.py" \
 		$(SRC_DIR)/ $(TEST_DIR)/src/
 
 # Copy files without lint check (use with caution)
@@ -90,5 +89,4 @@ copy-to-circuitpy-no-lint : $(TEST_DIR)
 		--exclude='.DS_Store' \
 		--exclude='**/.DS_Store' \
 		--exclude="__pycache__" \
-		--exclude="__init__.py" \
 		$(SRC_DIR)/ $(TEST_DIR)/src/

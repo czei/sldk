@@ -29,7 +29,7 @@ def main():
     # Try the larger font first
     try:
         # LeagueSpartan is too large, let's use the 5x8 font with scaling
-        font = bitmap_font.load_font(os.path.join(font_dir, '5x8.bdf'))
+        font = bitmap_font.load_font(os.path.join(font_dir, 'viii.bdf'))
         print("Loaded 5x8 font")
     except:
         # Fallback to tom-thumb

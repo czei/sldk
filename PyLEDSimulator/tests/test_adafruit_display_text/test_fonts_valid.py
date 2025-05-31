@@ -34,7 +34,7 @@ class TestValidFonts(unittest.TestCase):
         
         cls.fonts = {
             'tom-thumb': bitmap_font.load_font(os.path.join(font_dir, 'tom-thumb.bdf')),
-            '5x8': bitmap_font.load_font(os.path.join(font_dir, '5x8.bdf'))
+            'viii': bitmap_font.load_font(os.path.join(font_dir, 'viii.bdf'))
         }
         
         # Character sets to test

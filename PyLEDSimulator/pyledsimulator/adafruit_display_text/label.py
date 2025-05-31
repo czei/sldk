@@ -2,6 +2,7 @@
 
 from ..displayio import Group, Bitmap, Palette, TileGrid
 from ..core.color_utils import rgb888_to_rgb565
+from ..terminalio.font_scaler import get_font_for_scale
 
 
 class Label(Group):
@@ -39,7 +40,16 @@ class Label(Group):
         """
         super().__init__(scale=scale, **kwargs)
         
-        self.font = font
+        # If using terminalio.FONT, automatically select font based on scale
+        try:
+            from ..terminalio import FONT as DEFAULT_FONT
+            if font is DEFAULT_FONT:
+                self.font = get_font_for_scale(scale)
+            else:
+                self.font = font
+        except ImportError:
+            # If terminalio is not available, just use the provided font
+            self.font = font
         self._text = ""
         self._color = color if isinstance(color, int) else rgb888_to_rgb565(*color)
         self._background_color = background_color

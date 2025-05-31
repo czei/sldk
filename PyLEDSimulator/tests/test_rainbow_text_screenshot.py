@@ -206,7 +206,7 @@ class TestRainbowTextScreenshot(unittest.TestCase):
         
         fonts_to_test = [
             ('tom-thumb.bdf', 'tom-thumb', 1),
-            ('5x8.bdf', '5x8', 1),
+            ('viii.bdf', '5x8', 1),
             ('tom-thumb.bdf', 'tom-thumb-2x', 2),  # Scaled
             ('LeagueSpartan-Bold-16.bdf', 'league-spartan', 1),
         ]

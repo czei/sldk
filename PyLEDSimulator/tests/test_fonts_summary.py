@@ -33,7 +33,7 @@ class FontTestSummary(unittest.TestCase):
         # Test valid fonts
         valid_fonts = {
             'tom-thumb.bdf': 'Tom Thumb (3x5 tiny font)',
-            '5x8.bdf': 'Teeny Tiny Pixls (3x5 font)'
+            'viii.bdf': 'Teeny Tiny Pixls (3x5 font)'
         }
         
         invalid_fonts = {

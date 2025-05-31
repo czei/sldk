@@ -24,13 +24,13 @@ class TestFontsSimple(unittest.TestCase):
         )
         
         cls.tom_thumb = bitmap_font.load_font(os.path.join(font_dir, 'tom-thumb.bdf'))
-        cls.font_5x8 = bitmap_font.load_font(os.path.join(font_dir, '5x8.bdf'))
+        cls.font_viii = bitmap_font.load_font(os.path.join(font_dir, 'viii.bdf'))
         
     def test_alphabet_rendering(self):
         """Test rendering A-Z for each font."""
         fonts = [
             ('tom-thumb', self.tom_thumb),
-            ('5x8', self.font_5x8)
+            ('viii', self.font_viii)
         ]
         
         for font_name, font in fonts:
@@ -55,7 +55,7 @@ class TestFontsSimple(unittest.TestCase):
         """Test rendering 0-9 for each font."""
         fonts = [
             ('tom-thumb', self.tom_thumb),
-            ('5x8', self.font_5x8)
+            ('viii', self.font_viii)
         ]
         
         for font_name, font in fonts:
@@ -79,7 +79,7 @@ class TestFontsSimple(unittest.TestCase):
         
         fonts = [
             ('tom-thumb', self.tom_thumb),
-            ('5x8', self.font_5x8)
+            ('viii', self.font_viii)
         ]
         
         for font_name, font in fonts:
@@ -108,7 +108,7 @@ class TestFontsSimple(unittest.TestCase):
         """Test multiline with actual newlines."""
         fonts = [
             ('tom-thumb', self.tom_thumb),
-            ('5x8', self.font_5x8)
+            ('viii', self.font_viii)
         ]
         
         for font_name, font in fonts:
@@ -131,7 +131,7 @@ class TestFontsSimple(unittest.TestCase):
         """Test the scale parameter works."""
         fonts = [
             ('tom-thumb', self.tom_thumb),
-            ('5x8', self.font_5x8)
+            ('viii', self.font_viii)
         ]
         
         for font_name, font in fonts:
@@ -154,7 +154,7 @@ class TestFontsSimple(unittest.TestCase):
         
         fonts = [
             ('tom-thumb', self.tom_thumb),
-            ('5x8', self.font_5x8)
+            ('viii', self.font_viii)
         ]
         
         test_chars = "ABCXYZ0189.,"

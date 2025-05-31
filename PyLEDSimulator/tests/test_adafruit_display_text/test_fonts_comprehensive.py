@@ -38,7 +38,7 @@ class TestFontsComprehensive(unittest.TestCase):
         # Load fonts with error handling
         font_files = {
             'tom-thumb': 'tom-thumb.bdf',
-            '5x8': '5x8.bdf',
+            '5x8': 'viii.bdf',
             # Note: The following fonts appear to be HTML files instead of BDF
             # They need to be properly downloaded or converted
             'LeagueSpartan-16': 'LeagueSpartan-Bold-16.bdf',

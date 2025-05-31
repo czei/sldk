@@ -121,7 +121,21 @@ When making changes to either web server:
    - Settings updates
    - HTML generation
    - API endpoints
-   - Update mechanisms (like queue_rebuild_needed)
+   - Update mechanisms
+
+### CRITICAL: Thread Safety - Web Server Must Never Modify Message Queue
+**⚠️ IMPORTANT: The web server runs in a separate context/thread and must NEVER directly modify the message queue data structures.**
+
+Thread safety rules:
+1. **NEVER** call `message_queue.init()` from the web server
+2. **NEVER** directly modify any message queue data from the web server
+3. **NEVER** call methods that modify the message queue state
+4. The message queue is owned by the main display loop thread
+5. Only the main thread that runs the display loop can safely modify message queue data
+6. Web server should only:
+   - Update settings that the main thread reads
+   - Set flags that the main thread checks
+   - Never directly manipulate display or queue state
 
 ### CircuitPython Development Guidelines:
 * Instructions for the wait times API are at:  https://queue-times.com/pages/api
