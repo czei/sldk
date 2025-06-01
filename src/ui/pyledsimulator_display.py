@@ -100,7 +100,7 @@ class PyLEDSimulatorDisplay(DisplayInterface):
             # Configure generic scrolling message
             self.scrolling_label = Label(terminalio_FONT)
             self.scrolling_label.x = 0
-            self.scrolling_label.y = 5
+            self.scrolling_label.y = 16
             self.scrolling_group = displayio.Group()
             self.scrolling_group.append(self.scrolling_label)
             self.scrolling_group.hidden = True
@@ -108,7 +108,7 @@ class PyLEDSimulatorDisplay(DisplayInterface):
             # Configure Ride Times
             self.wait_time_name = Label(terminalio_FONT)
             self.wait_time_name.x = 0
-            self.wait_time_name.y = 7
+            self.wait_time_name.y = 2
             self.wait_time_name.scale = 1
             self.wait_time_name_group = displayio.Group()
             self.wait_time_name_group.append(self.wait_time_name)
@@ -124,7 +124,7 @@ class PyLEDSimulatorDisplay(DisplayInterface):
 
             self.closed = Label(terminalio_FONT)
             self.closed.x = 14
-            self.closed.y = 12
+            self.closed.y = 14
             self.closed.scale = 1
             self.closed.text = "Closed"
             self.closed_group = displayio.Group()

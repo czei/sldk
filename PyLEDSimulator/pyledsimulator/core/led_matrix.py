@@ -191,26 +191,25 @@ class LEDMatrix:
         center = self.led_size // 2
         radius = self.led_size // 2 - 1
         
-        # Ensure we have a perfect circle by using anti-aliasing
         # For 100% brightness, enhance the LED appearance for maximum visibility
         enhanced_color = color
         if hasattr(self, 'brightness') and self.brightness == 1.0:
             # At 100% brightness, make LEDs extra bright by enhancing the base color
             enhanced_color = tuple(min(255, int(c * 1.15)) for c in color)
-            pygame.draw.circle(led_surface, enhanced_color, (center, center), radius)
-        else:
-            # Draw main LED circle with anti-aliasing for smooth edges
-            pygame.draw.circle(led_surface, color, (center, center), radius)
         
-        # Add realistic LED appearance: slightly brighter center for depth
+        # Draw main LED circle - simple and round
+        pygame.draw.circle(led_surface, enhanced_color, (center, center), radius)
+        
+        # Add very subtle gradient for realism without creating diamond shape
         # Convert to regular ints to avoid numpy overflow
         color_sum = int(color[0]) + int(color[1]) + int(color[2])
         if color_sum > 20:  # Only for non-black LEDs
-            # Create a more realistic LED appearance with a single highlight
-            # Reduce highlight intensity to avoid "star" effect
-            highlight_color = tuple(min(255, int(c) + 35) for c in enhanced_color)
-            highlight_radius = max(1, radius // 3)
-            pygame.draw.circle(led_surface, highlight_color, (center, center), highlight_radius)
+            # Create a smaller, dimmer circle for subtle depth
+            # Avoid sharp highlights that create diamond appearance
+            inner_radius = max(1, radius - 3)
+            gradient_intensity = 15  # Very subtle
+            gradient_color = tuple(min(255, int(c) + gradient_intensity) for c in enhanced_color)
+            pygame.draw.circle(led_surface, gradient_color, (center, center), inner_radius)
             
         return led_surface
         
