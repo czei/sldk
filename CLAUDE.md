@@ -50,6 +50,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 * Use the MockHardwareContext from helpers.py when testing code that requires multiple hardware components
 * Test fixtures in conftest.py provide access to common test data
 
+## Git Workflow
+* **IMPORTANT**: All new code changes are made on the master branch in this project
+* Feature branches (like release-2.5) are created from master but development happens on master
+* Do NOT make code changes directly on feature/release branches
+
 ## Code Style
 * Think hard about how to find the root cause of problems. DO NOT cover up issues such as the lack of data.
 * If there are significant details or questions about what is intended ask me for more details before doing anything.
