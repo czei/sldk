@@ -21,6 +21,7 @@ from pyledsimulator.adafruit_display_text.label import Label
 from pyledsimulator.terminalio import FONT as terminalio_FONT
 
 from src.ui.display_interface import DisplayInterface
+from src.ui.reveal_animation import show_reveal_splash
 from src.utils.color_utils import ColorUtils
 from src.utils.error_handler import ErrorHandler
 
@@ -99,7 +100,7 @@ class PyLEDSimulatorDisplay(DisplayInterface):
             # Configure generic scrolling message
             self.scrolling_label = Label(terminalio_FONT)
             self.scrolling_label.x = 0
-            self.scrolling_label.y = 15
+            self.scrolling_label.y = 5
             self.scrolling_group = displayio.Group()
             self.scrolling_group.append(self.scrolling_label)
             self.scrolling_group.hidden = True
@@ -115,7 +116,7 @@ class PyLEDSimulatorDisplay(DisplayInterface):
 
             self.wait_time = Label(terminalio_FONT)
             self.wait_time.x = 0
-            self.wait_time.y = 22
+            self.wait_time.y = 12
             self.wait_time.scale = 2
             self.wait_time_group = displayio.Group()
             self.wait_time_group.append(self.wait_time)
@@ -123,7 +124,7 @@ class PyLEDSimulatorDisplay(DisplayInterface):
 
             self.closed = Label(terminalio_FONT)
             self.closed.x = 14
-            self.closed.y = 22
+            self.closed.y = 12
             self.closed.scale = 1
             self.closed.text = "Closed"
             self.closed_group = displayio.Group()
@@ -142,7 +143,7 @@ class PyLEDSimulatorDisplay(DisplayInterface):
                 text="WAITS",
                 scale=2)
             self.splash_line2.x = 3
-            self.splash_line2.y = 22
+            self.splash_line2.y = 12
             self.splash_group = displayio.Group()
             self.splash_group.hidden = True
             self.splash_group.append(self.splash_line1)
@@ -156,13 +157,13 @@ class PyLEDSimulatorDisplay(DisplayInterface):
                 text="Wait Times"
             )
             self.update_line1.x = 2
-            self.update_line1.y = 10
+            self.update_line1.y = 2
             self.update_line2 = Label(
                 terminalio_FONT,
                 text="Powered By",
                 scale=1)
             self.update_line2.x = 2
-            self.update_line2.y = 22
+            self.update_line2.y = 12
             self.update_group = displayio.Group()
             self.update_group.hidden = True
             self.update_group.append(self.update_line1)
@@ -187,9 +188,9 @@ class PyLEDSimulatorDisplay(DisplayInterface):
                 text="UPDATING NOW"
             )
             self.required_line1.x = 3
-            self.required_line1.y = 12
+            self.required_line1.y = 4
             self.required_line2.x = 8
-            self.required_line2.y = 20
+            self.required_line2.y = 10
             self.required_group = displayio.Group()
             self.required_group.hidden = True
             self.required_group.append(self.required_line1)
@@ -201,9 +202,9 @@ class PyLEDSimulatorDisplay(DisplayInterface):
             self.centered_line1 = Label(terminalio_FONT, text="Test Line1")
             self.centered_line2 = Label(terminalio_FONT, text="TEST LINE2")
             self.centered_line1.x = 0
-            self.centered_line1.y = 9
+            self.centered_line1.y = 1
             self.centered_line2.x = 0
-            self.centered_line2.y = 23
+            self.centered_line2.y = 13
             self.centered_group = displayio.Group()
             self.centered_group.hidden = True
             self.centered_group.append(self.centered_line1)
@@ -216,7 +217,7 @@ class PyLEDSimulatorDisplay(DisplayInterface):
             )
             self.queue_line1.color = int(ColorUtils.colors["Yellow"], 16)
             self.queue_line1.x = 0
-            self.queue_line1.y = 10
+            self.queue_line1.y = 2
 
             self.queue_line2 = Label(
                 small_font,
@@ -224,7 +225,7 @@ class PyLEDSimulatorDisplay(DisplayInterface):
             )
             self.queue_line2.color = int(ColorUtils.colors["Orange"], 16)
             self.queue_line2.x = 1
-            self.queue_line2.y = 25
+            self.queue_line2.y = 15
             self.queue_group = displayio.Group()
             self.queue_group.hidden = True
             self.queue_group.append(self.queue_line1)
@@ -527,16 +528,20 @@ class PyLEDSimulatorDisplay(DisplayInterface):
         
         Args:
             duration: Duration to show in seconds
-            reveal_style: If True, use reveal animation (not implemented in simulator)
+            reveal_style: If True, use reveal animation
         """
         logger.debug(f"PyLEDSimulator.show_splash called with duration={duration}, reveal_style={reveal_style}")
         self._hide_all_groups()
         
-        # For now, just show static splash (reveal animation could be added later)
-        logger.debug(f"Showing the splash screen for {duration} seconds")
-        self.splash_group.hidden = False
-        await asyncio.sleep(duration)
-        self.splash_group.hidden = True
+        if reveal_style:
+            logger.debug("Using reveal animation style")
+            await show_reveal_splash(self.main_group)
+        else:
+            logger.debug(f"Showing the splash screen for {duration} seconds")
+            self.splash_group.hidden = False
+            await asyncio.sleep(duration)
+            self.splash_group.hidden = True
+    
     
     async def show_ride_name(self, ride_name):
         """

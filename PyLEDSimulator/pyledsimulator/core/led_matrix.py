@@ -187,24 +187,30 @@ class LEDMatrix:
         # Create surface with per-pixel alpha
         led_surface = pygame.Surface((self.led_size, self.led_size), pygame.SRCALPHA)
         
-        # Draw LED as a circle with gradient effect
+        # Draw LED as a perfect circle to simulate real LED
         center = self.led_size // 2
         radius = self.led_size // 2 - 1
         
-        # Draw main LED circle
-        pygame.draw.circle(led_surface, color, (center, center), radius)
+        # Ensure we have a perfect circle by using anti-aliasing
+        # For 100% brightness, enhance the LED appearance for maximum visibility
+        enhanced_color = color
+        if hasattr(self, 'brightness') and self.brightness == 1.0:
+            # At 100% brightness, make LEDs extra bright by enhancing the base color
+            enhanced_color = tuple(min(255, int(c * 1.15)) for c in color)
+            pygame.draw.circle(led_surface, enhanced_color, (center, center), radius)
+        else:
+            # Draw main LED circle with anti-aliasing for smooth edges
+            pygame.draw.circle(led_surface, color, (center, center), radius)
         
-        # Add slight gradient/glow effect for realism
+        # Add realistic LED appearance: slightly brighter center for depth
         # Convert to regular ints to avoid numpy overflow
         color_sum = int(color[0]) + int(color[1]) + int(color[2])
-        if color_sum > 30:  # Only for non-black LEDs
-            # Lighter center
-            light_color = tuple(min(255, int(c) + 50) for c in color)
-            pygame.draw.circle(led_surface, light_color, (center, center), radius // 2)
-            
-            # Even lighter center spot
-            highlight_color = tuple(min(255, int(c) + 100) for c in color)
-            pygame.draw.circle(led_surface, highlight_color, (center, center), radius // 4)
+        if color_sum > 20:  # Only for non-black LEDs
+            # Create a more realistic LED appearance with a single highlight
+            # Reduce highlight intensity to avoid "star" effect
+            highlight_color = tuple(min(255, int(c) + 35) for c in enhanced_color)
+            highlight_radius = max(1, radius // 3)
+            pygame.draw.circle(led_surface, highlight_color, (center, center), highlight_radius)
             
         return led_surface
         

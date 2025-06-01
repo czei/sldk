@@ -19,6 +19,11 @@ class BitmapFont:
         self.height = 0
         self.ascent = 0
         self.descent = 0
+        # Global font metrics from BDF
+        self.font_bounding_box = None  # (width, height, x_offset, y_offset)
+        self.font_ascent = None   # From FONT_ASCENT property
+        self.font_descent = None  # From FONT_DESCENT property
+        self.baseline_to_top = 0  # Distance from baseline to top of font bounding box
         self.glyphs = {}
         self.default_char = ord('?')
         self._glyph_cache = GlyphCache()
@@ -43,7 +48,9 @@ class BitmapFont:
         """
         current_char = None
         current_bitmap = []
+        current_dwidth = None
         in_bitmap = False
+        in_properties = False
         
         for line in file:
             line = line.strip()
@@ -57,18 +64,45 @@ class BitmapFont:
             elif line.startswith('FONTBOUNDINGBOX'):
                 parts = line.split()
                 if len(parts) >= 5:
-                    width = int(parts[1])
-                    height = int(parts[2])
-                    x_offset = int(parts[3])
-                    y_offset = int(parts[4])
-                    self.height = height
-                    self.ascent = height + y_offset
-                    self.descent = -y_offset
+                    bbox_width = int(parts[1])
+                    bbox_height = int(parts[2])
+                    bbox_x_offset = int(parts[3])
+                    bbox_y_offset = int(parts[4])
+                    self.font_bounding_box = (bbox_width, bbox_height, bbox_x_offset, bbox_y_offset)
+                    # Set initial values (may be overridden by FONT_ASCENT/FONT_DESCENT)
+                    self.height = bbox_height
+                    self.ascent = bbox_height + bbox_y_offset  # Distance from baseline to top
+                    self.descent = -bbox_y_offset  # Distance from baseline to bottom
+                    self.baseline_to_top = self.ascent
+            elif line.startswith('STARTPROPERTIES'):
+                in_properties = True
+            elif line.startswith('ENDPROPERTIES'):
+                in_properties = False
+            elif in_properties and line.startswith('FONT_ASCENT'):
+                parts = line.split()
+                if len(parts) >= 2:
+                    self.font_ascent = int(parts[1])
+                    self.ascent = self.font_ascent
+                    self.baseline_to_top = self.font_ascent
+            elif in_properties and line.startswith('FONT_DESCENT'):
+                parts = line.split()
+                if len(parts) >= 2:
+                    self.font_descent = int(parts[1])
+                    self.descent = self.font_descent
+                    # Update total height if we have both ascent and descent
+                    if self.font_ascent is not None:
+                        self.height = self.font_ascent + self.font_descent
             elif line.startswith('STARTCHAR'):
                 current_char = None
                 current_bitmap = []
+                current_dwidth = None
             elif line.startswith('ENCODING'):
                 current_char = int(line.split()[1])
+            elif line.startswith('DWIDTH'):
+                # Parse device width (advance width for kerning)
+                parts = line.split()
+                if len(parts) >= 2:
+                    current_dwidth = int(parts[1])
             elif line.startswith('BBX'):
                 if current_char is not None:
                     parts = line.split()
@@ -84,6 +118,7 @@ class BitmapFont:
                                 'height': char_height,
                                 'x_offset': x_offset,
                                 'y_offset': y_offset,
+                                'dwidth': current_dwidth if current_dwidth is not None else char_width,  # Use DWIDTH or fallback to bitmap width
                                 'bitmap': []
                             }
             elif line.startswith('BITMAP'):
@@ -131,7 +166,19 @@ class BitmapFont:
         height = glyph_data['height']
         
         if width == 0 or height == 0:
-            return None
+            # Handle zero-size glyphs (like spaces) - they still need DWIDTH for advancement
+            result = {
+                'bitmap': None,  # No bitmap to render
+                'width': width,
+                'height': height,
+                'dx': glyph_data['dwidth'],  # Still use DWIDTH for spacing
+                'dy': 0,
+                'x_offset': glyph_data['x_offset'],
+                'y_offset': glyph_data['y_offset']
+            }
+            # Cache the result
+            self._glyph_cache.put(char_code, None, result)
+            return result
             
         # Create bitmap with 2 colors (0=background, 1=foreground)
         bitmap = Bitmap(width, height, 2)
@@ -166,7 +213,7 @@ class BitmapFont:
             'bitmap': bitmap,
             'width': width,
             'height': height,
-            'dx': width,  # Advance width
+            'dx': glyph_data['dwidth'],  # Use DWIDTH for proper kerning/spacing
             'dy': 0,
             'x_offset': glyph_data['x_offset'],
             'y_offset': glyph_data['y_offset']

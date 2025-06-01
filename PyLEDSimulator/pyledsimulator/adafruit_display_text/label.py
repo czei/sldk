@@ -2,7 +2,6 @@
 
 from ..displayio import Group, Bitmap, Palette, TileGrid
 from ..core.color_utils import rgb888_to_rgb565
-from ..terminalio.font_scaler import get_font_for_scale
 
 
 class Label(Group):
@@ -40,18 +39,18 @@ class Label(Group):
         """
         super().__init__(scale=scale, **kwargs)
         
-        # If using terminalio.FONT, automatically select font based on scale
-        try:
-            from ..terminalio import FONT as DEFAULT_FONT
-            if font is DEFAULT_FONT:
-                self.font = get_font_for_scale(scale)
-            else:
-                self.font = font
-        except ImportError:
-            # If terminalio is not available, just use the provided font
-            self.font = font
+        # Always use the provided font without automatic scaling font switching
+        # This ensures consistent behavior and allows Group.scale to handle scaling
+        self.font = font
         self._text = ""
-        self._color = color if isinstance(color, int) else rgb888_to_rgb565(*color)
+        if isinstance(color, int):
+            self._color = color
+        else:
+            # Convert tuple/list to RGB565
+            if hasattr(color, '__iter__'):
+                self._color = rgb888_to_rgb565(*color)
+            else:
+                self._color = color
         self._background_color = background_color
         self.line_spacing = line_spacing
         self.background_tight = background_tight
@@ -104,7 +103,13 @@ class Label(Group):
         Args:
             new_color: New color value
         """
-        self._color = new_color if isinstance(new_color, int) else rgb888_to_rgb565(*new_color)
+        if isinstance(new_color, int):
+            self._color = new_color
+        else:
+            if hasattr(new_color, '__iter__'):
+                self._color = rgb888_to_rgb565(*new_color)
+            else:
+                self._color = new_color
         if self._palette:
             self._palette[1] = self._color
             
@@ -174,12 +179,16 @@ class Label(Group):
         for i, line in enumerate(lines):
             line_width = 0
             line_height = 0
+            char_count = 0
             
             for char in line:
                 glyph = self.font.get_glyph(char)
                 if glyph:
                     line_width += glyph['dx']
                     line_height = max(line_height, glyph['height'])
+                    char_count += 1
+                    
+            # Character spacing is now handled by DWIDTH from BDF file
                     
             max_width = max(max_width, line_width)
             if i == 0:
@@ -189,7 +198,15 @@ class Label(Group):
                 
         # Add padding
         bitmap_width = max_width + self.padding_left + self.padding_right
-        bitmap_height = total_height + self.padding_top + self.padding_bottom
+        # Calculate bitmap height for proper baseline alignment
+        # Need space for: padding_top + font.ascent (above baseline) + font.descent (below baseline) + padding_bottom
+        # For multiline text, add space for additional lines
+        bitmap_height = self.padding_top + self.font.ascent + self.padding_bottom
+        if len(lines) > 1:
+            # Add space for additional lines
+            bitmap_height += (len(lines) - 1) * int(self.font.height * self.line_spacing)
+        # Add space for descenders (font.descent is the maximum depth below baseline)
+        bitmap_height += self.font.descent
         
         # Ensure minimum size
         bitmap_width = max(1, bitmap_width)
@@ -210,8 +227,10 @@ class Label(Group):
         if self._background_color is not None:
             self._bitmap.fill(0)
             
-        # Render text
-        y_offset = self.padding_top
+        # Render text with proper baseline alignment
+        # The baseline should be positioned font.ascent pixels from the top of the text area
+        # This leaves room for ascenders above and descenders below the baseline
+        baseline_y = self.padding_top + self.font.ascent
         
         for line_num, line in enumerate(lines):
             x_offset = self.padding_left
@@ -230,24 +249,30 @@ class Label(Group):
                 glyph_x_offset = glyph.get('x_offset', 0)
                 glyph_y_offset = glyph.get('y_offset', 0)
                 
-                # Calculate position
+                # Calculate position with proper baseline alignment
+                # All characters are positioned relative to the common baseline
                 draw_x = x_offset + glyph_x_offset
-                draw_y = y_offset + glyph_y_offset
+                # Position character so its bottom edge aligns with baseline + y_offset
+                # For y_offset=0: character bottom is at baseline
+                # For y_offset=-2: character bottom is 2 pixels below baseline (descender)
+                draw_y = baseline_y - glyph['height'] - glyph_y_offset
                 
-                # Copy glyph pixels to main bitmap
-                for gy in range(glyph_bitmap.height):
-                    for gx in range(glyph_bitmap.width):
-                        if glyph_bitmap[gx, gy] > 0:
-                            bx = draw_x + gx
-                            by = draw_y + gy
-                            if 0 <= bx < bitmap_width and 0 <= by < bitmap_height:
-                                self._bitmap[bx, by] = 1
+                # Copy glyph pixels to main bitmap (skip if no bitmap, e.g., spaces)
+                if glyph_bitmap is not None:
+                    for gy in range(glyph_bitmap.height):
+                        for gx in range(glyph_bitmap.width):
+                            if glyph_bitmap[gx, gy] > 0:
+                                bx = draw_x + gx
+                                by = draw_y + gy
+                                if 0 <= bx < bitmap_width and 0 <= by < bitmap_height:
+                                    self._bitmap[bx, by] = 1
                                 
+                # Use DWIDTH from BDF file for proper kerning
                 x_offset += glyph['dx']
                 
             # Move to next line
             if line_num < len(lines) - 1:
-                y_offset += int(self.font.height * self.line_spacing)
+                baseline_y += int(self.font.height * self.line_spacing)
                 
         # Update or create tilegrid
         if self._tilegrid:
