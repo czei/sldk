@@ -530,7 +530,7 @@ secrets = {
         logger.debug(f"Starting web server loop with termination function")
         
         if not hasattr(self, 'web_server') or self.web_server is None:
-            logger.error("Web server not initialized")
+            logger.error(None, "Web server not initialized")
             return
             
         # If you want you can stop the server by calling server.stop() anywhere in your code

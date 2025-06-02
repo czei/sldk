@@ -1,8 +1,8 @@
-# PyLEDSimulator Integration for Theme Park Waits
+# LED Simulator Integration for Theme Park Waits
 
 ## Overview
 
-The Theme Park Waits application now supports the PyLEDSimulator library as an alternative to the simple pygame-based simulator. PyLEDSimulator provides a more accurate simulation of the MatrixPortal S3 hardware, including proper displayio support and LED matrix rendering.
+The Theme Park Waits application now supports the LED Simulator library as an alternative to the simple pygame-based simulator. LED Simulator provides a more accurate simulation of the MatrixPortal S3 hardware, including proper displayio support and LED matrix rendering.
 
 ## Usage
 
@@ -11,10 +11,10 @@ The Theme Park Waits application now supports the PyLEDSimulator library as an a
 The application now supports several command line options for choosing the display mode:
 
 ```bash
-# Use PyLEDSimulator (default for development mode)
+# Use LED Simulator (default for development mode)
 python main.py --dev
 
-# Explicitly use PyLEDSimulator
+# Explicitly use LED Simulator
 python main.py --dev --pyled
 
 # Use the simple pygame simulator

@@ -1,0 +1,61 @@
+Vacation data loaded from settings
+Attempting to fetch park list (attempt 1/3)
+Fetching park list from https://queue-times.com/parks.json (attempt 1/3)
+Error fetching park list (attempt 1):Network error
+stack trace:Traceback (most recent call last):
+  File "/Users/czei/Projects/Disney/ThemeParkAPI/src/api/theme_park_service.py", line 115, in fetch_park_list
+    response = await self.http_client.get(url)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/unittest/mock.py", line 2328, in _execute_mock_call
+    raise result
+Exception: Network error
+
+Fetching park list from https://queue-times.com/parks.json (attempt 2/3)
+Successfully fetched 1 parks
+Successfully fetched 1 parks on attempt 1
+Theme park service initialized. Steps completed: vacation_loaded, fetch_park_list, load_park_settings, load_vacation_settings
+Fetching data for park ID 1 from https://queue-times.com/parks/1/queue_times.json (attempt 1/2)
+Successfully fetched data for park ID 1
+Loading settings test_settings.json
+The current year is 2023
+Checking version... 
+	Current version: 1.0
+	Latest version: 2.0
+Checking version... 
+	Current version: 1.5
+	Latest version: 1.5
+Checking version... 
+	Current version: 2.0
+	Latest version: 1.0
+Checking latest stable release at: https://api.github.com/repos/test/repo/releases/latest
+Found latest stable release: v1.5.0
+Checking all releases (including pre-releases) at: https://api.github.com/repos/test/repo/releases
+Found pre-release: v2.0.0-beta
+Error downloading file src/main.py:Network error
+stack trace:Traceback (most recent call last):
+  File "/Users/czei/Projects/Disney/ThemeParkAPI/src/ota/ota_updater.py", line 357, in _download_file
+    response = self.http_client.get_sync(url, headers=self.headers)
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/unittest/mock.py", line 1167, in __call__
+    return self._mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/unittest/mock.py", line 1171, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/unittest/mock.py", line 1226, in _execute_mock_call
+    raise effect
+Exception: Network error
+
+Checking latest stable release at: https://api.github.com/repos/Czeiszperger/themeparkwaits.release/releases/latest
+Found latest stable release: 2.5
+Checking version... 
+	Current version: 1.9
+	Latest version: 2.0
+New version available, will download and install on next reboot
+Loading settings settings.json
+Loading settings settings.json
+Loading settings settings.json
+Loading settings settings.json
+Loading settings settings.json
+Loading settings settings.json
+Loading settings settings.json
+Loading settings settings.json

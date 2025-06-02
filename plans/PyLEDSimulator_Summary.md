@@ -1,16 +1,16 @@
-# PyLEDSimulator Implementation Summary
+# LED Simulator Implementation Summary
 
 ## Overview
 
-PyLEDSimulator has been successfully implemented as a standalone Python library for simulating LED matrix displays used with CircuitPython boards. The implementation follows the plan outlined in LedSimulatorPlan.md with a pragmatic approach focusing on practical API compatibility rather than perfect hardware emulation.
+LED Simulator has been successfully implemented as a standalone Python library for simulating LED matrix displays used with CircuitPython boards. The implementation follows the plan outlined in LedSimulatorPlan.md with a pragmatic approach focusing on practical API compatibility rather than perfect hardware emulation.
 
 ## What Was Implemented
 
 ### 1. Core LED Matrix Simulation ✅
-- `pyledsimulator/core/led_matrix.py` - Realistic LED rendering with configurable pitch
-- `pyledsimulator/core/pixel_buffer.py` - Efficient pixel management using numpy
-- `pyledsimulator/core/display_manager.py` - Pygame window and event management
-- `pyledsimulator/core/color_utils.py` - Color conversion utilities
+- `led_simulator/core/led_matrix.py` - Realistic LED rendering with configurable pitch
+- `led_simulator/core/pixel_buffer.py` - Efficient pixel management using numpy
+- `led_simulator/core/display_manager.py` - Pygame window and event management
+- `led_simulator/core/color_utils.py` - Color conversion utilities
 
 ### 2. CircuitPython API Compatibility ✅
 - **displayio module** - Complete implementation of:

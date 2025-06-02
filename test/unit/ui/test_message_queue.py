@@ -107,11 +107,11 @@ class TestMessageQueue:
             assert len(mq.param_queue) == 1
             assert len(mq.delay_queue) == 1
             assert mq.func_queue[0] == mock_display.show_splash
-            assert mq.param_queue[0] == (4, False)  # Default duration and reveal_style
+            assert mq.param_queue[0] == (10, False)  # Default duration and reveal_style
             assert mq.delay_queue[0] == 0  # No additional delay
             
             # Verify the log message
-            mock_logger.debug.assert_called_once_with("Adding splash message to queue with duration=4, reveal_style=False")
+            mock_logger.debug.assert_called_once_with("Adding splash message to queue with duration=10, reveal_style=False")
             
             # Add a splash screen with custom duration
             await mq.add_splash(duration=2)
@@ -225,7 +225,7 @@ class TestMessageQueue:
         
         # Create mock settings manager that returns default sort settings
         mock_settings_manager = MagicMock()
-        mock_settings_manager.get.side_effect = lambda key, default: default
+        mock_settings_manager.get.side_effect = lambda key, default=None: default
         mock_display.settings_manager = mock_settings_manager
         
         # Initialize message queue
@@ -300,7 +300,7 @@ class TestMessageQueue:
         
         # Create mock settings manager that returns default sort settings
         mock_settings_manager = MagicMock()
-        mock_settings_manager.get.side_effect = lambda key, default: default
+        mock_settings_manager.get.side_effect = lambda key, default=None: default
         mock_display.settings_manager = mock_settings_manager
         
         # Initialize message queue

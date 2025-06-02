@@ -8,7 +8,7 @@ import time
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from pyledsimulator.devices import MatrixPortalS3
+from led_simulator.devices import MatrixPortalS3
 
 
 def main():

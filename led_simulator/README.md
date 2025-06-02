@@ -1,4 +1,4 @@
-# PyLEDSimulator
+# LED Simulator
 
 A standalone Python library for simulating LED matrix displays used with CircuitPython boards. The library provides a visual representation of LED hardware using Pygame, allowing developers to test their code on desktop platforms before deploying to actual hardware.
 
@@ -14,16 +14,16 @@ A standalone Python library for simulating LED matrix displays used with Circuit
 ## Installation
 
 ```bash
-pip install pyledsimulator
+pip install led_simulator
 ```
 
 ## Quick Start
 
 ```python
-from pyledsimulator.devices import MatrixPortalS3
-from pyledsimulator.displayio import Group
-from pyledsimulator.adafruit_display_text import Label
-from pyledsimulator.terminalio import FONT
+from led_simulator.devices import MatrixPortalS3
+from led_simulator.displayio import Group
+from led_simulator.adafruit_display_text import Label
+from led_simulator.terminalio import FONT
 
 # Create device
 device = MatrixPortalS3()

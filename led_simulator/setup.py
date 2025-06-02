@@ -4,13 +4,13 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="pyledsimulator",
+    name="led_simulator",
     version="0.1.0",
-    author="PyLEDSimulator Contributors",
+    author="LED Simulator Contributors",
     description="LED matrix display simulator for CircuitPython development",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/pyledsimulator",
+    url="https://github.com/yourusername/led_simulator",
     packages=find_packages(exclude=["tests", "tests.*", "examples", "examples.*"]),
     classifiers=[
         "Development Status :: 3 - Alpha",
@@ -40,7 +40,7 @@ setup(
         ],
     },
     package_data={
-        "pyledsimulator": ["fonts/*.bdf"],
+        "led_simulator": ["fonts/*.bdf"],
     },
     include_package_data=True,
     license="Apache-2.0",

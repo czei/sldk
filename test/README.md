@@ -7,11 +7,11 @@ This directory contains the test suite for the ThemeParkAPI application.
 The tests are organized following these patterns:
 
 - `unit/`: Contains unit tests organized by module (models, network, utils, etc.)
-- `integration/`: Contains tests that verify multiple components working together
+- `integration/`: Contains tests that verify multiple components working together (currently empty)
+- `experiments/`: Contains experimental tests, debugging tools, and verification scripts
 - `fixtures/` and `data/`: Contains test data and shared fixtures
 - `helpers.py`: Contains utility functions to simplify test writing
 - `conftest.py`: Contains pytest fixtures and CircuitPython mocking
-- `test-suite.py`: Original test suite using unittest framework
 
 ## Running Tests
 
@@ -30,8 +30,8 @@ python -m pytest test/unit/models/test_theme_park.py
 # Run a specific test
 python -m pytest test/unit/models/test_theme_park.py::TestThemePark::test_initialization
 
-# Run the original test suite
-python -m pytest test/test-suite.py
+# Run tests with verbose output
+python -m pytest -v
 ```
 
 ## Test Data

@@ -1,6 +1,6 @@
 """
-PyLEDSimulator display implementation for Theme Park Waits.
-Uses the PyLEDSimulator library to provide a more accurate simulation
+LED Simulator display implementation for Theme Park Waits.
+Uses the led_simulator library to provide a more accurate simulation
 of the MatrixPortal S3 hardware.
 Copyright 2024 3DUPFitters LLC
 """
@@ -9,16 +9,16 @@ import time
 import sys
 import os
 
-# Add PyLEDSimulator to path if needed
-pyledsim_path = os.path.join(os.path.dirname(__file__), '..', '..', 'PyLEDSimulator')
-if os.path.exists(pyledsim_path) and pyledsim_path not in sys.path:
-    sys.path.insert(0, pyledsim_path)
+# Add led_simulator to path if needed
+led_sim_path = os.path.join(os.path.dirname(__file__), '..', '..', 'led_simulator')
+if os.path.exists(led_sim_path) and led_sim_path not in sys.path:
+    sys.path.insert(0, led_sim_path)
 
-from pyledsimulator.devices.matrixportal_s3 import MatrixPortalS3
-from pyledsimulator import displayio
-from pyledsimulator.adafruit_bitmap_font import bitmap_font
-from pyledsimulator.adafruit_display_text.label import Label
-from pyledsimulator.terminalio import FONT as terminalio_FONT
+from led_simulator.devices.matrixportal_s3 import MatrixPortalS3
+from led_simulator import displayio
+from led_simulator.adafruit_bitmap_font import bitmap_font
+from led_simulator.adafruit_display_text.label import Label
+from led_simulator.terminalio import FONT as terminalio_FONT
 
 from src.ui.display_interface import DisplayInterface
 from src.ui.reveal_animation import show_reveal_splash
@@ -31,12 +31,12 @@ logger = ErrorHandler("error_log")
 
 class PyLEDSimulatorDisplay(DisplayInterface):
     """
-    Display implementation using PyLEDSimulator for development
+    Display implementation using led_simulator for development
     """
     
     def __init__(self, config=None):
         """
-        Initialize the PyLEDSimulator display
+        Initialize the LED Simulator display
         
         Args:
             config: Optional configuration dictionary
@@ -80,9 +80,9 @@ class PyLEDSimulatorDisplay(DisplayInterface):
         self.queue_line2 = None
         
     def initialize(self):
-        """Initialize the PyLEDSimulator display"""
+        """Initialize the LED Simulator display"""
         try:
-            logger.info("Initializing PyLEDSimulator display")
+            logger.info("Initializing LED Simulator display")
             
             # Create MatrixPortal S3 device
             self.device = MatrixPortalS3(width=64, height=32)
@@ -250,11 +250,11 @@ class PyLEDSimulatorDisplay(DisplayInterface):
             if hasattr(self.matrix, 'initialize_surface'):
                 self.matrix.initialize_surface()
                 
-            logger.info("PyLEDSimulator display initialized successfully")
+            logger.info("LED Simulator display initialized successfully")
             return True
             
         except Exception as e:
-            logger.error(e, "Failed to initialize PyLEDSimulator display")
+            logger.error(e, "Failed to initialize LED Simulator display")
             return False
     
     def set_text(self, text, color=None):
@@ -330,7 +330,7 @@ class PyLEDSimulatorDisplay(DisplayInterface):
             
         # Create the window
         screen = pygame.display.set_mode((self.matrix.surface_width, self.matrix.surface_height))
-        pygame.display.set_caption("Theme Park Waits - PyLEDSimulator")
+        pygame.display.set_caption("Theme Park Waits - LED Simulator")
         
         # Main display loop
         clock = pygame.time.Clock()
@@ -383,7 +383,7 @@ class PyLEDSimulatorDisplay(DisplayInterface):
             y: Y position
         """
         try:
-            # PyLEDSimulator supports PIL images directly
+            # LED Simulator supports PIL images directly
             if hasattr(image, 'mode') and image.mode:
                 # Convert to displayio bitmap
                 bitmap = displayio.Bitmap(image.width, image.height, 256)
@@ -530,7 +530,7 @@ class PyLEDSimulatorDisplay(DisplayInterface):
             duration: Duration to show in seconds
             reveal_style: If True, use reveal animation
         """
-        logger.debug(f"PyLEDSimulator.show_splash called with duration={duration}, reveal_style={reveal_style}")
+        logger.debug(f"LED Simulator.show_splash called with duration={duration}, reveal_style={reveal_style}")
         self._hide_all_groups()
         
         if reveal_style:

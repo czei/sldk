@@ -66,7 +66,7 @@ class UnifiedWebServer:
                 self.running = True
                 logger.info("Unified web server started successfully")
             else:
-                logger.error("Failed to start unified web server")
+                logger.error(None, "Failed to start unified web server")
                 
             return success
             

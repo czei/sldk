@@ -1,14 +1,14 @@
 """
-Shared reveal animation module that works in both CircuitPython and PyLEDSimulator environments.
-Uses PyLEDSimulator's compatibility layer for unified implementation.
+Shared reveal animation module that works in both CircuitPython and LED Simulator environments.
+Uses LED Simulator's compatibility layer for unified implementation.
 """
 import asyncio
 import random
 import time
 
 try:
-    # Try PyLEDSimulator import first
-    from pyledsimulator import displayio
+    # Try LED Simulator import first
+    from led_simulator import displayio
 except ImportError:
     # Fall back to CircuitPython displayio
     import displayio

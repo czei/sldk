@@ -75,9 +75,9 @@ class TestUnifiedDisplayBasic:
         assert display.settings_manager == mock_settings_manager
         assert display.scroll_delay == 0.04  # Default
         
-        # Verify platform-specific positions are loaded
+        # Verify unified positions are loaded
         from src.ui.unified_display import PLATFORM_CONFIG
-        assert display.positions == PLATFORM_CONFIG['simulator']
+        assert display.positions == PLATFORM_CONFIG
     
     @patch('src.ui.unified_display.IS_CIRCUITPYTHON', False)
     @pytest.mark.asyncio

@@ -169,7 +169,7 @@ if IS_CIRCUITPYTHON:
                 try:
                     request_body = request_body.decode('utf-8')
                 except UnicodeDecodeError:
-                    logger.error("Failed to decode form data")
+                    logger.error(None, "Failed to decode form data")
                     return {}
             
             return self.parse_query_params(request_body)

@@ -255,5 +255,5 @@ class ErrorHandler:
             message: The informational message to log
         """
         print(message)
-        if self.mode == ErrorHandler.DEVELOPMENT:
-            self.write_to_file(message)
+        # Info messages are always written to file (in both development and production modes)
+        self.write_to_file(message)

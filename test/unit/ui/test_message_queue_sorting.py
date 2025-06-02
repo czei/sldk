@@ -114,7 +114,7 @@ class TestMessageQueueSorting:
         mock_park_list.skip_closed = False
         
         # Configure settings
-        self.mock_settings_manager.get.side_effect = lambda key, default: {
+        self.mock_settings_manager.get.side_effect = lambda key, default=None: {
             "sort_mode": "alphabetical",
             "group_by_park": True
         }.get(key, default)
@@ -158,7 +158,7 @@ class TestMessageQueueSorting:
         mock_park_list.skip_closed = False
         
         # Configure settings for max wait sorting without grouping
-        self.mock_settings_manager.get.side_effect = lambda key, default: {
+        self.mock_settings_manager.get.side_effect = lambda key, default=None: {
             "sort_mode": "max_wait",
             "group_by_park": False
         }.get(key, default)
@@ -186,7 +186,7 @@ class TestMessageQueueSorting:
         mock_park_list.skip_closed = True  # Skip closed rides
         
         # Configure settings
-        self.mock_settings_manager.get.side_effect = lambda key, default: {
+        self.mock_settings_manager.get.side_effect = lambda key, default=None: {
             "sort_mode": "alphabetical",
             "group_by_park": False
         }.get(key, default)

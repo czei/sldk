@@ -1,6 +1,6 @@
 """
 Unified display implementation for Theme Park Waits.
-Works on both CircuitPython hardware and PyLEDSimulator development environment.
+Works on both CircuitPython hardware and LED Simulator development environment.
 Copyright 2024 3DUPFitters LLC
 """
 import asyncio
@@ -17,20 +17,20 @@ if IS_CIRCUITPYTHON:
     from adafruit_bitmap_font import bitmap_font
     from adafruit_display_text.label import Label
 else:
-    # PyLEDSimulator imports
+    # LED Simulator imports
     import os
-    pyledsim_path = os.path.join(os.path.dirname(__file__), '..', '..', 'PyLEDSimulator')
-    if os.path.exists(pyledsim_path) and pyledsim_path not in sys.path:
-        sys.path.insert(0, pyledsim_path)
+    led_sim_path = os.path.join(os.path.dirname(__file__), '..', '..', 'led_simulator')
+    if os.path.exists(led_sim_path) and led_sim_path not in sys.path:
+        sys.path.insert(0, led_sim_path)
     
-    from pyledsimulator.devices.matrixportal_s3 import MatrixPortalS3
-    from pyledsimulator import displayio
-    from pyledsimulator.adafruit_bitmap_font import bitmap_font
-    from pyledsimulator.adafruit_display_text.label import Label
-    from pyledsimulator.terminalio import FONT as terminalio_FONT
+    from led_simulator.devices.matrixportal_s3 import MatrixPortalS3
+    from led_simulator import displayio
+    from led_simulator.adafruit_bitmap_font import bitmap_font
+    from led_simulator.adafruit_display_text.label import Label
+    from led_simulator.terminalio import FONT as terminalio_FONT
     # Create module alias for consistency
-    import pyledsimulator.terminalio
-    terminalio = pyledsimulator.terminalio
+    import led_simulator.terminalio
+    terminalio = led_simulator.terminalio
     terminalio.FONT = terminalio_FONT
 
 from src.ui.display_interface import DisplayInterface
@@ -42,7 +42,7 @@ from src.utils.error_handler import ErrorHandler
 logger = ErrorHandler("error_log")
 
 # Unified positioning configuration
-# Now that PyLEDSimulator correctly interprets baseline positioning,
+# Now that LED Simulator correctly interprets baseline positioning,
 # we can use the same values for both platforms
 PLATFORM_CONFIG = {
     'scrolling_y': 15,
