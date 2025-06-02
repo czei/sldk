@@ -62,6 +62,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 * **Error Handling**: Use try/except blocks with specific exceptions
 * **Logging**: Use `ErrorHandler` class for centralized error logging
 * **Documentation**: Use docstrings for classes and methods
+* **Documentation**: Claude documentation files to keep track of recommendations and changes go into the folder plans 
+* **Testing**: Temporary test programs to solve problems should be created in the directory test/claude
 * **Hardware Abstraction**: Include fallbacks when hardware components aren't available
 
 ## CircuitPython Development
@@ -112,17 +114,6 @@ except OSError:  # CircuitPython only has OSError
 ### CRITICAL: There should be only one web user interface for both the dev and CircuitPython execution.
 ### CRITICAL: There should be only one LED display for both the dev and CircuitPython execution.
 **⚠️ IMPORTANT: If the LED display in the dev environment doesn't match the reported behavior of CircuitPython, adjust the LED simulator code, not the shared display code. NO EXCEPTIONS.**
-
-When making changes to either web server:
-1. **ALWAYS** check if the same functionality exists in the other file
-2. **ALWAYS** apply the same changes to both files
-3. **NEVER** make changes to only one file
-4. This includes:
-   - Query parameter processing
-   - Settings updates
-   - HTML generation
-   - API endpoints
-   - Update mechanisms
 
 ### CRITICAL: Thread Safety - Web Server Must Never Modify Message Queue
 **⚠️ IMPORTANT: The web server runs in a separate context/thread and must NEVER directly modify the message queue data structures.**
