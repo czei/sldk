@@ -158,7 +158,7 @@ class TestExample:
     def test_hardware_code(self):
         with MockHardwareContext() as hw:
             # Now hardware modules are all mocked
-            from src.ui.display_impl import AsyncScrollingDisplay
-            display = AsyncScrollingDisplay(hw.matrix.display, None)
+            from src.ui.unified_display import UnifiedDisplay
+            display = UnifiedDisplay({'settings_manager': None})
             # Test the display implementation without real hardware
 """

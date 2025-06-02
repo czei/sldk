@@ -37,11 +37,11 @@ class Label(Group):
             label_direction: Text direction ("LTR" or "RTL")
             **kwargs: Additional keyword arguments
         """
-        super().__init__(scale=scale, **kwargs)
-        
-        # Always use the provided font without automatic scaling font switching
-        # This ensures consistent behavior and allows Group.scale to handle scaling
+        # Store the font first
         self.font = font
+        
+        # Initialize parent with all parameters
+        super().__init__(scale=scale, **kwargs)
         self._text = ""
         if isinstance(color, int):
             self._color = color
@@ -279,6 +279,17 @@ class Label(Group):
             self.remove(self._tilegrid)
             
         self._tilegrid = TileGrid(self._bitmap, pixel_shader=self._palette)
+        
+        # Apply baseline adjustment to TileGrid position
+        # In CircuitPython, label.y represents the baseline position
+        # We need to offset the TileGrid to account for this
+        # The adjustment needs to account for the actual character positioning
+        # For a font with ascent=9, setting y=15 should put the baseline at row 15
+        # This means the top of the bitmap (which includes ascent space) should be at y=15-9=6
+        # But we also need to account for the actual glyph positioning within the bitmap
+        baseline_offset = self.font.ascent + self.padding_top - 4  # Fine-tuned for CircuitPython compatibility
+        self._tilegrid.y = -baseline_offset
+        
         self.append(self._tilegrid)
         
         # Update position if anchored
@@ -314,3 +325,4 @@ class Label(Group):
     def height(self):
         """Get the height of the label."""
         return self._bitmap.height if self._bitmap else 0
+    

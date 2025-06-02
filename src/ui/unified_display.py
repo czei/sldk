@@ -41,40 +41,24 @@ from src.utils.error_handler import ErrorHandler
 # Initialize logger
 logger = ErrorHandler("error_log")
 
-# Platform-specific positioning configuration
+# Unified positioning configuration
+# Now that PyLEDSimulator correctly interprets baseline positioning,
+# we can use the same values for both platforms
 PLATFORM_CONFIG = {
-    'circuitpython': {
-        'scrolling_y': 15,
-        'wait_name_y': 7,
-        'wait_time_y': 22,
-        'closed_y': 22,
-        'splash_line1_y': 7,
-        'splash_line2_y': 22,
-        'update_line1_y': 2,
-        'update_line2_y': 12,
-        'required_line1_y': 4,
-        'required_line2_y': 12,
-        'centered_line1_y': 1,
-        'centered_line2_y': 12,
-        'queue_line1_y': 2,
-        'queue_line2_y': 17,
-    },
-    'simulator': {
-        'scrolling_y': 16,  # Centered
-        'wait_name_y': 2,   # Top 4 LEDs from top
-        'wait_time_y': 12,
-        'closed_y': 14,     # Bottom 7 LEDs from bottom
-        'splash_line1_y': 7,
-        'splash_line2_y': 12,
-        'update_line1_y': 2,
-        'update_line2_y': 12,
-        'required_line1_y': 4,
-        'required_line2_y': 10,
-        'centered_line1_y': 1,
-        'centered_line2_y': 13,
-        'queue_line1_y': 2,
-        'queue_line2_y': 15,
-    }
+    'scrolling_y': 15,
+    'wait_name_y': 7,
+    'wait_time_y': 22,
+    'closed_y': 22,
+    'splash_line1_y': 7,
+    'splash_line2_y': 22,
+    'update_line1_y': 10,
+    'update_line2_y': 22,
+    'required_line1_y': 12,
+    'required_line2_y': 20,
+    'centered_line1_y': 9,
+    'centered_line2_y': 23,
+    'queue_line1_y': 10,
+    'queue_line2_y': 25,
 }
 
 
@@ -97,8 +81,8 @@ class UnifiedDisplay(DisplayInterface):
         self.font = None
         self.settings_manager = config.get('settings_manager') if config else None
         
-        # Get platform-specific config
-        self.positions = PLATFORM_CONFIG['circuitpython' if IS_CIRCUITPYTHON else 'simulator']
+        # Use unified config for all platforms
+        self.positions = PLATFORM_CONFIG
         
         # For scrolling
         self.scroll_position = 0

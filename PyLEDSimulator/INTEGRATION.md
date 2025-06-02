@@ -90,9 +90,6 @@ class HardwareDisplay(DisplayInterface):
 When developing on your desktop:
 
 ```python
-# test_display_dev.py
-from src.ui.display_impl import HardwareDisplay
-from src.models.theme_park import ThemePark
 
 # Create display
 display = HardwareDisplay()

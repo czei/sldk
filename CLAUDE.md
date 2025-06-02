@@ -109,8 +109,9 @@ except OSError:  # CircuitPython only has OSError
     pass
 ```
 
-### CRITICAL: Synchronize web_server.py and dev_web_server.py
-**⚠️ IMPORTANT: The UI for the MatrixPortal hardware is in web_server.py and the UI for the development simulation is in dev_web_server.py. ANY change made to one file MUST be made to the other file as well. NO EXCEPTIONS.**
+### CRITICAL: There should be only one web user interface for both the dev and CircuitPython execution.
+### CRITICAL: There should be only one LED display for both the dev and CircuitPython execution.
+**⚠️ IMPORTANT: If the LED display in the dev environment doesn't match the reported behavior of CircuitPython, adjust the LED simulator code, not the shared display code. NO EXCEPTIONS.**
 
 When making changes to either web server:
 1. **ALWAYS** check if the same functionality exists in the other file
