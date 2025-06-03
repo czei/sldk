@@ -62,7 +62,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 * **Error Handling**: Use try/except blocks with specific exceptions
 * **Logging**: Use `ErrorHandler` class for centralized error logging
 * **Documentation**: Use docstrings for classes and methods
-* **Documentation**: Claude documentation files to keep track of recommendations and changes go into the folder plans 
+* **Documentation**: ALL documentation files, plans, recommendations, and design documents MUST go in the `plans/` folder
 * **Testing**: Temporary test programs to solve problems should be created in the directory test/claude
 * **Hardware Abstraction**: Include fallbacks when hardware components aren't available
 

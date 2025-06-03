@@ -17,20 +17,20 @@ if IS_CIRCUITPYTHON:
     from adafruit_bitmap_font import bitmap_font
     from adafruit_display_text.label import Label
 else:
-    # LED Simulator imports
+    # SLDK Simulator imports
     import os
-    led_sim_path = os.path.join(os.path.dirname(__file__), '..', '..', 'led_simulator')
-    if os.path.exists(led_sim_path) and led_sim_path not in sys.path:
-        sys.path.insert(0, led_sim_path)
+    sldk_path = os.path.join(os.path.dirname(__file__), '..', '..', 'sldk', 'src')
+    if os.path.exists(sldk_path) and sldk_path not in sys.path:
+        sys.path.insert(0, sldk_path)
     
-    from led_simulator.devices.matrixportal_s3 import MatrixPortalS3
-    from led_simulator import displayio
-    from led_simulator.adafruit_bitmap_font import bitmap_font
-    from led_simulator.adafruit_display_text.label import Label
-    from led_simulator.terminalio import FONT as terminalio_FONT
+    from sldk.simulator.devices.matrixportal_s3 import MatrixPortalS3
+    from sldk.simulator import displayio
+    from sldk.simulator.adafruit_bitmap_font import bitmap_font
+    from sldk.simulator.adafruit_display_text.label import Label
+    from sldk.simulator.terminalio import FONT as terminalio_FONT
     # Create module alias for consistency
-    import led_simulator.terminalio
-    terminalio = led_simulator.terminalio
+    from sldk.simulator import terminalio as simulator_terminalio
+    terminalio = simulator_terminalio
     terminalio.FONT = terminalio_FONT
 
 from src.ui.display_interface import DisplayInterface

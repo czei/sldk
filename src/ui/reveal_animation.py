@@ -7,8 +7,8 @@ import random
 import time
 
 try:
-    # Try LED Simulator import first
-    from led_simulator import displayio
+    # Try SLDK simulator import first
+    from sldk.simulator import displayio
 except ImportError:
     # Fall back to CircuitPython displayio
     import displayio

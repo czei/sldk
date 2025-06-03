@@ -9,7 +9,7 @@ SRC_DIR := src
 PYTHON := python
 PIP := python -m pip
 
-.PHONY: test test-all test-unit test-coverage install-test-deps dev lint lint-errors clean format
+.PHONY: test test-all test-unit test-coverage install-test-deps dev lint lint-errors clean format test-sldk test-sldk-unit install-sldk-dev
 all: test release
 
 # Development mode with simulator
@@ -128,11 +128,11 @@ format:
 	$(PYTHON) -m ruff format $(SRC_DIR) test/
 	@echo "Formatting complete\!"
 
-# Install LED Simulator in development mode
-install-simulator:
-	@echo "Installing LED Simulator..."
-	cd led_simulator && $(PIP) install -e .
-	@echo "LED Simulator installed\!"
+# Install SLDK with simulator support in development mode
+install-sldk-dev:
+	@echo "Installing SLDK in development mode..."
+	cd sldk && $(PIP) install -e .[dev,simulator]
+	@echo "SLDK installed\!"
 
 # Run specific experiment tests
 test-experiments:
@@ -153,4 +153,12 @@ test-system:
 
 test-integration:
 	$(PYTHON) -m pytest test/experiments/integration/ -v
+
+# SLDK Testing
+test-sldk: test-sldk-unit
+
+# Run SLDK unit tests
+test-sldk-unit:
+	@echo "Running SLDK unit tests..."
+	@cd sldk && SLDK_TESTING=1 $(PYTHON) -m pytest tests/unit -v
 
