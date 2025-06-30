@@ -5,11 +5,11 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from pyledsimulator.devices import MatrixPortalS3
-from pyledsimulator.displayio import Group
-from pyledsimulator.adafruit_display_text import ScrollingLabel
-from pyledsimulator.terminalio import FONT
-from pyledsimulator.core import CYAN, MAGENTA, YELLOW
+from sldk.simulator.devices import MatrixPortalS3
+from sldk.simulator.displayio import Group
+from sldk.simulator.adafruit_display_text import ScrollingLabel
+from sldk.simulator.terminalio import FONT
+from sldk.simulator.core import CYAN, MAGENTA, YELLOW
 
 
 def main():
@@ -25,7 +25,7 @@ def main():
     # Create scrolling labels
     top_scroll = ScrollingLabel(
         font=FONT,
-        text="Welcome to PyLEDSimulator! This is a long scrolling message...",
+        text="Welcome to SLDK Simulator! This is a long scrolling message...",
         max_characters=13,  # Show 13 characters at a time
         color=CYAN,
         x=0,
@@ -47,7 +47,7 @@ def main():
     
     bottom_scroll = ScrollingLabel(
         font=FONT,
-        text="Visit github.com/yourusername/pyledsimulator",
+        text="Visit github.com/yourusername/sldk",
         max_characters=12,
         color=MAGENTA,
         x=0,

@@ -6,11 +6,11 @@ import os
 import time
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from pyledsimulator.devices import MatrixPortalS3
-from pyledsimulator.displayio import Group, Bitmap, Palette, TileGrid
-from pyledsimulator.adafruit_display_text import Label
-from pyledsimulator.terminalio import FONT
-from pyledsimulator.core import RED, GREEN, BLUE, WHITE, BLACK, YELLOW
+from sldk.simulator.devices import MatrixPortalS3
+from sldk.simulator.displayio import Group, Bitmap, Palette, TileGrid
+from sldk.simulator.adafruit_display_text import Label
+from sldk.simulator.terminalio import FONT
+from sldk.simulator.core import RED, GREEN, BLUE, WHITE, BLACK, YELLOW
 
 
 def create_border(width, height, color):

@@ -29,9 +29,9 @@ from src.utils.error_handler import ErrorHandler
 logger = ErrorHandler("error_log")
 
 
-class PyLEDSimulatorDisplay(DisplayInterface):
+class SLDKSimulatorDisplay(DisplayInterface):
     """
-    Display implementation using led_simulator for development
+    Display implementation using SLDK's simulator for development
     """
     
     def __init__(self, config=None):

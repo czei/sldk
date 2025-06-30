@@ -14,9 +14,11 @@ import os
 import random
 import time
 import math
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from pyledsimulator.devices import MatrixPortalS3
+# Add SLDK to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', '..', 'sldk', 'src'))
+
+from sldk.simulator.devices import MatrixPortalS3
 
 
 def hsv_to_rgb(h, s, v):

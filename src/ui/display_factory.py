@@ -86,9 +86,9 @@ def create_display(config=None):
                 return Display(config)
         else:
             try:
-                from src.ui.pyledsimulator_display import PyLEDSimulatorDisplay
-                logger.info("Falling back to legacy LED Simulator display")
-                return PyLEDSimulatorDisplay(config)
+                from src.ui.sldk_simulator_display import SLDKSimulatorDisplay
+                logger.info("Falling back to SLDK simulator display")
+                return SLDKSimulatorDisplay(config)
             except ImportError:
                 logger.info("LED Simulator not available, using simple simulator")
                 from src.ui.simulator_display import SimulatedLEDMatrix

@@ -20,8 +20,9 @@ except (ImportError, NotImplementedError):
     CIRCUITPYTHON = False
     import sys
     import os
-    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    from pyledsimulator.devices import MatrixPortalS3
+    sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..' if 'PyLEDSimulator' in __file__ else '.', 'sldk', 'src'))
+
+from sldk.simulator.devices import MatrixPortalS3
 
 
 class FramePlayer:

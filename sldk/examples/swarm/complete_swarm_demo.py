@@ -4,13 +4,13 @@
 import sys
 import os
 import time
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..' if 'PyLEDSimulator' in __file__ else '.', 'sldk', 'src'))
 
-from pyledsimulator.devices import MatrixPortalS3
-from pyledsimulator.displayio import Group, Bitmap, Palette, TileGrid
-from pyledsimulator.adafruit_display_text import Label
-from pyledsimulator.terminalio import FONT
-from pyledsimulator.core import RED, GREEN, BLUE, WHITE, YELLOW
+from sldk.simulator.devices import MatrixPortalS3
+from sldk.simulator.displayio import Group, Bitmap, Palette, TileGrid
+from sldk.simulator.adafruit_display_text import Label
+from sldk.simulator.terminalio import FONT
+from sldk.simulator.core import RED, GREEN, BLUE, WHITE, YELLOW
 
 
 def get_theme_park_waits_pixels():

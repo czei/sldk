@@ -11,9 +11,9 @@ import os
 import random
 import time
 import math
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../..' if 'PyLEDSimulator' in __file__ else '.', 'sldk', 'src'))
 
-from pyledsimulator.devices import MatrixPortalS3
+from sldk.simulator.devices import MatrixPortalS3
 
 
 def get_theme_park_waits_pixels():
