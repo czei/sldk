@@ -7,18 +7,15 @@
 # and it is possible to modify the example to use other fonts and non-standard
 # characters.
 
-import adafruit_display_text.label
+import time
+
+import adafruit_imageload
 import board
 import displayio
 import framebufferio
 import rgbmatrix
-import terminalio
-import adafruit_imageload
-import time
 from src.theme_park_api import ColorUtils
 from ulab import numpy as np
-
-
 
 FRAME_COLOR = 25024
 

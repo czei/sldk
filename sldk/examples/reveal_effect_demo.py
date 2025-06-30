@@ -4,8 +4,8 @@
 This demonstrates text reveal effects using direct device approach.
 """
 
-import sys
 import os
+import sys
 import time
 
 # Add src to path for imports
