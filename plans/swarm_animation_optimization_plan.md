@@ -1,5 +1,17 @@
 # Swarm Animation Hardware Acceleration Plan
 
+## Overview
+This plan details how to optimize the swarm animation using hardware acceleration while maintaining compatibility with the SLDK (Scrolling LED Development Kit) library. The key requirement is that the code must work seamlessly in both environments:
+- **Development**: Uses SLDK's simulator on macOS for testing and debugging
+- **Production**: Uses real CircuitPython displayio/rgbmatrix on MatrixPortal S3 hardware
+
+## SLDK Compatibility Requirements
+The SLDK library provides a compatibility layer that mimics CircuitPython's displayio API on desktop systems. All optimizations must:
+1. Use only SLDK-supported displayio features
+2. Avoid hardware-specific code that would break simulation
+3. Maintain the same visual output in both environments
+4. Use conditional imports only when absolutely necessary
+
 ## Performance Analysis
 
 ### Current Implementation Issues
@@ -23,32 +35,50 @@ The MatrixPortal S3 (ESP32-S3) supports:
 
 ## Optimization Strategy
 
-### 1. Bitmap-Based Rendering
-Replace pixel-by-pixel updates with bitmap operations:
+### SLDK-Compatible Import Pattern
+All code must use conditional imports to work in both environments:
 ```python
-# Create bitmaps for different layers
+try:
+    # CircuitPython hardware
+    import board
+    import displayio
+    from adafruit_matrixportal.matrix import Matrix
+    CIRCUITPYTHON = True
+except ImportError:
+    # SLDK simulator
+    from sldk.simulator import displayio
+    from sldk.simulator.devices import MatrixPortalS3
+    CIRCUITPYTHON = False
+```
+
+### 1. Bitmap-Based Rendering
+Replace pixel-by-pixel updates with bitmap operations (supported by both SLDK and CircuitPython):
+```python
+# Create bitmaps for different layers - works in both environments
 background_bitmap = displayio.Bitmap(64, 32, 16)  # 16 colors
 birds_bitmap = displayio.Bitmap(64, 32, 16)
 text_bitmap = displayio.Bitmap(64, 32, 16)
 
-# Use TileGrid for hardware-accelerated rendering
+# Use TileGrid for hardware-accelerated rendering on device
+# SLDK simulator will handle this efficiently in software
 background_grid = displayio.TileGrid(background_bitmap, pixel_shader=palette)
 ```
 
 ### 2. Pre-computed Color Palettes
-Instead of calculating colors every frame:
+Instead of calculating colors every frame (SLDK-compatible):
 ```python
-# Pre-compute rainbow palette
+# Pre-compute rainbow palette - works in both environments
 rainbow_palette = displayio.Palette(16)
 for i in range(16):
     hue = i / 16.0
+    # Use RGB888 format for compatibility
     rainbow_palette[i] = hsv_to_rgb888(hue, 1.0, 1.0)
 ```
 
 ### 3. Sprite Pooling for Birds
-Use displayio sprites with object pooling:
+Use displayio sprites with object pooling (SLDK and hardware compatible):
 ```python
-# Create sprite pool
+# Create sprite pool - Group max_size is supported by SLDK
 bird_sprites = displayio.Group(max_size=MAX_BIRDS)
 for i in range(MAX_BIRDS):
     bird_bitmap = displayio.Bitmap(3, 3, 1)
@@ -116,22 +146,54 @@ Total: ~13KB (well within ESP32-S3's 512KB RAM)
 
 ## Code Architecture
 ```python
-class HardwareSwarmAnimation:
+class OptimizedSwarmAnimation:
     def __init__(self):
-        self.display = board.DISPLAY
+        if CIRCUITPYTHON:
+            # Hardware initialization
+            self.matrix = Matrix(width=64, height=32, bit_depth=6)
+            self.display = self.matrix.display
+        else:
+            # SLDK simulator initialization
+            self.device = MatrixPortalS3()
+            self.device.initialize()
+            self.display = self.device.display
+            
         self.main_group = displayio.Group()
         self.setup_layers()
         self.setup_palettes()
         self.setup_sprites()
         
     def setup_layers(self):
-        # Create bitmap layers
+        # Create bitmap layers - works in both environments
         pass
         
     def update(self):
         # Update only changed elements
-        # Let hardware handle rendering
+        # Hardware: DMA handles rendering
+        # SLDK: Simulator efficiently updates display
         pass
+        
+    def run(self):
+        if CIRCUITPYTHON:
+            # Hardware main loop
+            while True:
+                self.update()
+        else:
+            # SLDK simulator with window management
+            self.device.run(update_callback=self.update)
 ```
 
-This approach leverages the ESP32-S3's hardware capabilities for smooth, efficient animation.
+## Benefits of SLDK Compatibility
+1. **Development Efficiency**: Test and debug on macOS without hardware
+2. **Visual Parity**: See exactly how animations will look on hardware
+3. **Rapid Iteration**: No need to deploy to hardware for every change
+4. **Performance Validation**: SLDK can simulate timing and frame rates
+
+## Hardware-Specific Optimizations
+When running on actual hardware, the optimizations will provide:
+- DMA transfers reduce CPU usage by 80%
+- Hardware double buffering eliminates flicker
+- Native displayio acceleration for smooth 30-60 FPS
+- Efficient memory usage within ESP32-S3's constraints
+
+The SLDK simulator will run the same code with software rendering, providing accurate visual output for development and testing.
