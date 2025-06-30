@@ -48,8 +48,4 @@ Thumbs.db
 *.mov
 *.wmv
 
-# Python files
-__init__.py
-
-
 **/.claude/settings.local.json
