@@ -23,15 +23,32 @@ else:
     if os.path.exists(sldk_path) and sldk_path not in sys.path:
         sys.path.insert(0, sldk_path)
     
+    print(f"[UnifiedDisplay] Loading SLDK from {sldk_path}")
+    
     from sldk.simulator.devices.matrixportal_s3 import MatrixPortalS3
     from sldk.simulator import displayio
     from sldk.simulator.adafruit_bitmap_font import bitmap_font
     from sldk.simulator.adafruit_display_text.label import Label
-    from sldk.simulator.terminalio import FONT as terminalio_FONT
-    # Create module alias for consistency
-    from sldk.simulator import terminalio as simulator_terminalio
-    terminalio = simulator_terminalio
-    terminalio.FONT = terminalio_FONT
+    
+    print("[UnifiedDisplay] SLDK imports successful")
+    
+    # SLDK doesn't have terminalio.FONT, so we'll load a default font
+    # Use viii.bdf for 8 pixel tall font (matches CircuitPython terminalio.FONT size)
+    default_font_path = os.path.join(os.path.dirname(__file__), '..', '..', 'sldk', 'src', 'sldk', 'simulator', 'fonts', 'viii.bdf')
+    default_font = None
+    if os.path.exists(default_font_path):
+        print(f"[UnifiedDisplay] Loading default font from {default_font_path}")
+        default_font = bitmap_font.load_font(default_font_path)
+    else:
+        print(f"[UnifiedDisplay] Default font not found at {default_font_path}")
+    
+    # Create a mock terminalio module for compatibility
+    class MockTerminalio:
+        def __init__(self):
+            self.FONT = default_font
+    
+    terminalio = MockTerminalio()
+    print(f"[UnifiedDisplay] Mock terminalio created with font: {terminalio.FONT}")
 
 from src.ui.display_interface import DisplayInterface
 from src.ui.reveal_animation import show_reveal_splash
@@ -124,7 +141,26 @@ class UnifiedDisplay(DisplayInterface):
             # Platform-specific hardware initialization
             self._initialize_hardware()
             
-            self.font = terminalio.FONT
+            # Use appropriate font based on platform
+            if IS_CIRCUITPYTHON:
+                self.font = terminalio.FONT
+            else:
+                # For SLDK, load tom-thumb font or fall back to None
+                if hasattr(terminalio, 'FONT') and terminalio.FONT:
+                    self.font = terminalio.FONT
+                else:
+                    # Try to load tom-thumb font
+                    font_path = os.path.join(os.path.dirname(__file__), '..', 'fonts', 'tom-thumb.bdf')
+                    if os.path.exists(font_path):
+                        self.font = bitmap_font.load_font(font_path)
+                    else:
+                        # Try SLDK fonts directory
+                        font_path = os.path.join(os.path.dirname(__file__), '..', '..', 'sldk', 'src', 'sldk', 'simulator', 'fonts', 'tom-thumb.bdf')
+                        if os.path.exists(font_path):
+                            self.font = bitmap_font.load_font(font_path)
+                        else:
+                            logger.error(None, "No suitable font found for SLDK simulator")
+                            self.font = None
             
             # Set up display groups
             self.main_group = displayio.Group()
@@ -133,7 +169,7 @@ class UnifiedDisplay(DisplayInterface):
                 self.main_group.hidden = False
             
             # Configure generic scrolling message
-            self.scrolling_label = Label(terminalio.FONT)
+            self.scrolling_label = Label(self.font)
             self.scrolling_label.x = 0
             self.scrolling_label.y = self.positions['scrolling_y']
             self.scrolling_group = displayio.Group()
@@ -141,7 +177,7 @@ class UnifiedDisplay(DisplayInterface):
             self.scrolling_group.hidden = True
 
             # Configure Ride Times
-            self.wait_time_name = Label(terminalio.FONT)
+            self.wait_time_name = Label(self.font)
             self.wait_time_name.x = 0
             self.wait_time_name.y = self.positions['wait_name_y']
             self.wait_time_name.scale = 1
@@ -149,7 +185,7 @@ class UnifiedDisplay(DisplayInterface):
             self.wait_time_name_group.append(self.wait_time_name)
             self.wait_time_name_group.hidden = True
 
-            self.wait_time = Label(terminalio.FONT)
+            self.wait_time = Label(self.font)
             self.wait_time.x = 0
             self.wait_time.y = self.positions['wait_time_y']
             self.wait_time.scale = 2
@@ -157,7 +193,7 @@ class UnifiedDisplay(DisplayInterface):
             self.wait_time_group.append(self.wait_time)
             self.wait_time_group.hidden = True
 
-            self.closed = Label(terminalio.FONT)
+            self.closed = Label(self.font)
             self.closed.x = 14
             self.closed.y = self.positions['closed_y']
             self.closed.scale = 1
@@ -168,13 +204,13 @@ class UnifiedDisplay(DisplayInterface):
 
             # Main Splash Screen
             self.splash_line1 = Label(
-                terminalio.FONT,
+                self.font,
                 text="THEME PARK"
             )
             self.splash_line1.x = 2
             self.splash_line1.y = self.positions['splash_line1_y']
             self.splash_line2 = Label(
-                terminalio.FONT,
+                self.font,
                 text="WAITS",
                 scale=2)
             self.splash_line2.x = 3
@@ -188,13 +224,13 @@ class UnifiedDisplay(DisplayInterface):
 
             # Message to show when wait times are updating
             self.update_line1 = Label(
-                terminalio.FONT,
+                self.font,
                 text="Wait Times"
             )
             self.update_line1.x = 2
             self.update_line1.y = self.positions['update_line1_y']
             self.update_line2 = Label(
-                terminalio.FONT,
+                self.font,
                 text="Powered By",
                 scale=1)
             self.update_line2.x = 2
@@ -207,12 +243,8 @@ class UnifiedDisplay(DisplayInterface):
             self.update_line2.color = self._convert_color(ColorUtils.colors["Yellow"])
 
             # Required attribution message
-            try:
-                # Try loading the small font
-                small_font = bitmap_font.load_font("src/fonts/tom-thumb.bdf")
-            except:
-                # Fallback to terminal font if small font not available
-                small_font = terminalio.FONT
+            # For small font, use tom-thumb (same as default)
+            small_font = self.font
                 
             self.required_line1 = Label(
                 small_font,
@@ -234,8 +266,8 @@ class UnifiedDisplay(DisplayInterface):
             self.required_line2.color = self._convert_color(ColorUtils.colors["Yellow"])
 
             # Centered generic messages
-            self.centered_line1 = Label(terminalio.FONT, text="Test Line1")
-            self.centered_line2 = Label(terminalio.FONT, text="TEST LINE2")
+            self.centered_line1 = Label(self.font, text="Test Line1")
+            self.centered_line2 = Label(self.font, text="TEST LINE2")
             self.centered_line1.x = 0
             self.centered_line1.y = self.positions['centered_line1_y']
             self.centered_line2.x = 0
@@ -247,7 +279,7 @@ class UnifiedDisplay(DisplayInterface):
             
             # Queue-times attribution
             self.queue_line1 = Label(
-                terminalio.FONT,
+                self.font,
                 text="Powered by"
             )
             self.queue_line1.color = self._convert_color(ColorUtils.colors["Yellow"])
